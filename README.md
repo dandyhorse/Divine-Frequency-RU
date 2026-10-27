@@ -8,7 +8,7 @@
 
 Оригинальные файлы игры не изменяются. Перевод подключается одним файлом и запускается обычным ярлыком или через Steam.
 
-**[Скачать DF_RU_Portable.zip](https://github.com/dandyhorse/Divine-Frequency-RU/releases/latest/download/DF_RU_Portable.zip)**
+**[Скачать DF_RU_Patcher.exe](https://github.com/dandyhorse/Divine-Frequency-RU/releases/latest/download/DF_RU_Patcher.exe)**
 
 ## Скриншоты
 
@@ -40,25 +40,12 @@
 
 ## Установка
 
-1. Скачайте и распакуйте [DF_RU_Portable.zip](https://github.com/dandyhorse/Divine-Frequency-RU/releases/latest/download/DF_RU_Portable.zip) в любую папку.
-2. Запустите `install.cmd`. Установщик ищет игру в стандартных папках Steam и во всех библиотеках из `libraryfolders.vdf`.
-3. Если игра не найдена автоматически, укажите папку, где лежат `DivineFrequency.exe` и `DFSDSA.ipk3`.
+1. Скачайте **`DF_RU_Patcher.exe`** и запустите его.
+2. Установщик сам найдёт полную версию Divine Frequency. Если игра не найдена — нажмите **ОБЗОР** и укажите папку с `DivineFrequency.exe` и `DFSDSA.ipk3`.
+3. Нажмите **УСТАНОВИТЬ / ОБНОВИТЬ**.
 4. Запускайте игру обычным ярлыком или через Steam. Новый ярлык не нужен.
 
-Патч предназначен только для **полной версии** игры. Демо-версия (`Divine Frequency Demo`) использует другие данные и не поддерживается.
-
-Для визуальной установки можно использовать `DF_RU_Patcher.exe`: он сам находит игру, показывает путь и умеет устанавливать, обновлять, удалять патч и запускать игру.
-
-## Музыка установщика
-
-В графическом установщике играет 8-bit версия **The Black Dahlia Murder — Moonlight Equilibrium**:
-
-[YouTube](https://www.youtube.com/watch?v=WOLUFWzSd4A)
-
-[Скачать графический установщик](https://github.com/dandyhorse/Divine-Frequency-RU/releases/latest/download/DF_RU_Patcher.exe)
-
-
-Установщик копирует только один файл:
+Удаление — кнопка **УДАЛИТЬ** в том же окне. Патч копирует только один файл:
 
 ```text
 <папка игры>\skins\DF_RU.wad
@@ -66,15 +53,15 @@
 
 Это PK3-архив с расширением `.wad`; UZDoom автоматически загружает `.wad` из папки `skins`. Конфиг игры не изменяется.
 
-## Удаление
+Патч предназначен только для **полной версии** игры. Демо-версия (`Divine Frequency Demo`) использует другие данные и не поддерживается.
 
-Запустите `uninstall.cmd` или удалите вручную:
+Портативный вариант с `install.cmd` остаётся доступен в релизе как [DF_RU_Portable.zip](https://github.com/dandyhorse/Divine-Frequency-RU/releases/latest/download/DF_RU_Portable.zip), но основной способ установки — графический установщик.
 
-```text
-<папка игры>\skins\DF_RU.wad
-```
+## Музыка установщика
 
-После удаления меню, шрифты и остальные файлы возвращаются к оригиналу.
+В установщике играет 8-bit версия **The Black Dahlia Murder — Moonlight Equilibrium**:
+
+[YouTube](https://www.youtube.com/watch?v=WOLUFWzSd4A)
 
 ## Сохранения
 

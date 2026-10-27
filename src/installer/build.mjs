@@ -7,6 +7,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../..");
 const source = join(here, "Installer.cs");
 const musicDir = join(here, "music");
+const background = join(here, "background.png");
+const font = join(here, "Creepster-Regular.ttf");
 const patch = join(root, "build", "DF_RU.pk3");
 const output = join(root, "build", "DF_RU_Patcher.exe");
 
@@ -28,6 +30,12 @@ const music = readdirSync(musicDir).find((name) => name.toLowerCase().endsWith("
 if (!music) {
   throw new Error(`MP3 not found in ${musicDir}`);
 }
+if (!existsSync(background)) {
+  throw new Error(`Background image not found: ${background}`);
+}
+if (!existsSync(font)) {
+  throw new Error(`Font not found: ${font}`);
+}
 
 const framework = dirname(csc);
 const wpf = join(framework, "WPF");
@@ -47,6 +55,8 @@ const args = [
   "/target:winexe",
   `/out:${output}`,
   `/resource:${join(musicDir, music)},music.mp3`,
+  `/resource:${background},background.png`,
+  `/resource:${font},Creepster-Regular.ttf`,
   `/resource:${patch},DF_RU.wad`,
   ...references,
   source,

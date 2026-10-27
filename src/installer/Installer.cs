@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
@@ -35,11 +36,15 @@ namespace DfRuPatcher
         private const string GameName = "Divine Frequency";
         private const string PatchResource = "DF_RU.wad";
         private const string MusicResource = "music.mp3";
+        private const string BackgroundResource = "background.png";
+        private const string FontResource = "Creepster-Regular.ttf";
         private const string MusicUrl = "https://www.youtube.com/watch?v=WOLUFWzSd4A";
 
         private readonly MediaPlayer music = new MediaPlayer();
         private readonly string musicFile = Path.Combine(Path.GetTempPath(), "df_ru_patcher_music.mp3");
-        private TextBox pathBox;
+        private FontFamily displayFont;
+        private bool musicOn = true;
+        private TextBlock pathText;
         private TextBox logBox;
         private TextBlock badge;
         private TextBlock patchSize;
@@ -53,15 +58,20 @@ namespace DfRuPatcher
         public PatcherWindow()
         {
             Title = "DF RU Patcher";
-            Width = 720;
-            Height = 720;
+            Width = 340;
+            Height = 680;
             ResizableMode();
             WindowStyle = WindowStyle.None;
-            Background = ColorBrush("#008080");
-            Foreground = ColorBrush("#E7E2D8");
+            Background = new ImageBrush(LoadImageResource(BackgroundResource))
+            {
+                Stretch = Stretch.UniformToFill,
+                Opacity = 0.55,
+            };
+            Foreground = ColorBrush("#F0F0F0");
             FontFamily = new FontFamily("Consolas");
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Content = BuildUi();
+            PreviewMouseLeftButtonDown += StartWindowDrag;
             Loaded += OnLoaded;
             Closed += OnClosed;
         }
@@ -69,6 +79,33 @@ namespace DfRuPatcher
         private void ResizableMode()
         {
             ResizeMode = ResizeMode.NoResize;
+        }
+
+        private void StartWindowDrag(object sender, MouseButtonEventArgs args)
+        {
+            if (!IsInteractive(args.OriginalSource as DependencyObject))
+            {
+                try
+                {
+                    DragMove();
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private static bool IsInteractive(DependencyObject source)
+        {
+            while (source != null)
+            {
+                if (source is Button || source is Slider || source is TextBox || source is Hyperlink)
+                {
+                    return true;
+                }
+                source = VisualTreeHelper.GetParent(source);
+            }
+            return false;
         }
 
         private static SolidColorBrush ColorBrush(string value)
@@ -92,8 +129,8 @@ namespace DfRuPatcher
         {
             return new Border
             {
-                Background = ColorBrush("#080B10"),
-                BorderBrush = ColorBrush("#505861"),
+                Background = ColorBrush("#D9050505"),
+                BorderBrush = ColorBrush("#777777"),
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(0),
                 Padding = new Thickness(12, 10, 12, 10),
@@ -108,7 +145,7 @@ namespace DfRuPatcher
                 Content = text,
                 Background = ColorBrush(background),
                 Foreground = ColorBrush(foreground),
-                BorderBrush = ColorBrush("#3B4557"),
+                BorderBrush = ColorBrush("#777777"),
                 BorderThickness = new Thickness(1),
                 FontFamily = new FontFamily("Consolas"),
                 FontSize = 15,
@@ -123,15 +160,7 @@ namespace DfRuPatcher
 
         private FrameworkElement BuildUi()
         {
-            var desktop = new Grid { Background = ColorBrush("#008080") };
-            var frame = new Border
-            {
-                Background = ColorBrush("#05070A"),
-                BorderBrush = ColorBrush("#6E747A"),
-                BorderThickness = new Thickness(2),
-                Margin = new Thickness(12),
-            };
-            var root = new StackPanel { Margin = new Thickness(10) };
+            var root = new StackPanel { Margin = new Thickness(9, 9, 9, 7) };
             root.Children.Add(BuildTitleBar());
             root.Children.Add(BuildDisplay());
 
@@ -143,10 +172,25 @@ namespace DfRuPatcher
             patch.Child = BuildPatchPanel();
             root.Children.Add(patch);
 
-            var actions = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 1, 0, 9) };
-            installButton = MakeButton("УСТАНОВИТЬ / ОБНОВИТЬ", "#D58B2B", "#090B0E", InstallPatch);
-            uninstallButton = MakeButton("УДАЛИТЬ", "#2A1717", "#F08A80", UninstallPatch);
-            launchButton = MakeButton("ЗАПУСТИТЬ ИГРУ", "#1B222D", "#D6DCE8", LaunchGame);
+            var actions = new Grid { Margin = new Thickness(0, 1, 0, 9) };
+            actions.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            actions.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            actions.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            installButton = MakeButton("УСТАНОВИТЬ", "#F0F0F0", "#000000", InstallPatch);
+            uninstallButton = MakeButton("УДАЛИТЬ", "#0A0A0A", "#C8C8C8", UninstallPatch);
+            launchButton = MakeButton("ЗАПУСТИТЬ", "#101010", "#E0E0E0", LaunchGame);
+            foreach (var button in new[] { installButton, uninstallButton, launchButton })
+            {
+                button.FontSize = 14;
+                button.Padding = new Thickness(4, 8, 4, 8);
+                button.HorizontalAlignment = HorizontalAlignment.Stretch;
+            }
+            installButton.Margin = new Thickness(0, 0, 4, 0);
+            uninstallButton.Margin = new Thickness(0, 0, 4, 0);
+            launchButton.Margin = new Thickness(0);
+            Grid.SetColumn(installButton, 0);
+            Grid.SetColumn(uninstallButton, 1);
+            Grid.SetColumn(launchButton, 2);
             actions.Children.Add(installButton);
             actions.Children.Add(uninstallButton);
             actions.Children.Add(launchButton);
@@ -154,24 +198,20 @@ namespace DfRuPatcher
 
             root.Children.Add(BuildTerminal());
             root.Children.Add(BuildFooter());
-            frame.Child = root;
-            desktop.Children.Add(frame);
-            return desktop;
+            return root;
         }
 
         private FrameworkElement BuildTitleBar()
         {
-            var bar = new Grid { Height = 31, Margin = new Thickness(0, 0, 0, 9) };
+            var bar = new Grid { Height = 44, Margin = new Thickness(0, 0, 0, 9) };
             bar.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             bar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            var drag = new Border
-            {
-                Background = ColorBrush("#0B0F15"),
-                BorderBrush = ColorBrush("#505861"),
-                BorderThickness = new Thickness(1),
-                Padding = new Thickness(9, 0, 9, 0),
-            };
-            drag.Child = Label("DF // RU PATCHER  ::  v1.0.7", 13, "#D8D2C4", true);
+            bar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            bar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            bar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var drag = new Border { Background = ColorBrush("#D9050505"), Padding = new Thickness(7, 0, 2, 0) };
+            drag.Child = Label("DF", 15, "#F0F0F0", true);
             drag.MouseLeftButtonDown += (sender, args) =>
             {
                 if (args.ButtonState == MouseButtonState.Pressed)
@@ -181,21 +221,68 @@ namespace DfRuPatcher
             };
             bar.Children.Add(drag);
 
-            var controls = new StackPanel { Orientation = Orientation.Horizontal };
-            var minimize = MakeButton("_", "#B8B8B8", "#000000", (sender, args) => WindowState = WindowState.Minimized);
-            minimize.Width = 30;
+            var volume = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center,
+                Width = 184,
+                Margin = new Thickness(0, 0, 3, 0),
+            };
+            volume.Children.Add(Label("VOL", 10, "#A8A8A8", true));
+            volumeSlider = new Slider
+            {
+                Width = 120,
+                Minimum = 0,
+                Maximum = 100,
+                Value = 50,
+                IsMoveToPointEnabled = true,
+                Margin = new Thickness(5, 0, 5, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            volumeSlider.ValueChanged += VolumeChanged;
+            volume.Children.Add(volumeSlider);
+            volumeLabel = Label("50%", 10, "#F0F0F0", true);
+            volumeLabel.Width = 30;
+            volumeLabel.TextAlignment = TextAlignment.Right;
+            volume.Children.Add(volumeLabel);
+            Grid.SetColumn(volume, 1);
+            bar.Children.Add(volume);
+
+            musicButton = new Button
+            {
+                Content = "\uD83D\uDD0A",
+                Width = 34,
+                Height = 30,
+                FontFamily = new FontFamily("Segoe UI Symbol"),
+                FontSize = 17,
+                Background = ColorBrush("#101010"),
+                Foreground = ColorBrush("#E0E0E0"),
+                BorderBrush = ColorBrush("#777777"),
+                BorderThickness = new Thickness(1),
+                Cursor = Cursors.Hand,
+                Margin = new Thickness(3, 0, 0, 0),
+            };
+            musicButton.Click += ToggleMusic;
+            Grid.SetColumn(musicButton, 2);
+            bar.Children.Add(musicButton);
+
+            var minimize = MakeButton("_", "#E0E0E0", "#000000", (sender, args) => WindowState = WindowState.Minimized);
+            minimize.Width = 28;
+            minimize.Height = 30;
             minimize.Padding = new Thickness(0);
             minimize.Margin = new Thickness(4, 0, 0, 0);
             minimize.FontSize = 14;
-            var close = MakeButton("X", "#B8B8B8", "#000000", (sender, args) => Close());
-            close.Width = 30;
+            Grid.SetColumn(minimize, 3);
+            bar.Children.Add(minimize);
+
+            var close = MakeButton("X", "#E0E0E0", "#000000", (sender, args) => Close());
+            close.Width = 28;
+            close.Height = 30;
             close.Padding = new Thickness(0);
             close.Margin = new Thickness(3, 0, 0, 0);
             close.FontSize = 14;
-            controls.Children.Add(minimize);
-            controls.Children.Add(close);
-            Grid.SetColumn(controls, 1);
-            bar.Children.Add(controls);
+            Grid.SetColumn(close, 4);
+            bar.Children.Add(close);
             return bar;
         }
 
@@ -203,193 +290,170 @@ namespace DfRuPatcher
         {
             var border = new Border
             {
-                Background = ColorBrush("#010203"),
-                BorderBrush = ColorBrush("#8B939C"),
-                BorderThickness = new Thickness(2),
-                Height = 184,
+                Background = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                Height = 166,
                 Margin = new Thickness(0, 0, 0, 9),
                 ClipToBounds = true,
             };
-            var canvas = new Canvas { Width = 664, Height = 180, ClipToBounds = true };
-            var glow = new Ellipse
-            {
-                Width = 430,
-                Height = 120,
-                Fill = new RadialGradientBrush(ColorBrush("#5A0A10").Color, ColorBrush("#00000000").Color),
-                Opacity = 0.65,
-            };
-            Canvas.SetLeft(glow, 117);
-            Canvas.SetTop(glow, 28);
-            canvas.Children.Add(glow);
-
-            var random = new Random(1337);
-            for (var i = 0; i < 70; i++)
-            {
-                var star = new Ellipse
-                {
-                    Width = random.Next(1, 3),
-                    Height = random.Next(1, 3),
-                    Fill = ColorBrush(random.Next(0, 3) == 0 ? "#B82931" : "#A8B0B8"),
-                    Opacity = 0.2 + random.NextDouble() * 0.7,
-                };
-                Canvas.SetLeft(star, random.Next(8, 650));
-                Canvas.SetTop(star, random.Next(5, 160));
-                canvas.Children.Add(star);
-                var blink = new DoubleAnimation(0.1, 1, TimeSpan.FromSeconds(1.4 + random.NextDouble() * 3.4))
-                {
-                    AutoReverse = true,
-                    RepeatBehavior = RepeatBehavior.Forever,
-                    BeginTime = TimeSpan.FromMilliseconds(random.Next(0, 1800)),
-                    EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
-                };
-                star.BeginAnimation(OpacityProperty, blink);
-            }
-
-            AddBlood(canvas, 196, 108, 0.0);
-            AddBlood(canvas, 252, 112, 0.7);
-            AddBlood(canvas, 430, 110, 1.2);
-            AddBlood(canvas, 520, 108, 0.35);
+            var titleGrid = new Grid { Width = 322, Height = 162 };
 
             var title = new StackPanel
             {
-                Orientation = Orientation.Horizontal,
+                Orientation = Orientation.Vertical,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
-            var text = "† DIVINE FREQUENCY †";
-            for (var i = 0; i < text.Length; i++)
+            var displayFont = DisplayFont();
+            var letterIndex = 0;
+            foreach (var word in new[] { "DIVINE", "FREQUENCY" })
             {
-                var ch = text[i];
-                var block = new TextBlock
+                var row = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+                foreach (var ch in word)
                 {
-                    Text = ch == ' ' ? " " : ch.ToString(),
-                    FontFamily = new FontFamily("Impact, Arial Black"),
-                    FontSize = ch == '†' ? 34 : 38,
-                    FontWeight = FontWeights.Bold,
-                    Foreground = TitleBrush(),
-                    Effect = new DropShadowEffect
+                    if (ch == ' ')
                     {
-                        Color = ColorBrush("#9B1018").Color,
-                        BlurRadius = 9,
-                        ShadowDepth = 0,
-                        Opacity = 0.9,
-                    },
-                };
-                var transform = new TranslateTransform();
-                block.RenderTransform = transform;
-                var floatAnimation = new DoubleAnimation(0, -3, TimeSpan.FromSeconds(2.2))
-                {
-                    AutoReverse = true,
-                    RepeatBehavior = RepeatBehavior.Forever,
-                    BeginTime = TimeSpan.FromMilliseconds(i * 65),
-                    EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
-                };
-                transform.BeginAnimation(TranslateTransform.YProperty, floatAnimation);
-                title.Children.Add(block);
+                        row.Children.Add(new Border { Width = 8 });
+                        continue;
+                    }
+                    var letter = new TextBlock
+                    {
+                        Text = ch.ToString(),
+                        FontFamily = displayFont,
+                        FontSize = 36,
+                        FontWeight = FontWeights.Bold,
+                        Foreground = ColorBrush("#F0F0F0"),
+                        TextAlignment = TextAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Bottom,
+                        Effect = new DropShadowEffect
+                        {
+                            Color = Colors.Black,
+                            BlurRadius = 3,
+                            ShadowDepth = 2,
+                            Opacity = 0.9,
+                        },
+                    };
+                    var transform = new TranslateTransform();
+                    letter.RenderTransform = transform;
+                    var wave = new DoubleAnimation(0, -5, TimeSpan.FromSeconds(1.8))
+                    {
+                        AutoReverse = true,
+                        RepeatBehavior = RepeatBehavior.Forever,
+                        BeginTime = TimeSpan.FromMilliseconds(letterIndex * 80),
+                        EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
+                    };
+                    var sway = new DoubleAnimation(-0.8, 0.8, TimeSpan.FromSeconds(2.3))
+                    {
+                        AutoReverse = true,
+                        RepeatBehavior = RepeatBehavior.Forever,
+                        BeginTime = TimeSpan.FromMilliseconds(letterIndex * 80),
+                        EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
+                    };
+                    transform.BeginAnimation(TranslateTransform.YProperty, wave);
+                    transform.BeginAnimation(TranslateTransform.XProperty, sway);
+                    row.Children.Add(letter);
+                    letterIndex++;
+                }
+                title.Children.Add(row);
             }
 
-            var titleGrid = new Grid { Width = 664, Height = 180 };
-            titleGrid.Children.Add(canvas);
-            titleGrid.Children.Add(title);
+            var viewbox = new Viewbox
+            {
+                Width = 300,
+                Height = 124,
+                Stretch = Stretch.Uniform,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Child = title,
+            };
+            titleGrid.Children.Add(viewbox);
+            var subtitle = new TextBlock
+            {
+                Text = "RUSSIAN PATCH  //  1.0.8",
+                FontFamily = new FontFamily("Consolas"),
+                FontSize = 10,
+                Foreground = ColorBrush("#D0D0D0"),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Margin = new Thickness(0, 0, 0, 8),
+            };
+            titleGrid.Children.Add(subtitle);
             border.Child = titleGrid;
             return border;
         }
 
-        private static Brush TitleBrush()
+        private static BitmapImage LoadImageResource(string name)
         {
-            var gradient = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(0, 1) };
-            gradient.GradientStops.Add(new GradientStop(ColorBrush("#FFE0A0").Color, 0));
-            gradient.GradientStops.Add(new GradientStop(ColorBrush("#D58B2B").Color, 0.42));
-            gradient.GradientStops.Add(new GradientStop(ColorBrush("#A81720").Color, 0.72));
-            gradient.GradientStops.Add(new GradientStop(ColorBrush("#6C0710").Color, 1));
-            return gradient;
+            try
+            {
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
+                {
+                    if (stream == null)
+                    {
+                        return null;
+                    }
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.StreamSource = stream;
+                    image.EndInit();
+                    image.Freeze();
+                    return image;
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        private static void AddBlood(Canvas canvas, double x, double y, double delay)
+        private FontFamily DisplayFont()
         {
-            var drip = new Polygon
+            if (displayFont != null)
             {
-                Points = new PointCollection
+                return displayFont;
+            }
+            try
+            {
+                var fontFile = Path.Combine(Path.GetTempPath(), "df_ru_creepster.ttf");
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(FontResource))
                 {
-                    new Point(0, 0),
-                    new Point(5, 0),
-                    new Point(4, 15),
-                    new Point(2, 20),
-                    new Point(0, 12),
-                },
-                Fill = ColorBrush("#9E1018"),
-                Opacity = 0.8,
-                Effect = new DropShadowEffect
-                {
-                    Color = ColorBrush("#E01420").Color,
-                    BlurRadius = 8,
-                    ShadowDepth = 0,
-                    Opacity = 0.8,
-                },
-            };
-            Canvas.SetLeft(drip, x);
-            Canvas.SetTop(drip, y);
-            var move = new TranslateTransform();
-            drip.RenderTransform = move;
-            var fall = new DoubleAnimation(0, 15, TimeSpan.FromSeconds(2.4))
+                    if (stream == null)
+                    {
+                        return displayFont = new FontFamily("Impact");
+                    }
+                    using (var output = File.Create(fontFile))
+                    {
+                        stream.CopyTo(output);
+                    }
+                }
+                var folder = new Uri(Path.GetDirectoryName(fontFile) + Path.DirectorySeparatorChar);
+                displayFont = new FontFamily(folder, "./Creepster-Regular.ttf#Creepster");
+                return displayFont;
+            }
+            catch
             {
-                AutoReverse = true,
-                RepeatBehavior = RepeatBehavior.Forever,
-                BeginTime = TimeSpan.FromSeconds(delay),
-                EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
-            };
-            var fade = new DoubleAnimation(0.8, 0.25, TimeSpan.FromSeconds(2.4))
-            {
-                AutoReverse = true,
-                RepeatBehavior = RepeatBehavior.Forever,
-                BeginTime = TimeSpan.FromSeconds(delay),
-            };
-            move.BeginAnimation(TranslateTransform.YProperty, fall);
-            drip.BeginAnimation(OpacityProperty, fade);
-            canvas.Children.Add(drip);
+                displayFont = new FontFamily("Impact");
+                return displayFont;
+            }
         }
 
         private FrameworkElement BuildFooter()
         {
             var footer = new Grid { Margin = new Thickness(1, 2, 1, 0) };
-            footer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             footer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             footer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-            var volume = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-            volume.Children.Add(Label("VOL", 11, "#98A2B0", true));
-            volumeSlider = new Slider
+            footer.Children.Add(Label("Файлы игры не изменяются", 9, "#888888"));
+            var link = new TextBlock { FontSize = 10, HorizontalAlignment = HorizontalAlignment.Right };
+            var hyperlink = new Hyperlink(new Run("Music"))
             {
-                Width = 130,
-                Minimum = 0,
-                Maximum = 100,
-                Value = 50,
-                Margin = new Thickness(7, 0, 7, 0),
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-            volumeSlider.ValueChanged += VolumeChanged;
-            volume.Children.Add(volumeSlider);
-            volumeLabel = Label("50%", 11, "#D58B2B", true);
-            volume.Children.Add(volumeLabel);
-            footer.Children.Add(volume);
-
-            var right = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
-            musicButton = MakeButton("MUSIC: ON", "#1B222D", "#D6DCE8", ToggleMusic);
-            musicButton.FontSize = 10;
-            musicButton.Padding = new Thickness(7, 3, 7, 3);
-            musicButton.Margin = new Thickness(12, 0, 0, 0);
-            right.Children.Add(musicButton);
-            var link = new TextBlock { FontSize = 10, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(14, 0, 0, 0) };
-            var hyperlink = new Hyperlink(new Run("MUSIC: Moonlight Equilibrium (8-bit)"))
-            {
-                Foreground = ColorBrush("#D58B2B"),
+                Foreground = ColorBrush("#F0F0F0"),
                 TextDecorations = TextDecorations.Underline,
             };
             hyperlink.RequestNavigate += OpenMusicLink;
             link.Inlines.Add(hyperlink);
-            right.Children.Add(link);
-            Grid.SetColumn(right, 2);
-            footer.Children.Add(right);
+            Grid.SetColumn(link, 1);
+            footer.Children.Add(link);
             return footer;
         }
 
@@ -406,25 +470,30 @@ namespace DfRuPatcher
         private FrameworkElement BuildGamePanel()
         {
             var panel = new StackPanel();
-            panel.Children.Add(Label("GAME DIRECTORY", 13, "#7E8798", true));
+            panel.Children.Add(Label("GAME DIRECTORY", 13, "#A8A8A8", true));
 
             var row = new Grid { Margin = new Thickness(0, 7, 0, 7) };
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            pathBox = new TextBox
+            pathText = new TextBlock
             {
-                IsReadOnly = true,
-                Background = ColorBrush("#0B0F16"),
-                Foreground = ColorBrush("#E7E2D8"),
-                BorderBrush = ColorBrush("#293141"),
-                BorderThickness = new Thickness(1),
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.NoWrap,
+                Foreground = ColorBrush("#F0F0F0"),
                 FontSize = 15,
                 Padding = new Thickness(9, 8, 9, 8),
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            var pathBox = new Border
+            {
+                Background = ColorBrush("#E6080808"),
+                BorderBrush = ColorBrush("#4A4A4A"),
+                BorderThickness = new Thickness(1),
                 Margin = new Thickness(0, 0, 8, 0),
-                VerticalContentAlignment = VerticalAlignment.Center,
+                Child = pathText,
             };
             row.Children.Add(pathBox);
-            var browse = MakeButton("ОБЗОР", "#1D2430", "#D6DCE8", BrowseGame);
+            var browse = MakeButton("ОБЗОР", "#101010", "#E0E0E0", BrowseGame);
             browse.Margin = new Thickness(0);
             Grid.SetColumn(browse, 1);
             row.Children.Add(browse);
@@ -434,7 +503,7 @@ namespace DfRuPatcher
             statusRow.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             statusRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             statusRow.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            badge = Label("ПОИСК", 13, "#7E8798", true);
+            badge = Label("ПОИСК", 13, "#A8A8A8", true);
             badge.Margin = new Thickness(0, 0, 10, 0);
             statusRow.Children.Add(badge);
             var detect = new Button
@@ -442,7 +511,7 @@ namespace DfRuPatcher
                 Content = "НАЙТИ АВТОМАТИЧЕСКИ",
                 Background = Brushes.Transparent,
                 BorderThickness = new Thickness(0),
-                Foreground = ColorBrush("#F3B43F"),
+                Foreground = ColorBrush("#FFFFFF"),
                 Cursor = Cursors.Hand,
                 FontSize = 13,
                 Padding = new Thickness(0),
@@ -460,11 +529,11 @@ namespace DfRuPatcher
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             var text = new StackPanel();
-            text.Children.Add(Label("RUSSIAN PATCH", 13, "#7E8798", true));
-            text.Children.Add(Label("DF_RU.wad", 20, "#E7E2D8", true));
-            text.Children.Add(Label("Полная версия игры. Демо не поддерживается.", 13, "#7E8798"));
+            text.Children.Add(Label("RUSSIAN PATCH", 13, "#A8A8A8", true));
+            text.Children.Add(Label("DF_RU.wad", 20, "#F0F0F0", true));
+            text.Children.Add(Label("Полная версия игры. Демо не поддерживается.", 13, "#A8A8A8"));
             grid.Children.Add(text);
-            patchSize = Label("...", 15, "#F3B43F", true);
+            patchSize = Label("...", 15, "#FFFFFF", true);
             patchSize.VerticalAlignment = VerticalAlignment.Center;
             Grid.SetColumn(patchSize, 1);
             grid.Children.Add(patchSize);
@@ -483,8 +552,8 @@ namespace DfRuPatcher
             var head = new Grid { Margin = new Thickness(10, 7, 10, 5) };
             head.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             head.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            head.Children.Add(Label("STATUS.LOG", 11, "#657080", true));
-            var state = Label("READY", 11, "#7DD49B", true);
+            head.Children.Add(Label("STATUS.LOG", 11, "#888888", true));
+            var state = Label("READY", 11, "#FFFFFF", true);
             Grid.SetColumn(state, 1);
             head.Children.Add(state);
             grid.Children.Add(head);
@@ -492,7 +561,7 @@ namespace DfRuPatcher
             {
                 IsReadOnly = true,
                 Background = Brushes.Transparent,
-                Foreground = ColorBrush("#B8C1CF"),
+                Foreground = ColorBrush("#D0D0D0"),
                 BorderThickness = new Thickness(0),
                 FontSize = 13,
                 Padding = new Thickness(10, 0, 10, 9),
@@ -509,6 +578,9 @@ namespace DfRuPatcher
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            volumeSlider.Value = 50;
+            volumeLabel.Text = "50%";
+            music.Volume = 0.5;
             patchSize.Text = FormatSize(ResourceSize(PatchResource));
             Log("Патч: DF_RU.wad, " + patchSize.Text);
             DetectGame(null, null);
@@ -539,14 +611,17 @@ namespace DfRuPatcher
 
         private void ToggleMusic(object sender, RoutedEventArgs e)
         {
-            if (musicButton.Content.ToString() == "MUSIC: ON")
+            musicOn = !musicOn;
+            if (musicOn)
+            {
+                music.Play();
+                musicButton.Content = "\uD83D\uDD0A";
+            }
+            else
             {
                 music.Pause();
-                musicButton.Content = "MUSIC: OFF";
-                return;
+                musicButton.Content = "\uD83D\uDD07";
             }
-            music.Play();
-            musicButton.Content = "MUSIC: ON";
         }
 
         private void StartMusic()
@@ -568,29 +643,33 @@ namespace DfRuPatcher
                 music.Volume = 0.5;
                 music.MediaEnded += (sender, args) =>
                 {
-                    music.Position = TimeSpan.Zero;
-                    music.Play();
+                    if (musicOn)
+                    {
+                        music.Position = TimeSpan.Zero;
+                        music.Play();
+                    }
                 };
                 music.Play();
             }
             catch
             {
-                musicButton.Content = "MUSIC: N/A";
+                musicButton.Content = "N/A";
             }
         }
 
         private void DetectGame(object sender, RoutedEventArgs e)
         {
-            var found = FindGame(pathBox.Text);
+            var found = FindGame(pathText.Text);
             if (found == null)
             {
-                SetBadge("НЕ НАЙДЕНА", "#F08A80");
+                SetBadge("НЕ НАЙДЕНА", "#C8C8C8");
                 SetButtons(false);
                 Log("Игра не найдена. Укажи папку вручную.");
                 return;
             }
-            pathBox.Text = found;
-            SetBadge("НАЙДЕНА", "#7DD49B");
+            pathText.Text = found;
+            pathText.ToolTip = found;
+            SetBadge("НАЙДЕНА", "#FFFFFF");
             SetButtons(true);
             Log("Игра: " + found);
         }
@@ -603,7 +682,7 @@ namespace DfRuPatcher
                 dialog.ShowNewFolderButton = false;
                 if (dialog.ShowDialog() == Forms.DialogResult.OK)
                 {
-                    pathBox.Text = dialog.SelectedPath;
+                    pathText.Text = dialog.SelectedPath;
                     DetectGame(null, null);
                 }
             }
@@ -627,7 +706,7 @@ namespace DfRuPatcher
 
         private void InstallPatch(object sender, RoutedEventArgs e)
         {
-            var game = pathBox.Text;
+            var game = pathText.Text;
             if (!IsGameDir(game))
             {
                 Log("Ошибка: папка игры не найдена или это Demo-версия.");
@@ -661,7 +740,7 @@ namespace DfRuPatcher
 
         private void UninstallPatch(object sender, RoutedEventArgs e)
         {
-            var game = pathBox.Text;
+            var game = pathText.Text;
             if (!IsGameDir(game))
             {
                 Log("Ошибка: папка игры не найдена.");
@@ -684,7 +763,7 @@ namespace DfRuPatcher
 
         private void LaunchGame(object sender, RoutedEventArgs e)
         {
-            var game = pathBox.Text;
+            var game = pathText.Text;
             if (!IsGameDir(game))
             {
                 Log("Ошибка: папка игры не найдена.");
