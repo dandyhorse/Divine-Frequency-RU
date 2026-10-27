@@ -90,7 +90,7 @@ Class DFSaveMenu : LoadSaveBase
 				string SaveCommentString = ""..manager.SaveCommentString;
 				string TimeSaved = SaveCommentString.mid(0,10);
 				//string MapNumber = SaveCommentString.mid(SaveCommentString.indexof("MAP"), 6);
-				string MapName = SaveCommentString.mid(SaveCommentString.indexof("MAP")+8, SaveCommentString.indexof("Time")-(SaveCommentString.indexof("MAP")+8));
+				string MapName = SaveCommentString.mid(SaveCommentString.indexof("MAP")+8, SaveCommentString.indexof("\n", SaveCommentString.indexof("MAP"))-(SaveCommentString.indexof("MAP")+8));
 				string SaveAge = SaveCommentString.mid(11,9);
 
 				// SaveSlotMapNumber.push(UILabel.create((25,(SlotSize*i)+70), (100,400), MapNumber , "SMALLFONT", textscale: 3.0));

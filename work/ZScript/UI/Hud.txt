@@ -1,0 +1,1559 @@
+Class DFStatusBar : BaseStatusBar
+{
+  HUDFont fnt, df_fnt, cb_fnt, hk_fnt;
+  LinearValueInterpolator  mHealthIntp, mStamIntp;
+  DynamicValueInterpolator expIntp;
+  GenericScreenStuff handler;
+  DFPlayer pmo;
+  
+  string getKey(string keybind) 
+  {
+    Array<int> keyInts;
+    Bindings.GetAllKeysForCommand(keyInts, keybind);
+    return Bindings.NameAllKeys(keyInts);
+  }
+  
+  string stim_hotkey, firemode_hotkey, rld_hotkey, qb1_key_name, qb2_key_name, qb3_key_name, qb4_key_name;
+  Array<String> wepSelKeys, useKeyList, autoUseKeyList;
+  void UpdateHotkeys()
+  {
+	int st_key = Bindings.GetKeysForCommand("FastHeal");
+	stim_hotkey = Bindings.NameKeys(st_key, 0);
+	if(stim_hotkey.Length() > 1)
+	  stim_hotkey = stim_hotkey.Left(1) .. stim_hotkey.Mid(stim_hotkey.Length() - 1, 1);
+	  
+	int fm_key = Bindings.GetKeysForCommand("SwitchFireMode");
+	firemode_hotkey = Bindings.NameKeys(fm_key, 0);
+	if(firemode_hotkey.Length() > 1)
+	  firemode_hotkey = firemode_hotkey.Left(1) .. firemode_hotkey.Mid(firemode_hotkey.Length() - 1, 1);
+	  
+	firemode_hotkey = "\cD[" .. firemode_hotkey .. "]";
+	
+	int rld_key = Bindings.GetKeysForCommand("Reload");
+	rld_hotkey = Bindings.NameKeys(rld_key, 0);
+	if(rld_hotkey.Length() > 1)
+	  rld_hotkey = rld_hotkey.Left(1) .. rld_hotkey.Mid(rld_hotkey.Length() - 1, 1);
+	
+	
+	useKeyList.Clear();
+	autoUseKeyList.Clear();
+	getKey("+Use").Split(useKeyList, "\cM, ");  
+	getKey("UseWithoutPickup").Split(autoUseKeyList, ", ");
+	
+	int qu1Key = Bindings.GetKeysForCommand("QuickUse1");
+	qb1_key_name = Bindings.NameKeys(qu1Key, 0);
+	  
+	int qu2Key = Bindings.GetKeysForCommand("QuickUse2");
+	qb2_key_name = Bindings.NameKeys(qu2Key, 0);
+	  
+	int qu3Key = Bindings.GetKeysForCommand("QuickUse3");
+	qb3_key_name = Bindings.NameKeys(qu3Key, 0);
+	  
+	int qu4Key = Bindings.GetKeysForCommand("QuickUse4");
+	qb4_key_name = Bindings.NameKeys(qu4Key, 0);
+	
+	int wselKey1 = Bindings.GetKeysForCommand("slot 1");
+	wepSelKeys.Push(Bindings.NameKeys(wselKey1, 0));
+	int wselKey2 = Bindings.GetKeysForCommand("slot 2");
+	wepSelKeys.Push(Bindings.NameKeys(wselKey2, 0));
+	int wselKey3 = Bindings.GetKeysForCommand("slot 3");
+	wepSelKeys.Push(Bindings.NameKeys(wselKey3, 0));
+	int wselKey4 = Bindings.GetKeysForCommand("slot 4");
+	wepSelKeys.Push(Bindings.NameKeys(wselKey4, 0));
+  }
+  
+  override void Init()
+  {
+	Super.Init();
+    SetSize(0, 1600, 900);
+	UpdateHotkeys();
+    fnt = HUDFont.Create("HUDFONT", 12, true, 1, 1);
+	df_fnt = HUDFont.Create("RU_DF_FONT", 1, false, 1, 1);
+	cb_fnt = HUDFont.Create("RU_ChatBoxFont", 1, false, 1, 1);
+	hk_fnt = HUDFont.Create("BIGFONT", 0, false, 2, -2);
+    mHealthIntp = LinearValueInterpolator.Create(0, 8);
+	mStamIntp = LinearValueInterpolator.Create(0, 10);
+	expIntp = DynamicValueInterpolator.Create(0, 1, 100, 10.0);
+	bossHPIntp = DynamicValueInterpolator.Create(0, 1.0, 1, 30);
+	itemSlotScale = 1.0;
+	setup = false;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(!CPlayer)
+	  return;
+
+	if(!pmo)
+	  pmo = DFPlayer(players[consoleplayer].mo);
+	  
+	if(!stim_)
+	{
+	  stim_ = Stim(CPlayer.mo.FindInventory("Stim"));
+	  if(stim_)
+	    stim_nfo = String.Format("%d/%d", stim_.amt, stim_.maxAmt);
+	}
+	  
+	if(!handler)
+	  handler = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  
+	if(!setup)
+	{
+	  plr_health = String.Format("%d/%d", pmo.Health, pmo.GetMaxHealth(true));
+	  armor_stck_nfo = String.Format("%d/%d", pmo.armorStack, pmo.armorMax);
+	  rad_nfo = String.Format("%d/%d", pmo.rad, pmo.radMax);
+	  tox_nfo = String.Format("%d/%d", pmo.tox, pmo.toxMax);
+	  shield_glow = TexMan.CheckForTexture("ShieldGL");
+	  
+	  if(pmo.quickUse1)
+	  {
+	    qb1 = true;
+		qb1_img = TexMan.CheckForTexture(pmo.quickUse1.invIcon);
+	  }
+		
+	  if(pmo.quickUse2)
+	  {
+	    qb2 = true;
+		qb2_img = TexMan.CheckForTexture(pmo.quickUse2.invIcon);
+	  }
+		
+	  if(pmo.quickUse3)
+	  {
+	    qb3 = true;
+		qb3_img = TexMan.CheckForTexture(pmo.quickUse3.invIcon);
+	  }
+		
+	  if(pmo.quickUse4)
+	  {
+	    qb4 = true;
+		qb4_img = TexMan.CheckForTexture(pmo.quickUse4.invIcon);
+	  }
+	  
+	  setup = true;
+	}
+
+	Update_Condition();
+	Update_Interaction();
+	Update_PickupSpace();
+	Update_Portrait();
+	Update_QuickUse();
+	Update_StatusEffect();
+	Update_WeaponBar();
+	Update_WeaponStatus();
+	UpdateItemInfo();
+	z_misc();
+
+	if(pmo.boss_ptr)
+	{
+	  boss_ptr = pmo.boss_ptr;
+	  Update_BossHealth();
+	}
+	else
+	{
+	  boss_ptr = null;
+	  bossBarAlpha = 0.0;
+	}
+  }
+  //lol
+  bool setup;
+  TextureID shield_glow;
+  //Health
+  int hp_prev, hp_delay, stam_prev, stam_delay, stam_pos_y;
+  //Lights
+  int cond_blinkTime;
+  double stimFlash;
+  //Mutation exp
+  int exp;
+  //Status effect
+  double stim_regen_scale;
+  int crAng;
+  //Space-pickups
+  double itemSlotScale, itemSlotScaleInc;
+  //Tutorial box
+  bool tex_tip;
+  TextureID tip_box, tip_box2;
+  string tipMsg;
+  //Weapons
+  string fireMode;
+  double fireModeAlpha;
+  
+  void z_misc()
+  {
+    expIntp.Update(DFPlayer(CPlayer.mo).phyExp);
+	
+    if(crAng == 0)
+	  crAng = 360; 
+	crAng -= 5;
+
+	if(cond_blinkTime > 35)
+	  cond_blinkTime = 0;
+    cond_blinkTime++;
+	
+	if(fireModeAlpha > 0.0)
+	  fireModeAlpha -= 0.1;
+	
+	if(item_slot_alpha > 0.0)
+	  item_slot_alpha -= 0.05;
+	  
+	if(itemSlotScale > 1.0)
+	  itemSlotScale -= itemSlotScaleInc;
+	  
+	stimFlash = abs(Cos(cond_blinkTime * 10.0));
+	stam_pos_y = Screen.GetHeight() * -0.21;
+	
+	if(stim_regen_scale >= 1.2)
+	  stim_regen_scale = 0.6;
+	else
+	  stim_regen_scale += 0.04;
+	
+    if(!tex_tip)
+	{
+      tip_box = TexMan.CheckForTexture("TIP_BOX");
+	  tip_box2 = TexMan.CheckForTexture("TIP_BOX2");
+	}
+	
+	//Damage interpolation
+	if(CPlayer.Health < hp_prev && hp_delay == 0)
+	  hp_delay = 9;
+		
+	if(hp_delay <= 0)
+	  mHealthIntp.Update(CPlayer.mo.Health);
+	else
+	  hp_delay--;
+
+	hp_prev = CPlayer.Health;
+	 
+	//Stamina consumption interpolation
+	if(stm < stam_prev && stam_delay == 0)
+	  stam_delay = 9;
+	  
+	if(stam_delay <= 0)
+	  mStamIntp.Update(stm);
+	else
+	  stam_delay--;
+	  
+	stam_prev = stm;
+  }
+  
+  
+  //Boss Stuff
+  DF_Boss boss_ptr;
+  int actrHPVal, actrHPTic;
+  double bossBarAlpha;
+  bool tex_boss;
+  TextureID bossbar1;
+  DynamicValueInterpolator bossHPIntp;
+  void Update_BossHealth()
+  {
+	if(boss_ptr)
+	{
+	  if(!tex_boss)
+	  {
+	    bossbar1 = TexMan.CheckForTexture("BossBar1");
+	    tex_boss = true;
+	  }
+	  if(boss_ptr.Health == boss_ptr.GetSpawnHealth()) //Full Health
+	  {
+		bossHPIntp.Reset(boss_ptr.health);
+		actrHPTic = 0;
+		bossBarAlpha = 2.0;
+	  }
+	  else if(boss_ptr.Health <= 0)
+	  {
+		bossHPIntp.Reset(0);
+	    return;
+	  }
+	  else
+	    bossBarAlpha = 2.0;
+		
+	  if(actrHPVal != boss_ptr.Health) //Took damage
+		actrHPTic = 24;
+	  
+	  if(actrHPTic > 0) //Delay before subtracting HP diff
+		actrHPTic--;
+	  else
+		bossHPIntp.Update(boss_ptr.Health);
+		
+	  actrHPVal = boss_ptr.Health;
+	}
+	else
+	{
+	  bossBarAlpha = 0.0;
+	}
+  }
+  
+  ////////// ****** Draw Condition
+  string plr_health;
+  int plr_hp, plr_max_hp, plr_max_hp_bar;
+  int heal_val;
+  bool heal_show;
+  
+  //Armor
+  int armor_, armor_max;
+  string armor_stck_nfo, armor_phys_nfo, armor_entr_nfo;
+  
+  //Stamina
+  bool stm_force;
+  int stm, stm_max;
+  
+  //Hazard - Rad
+  int rad_, rad_max, rad_drain;
+  double rad_half, rad_crit;
+  string rad_nfo;
+  //Hazard - Tox
+  bool tox_cleanse;
+  int tox_, tox_max, tox_drain;
+  double tox_half, tox_crit;
+  string tox_nfo;
+  
+  //Textures
+  bool tex_condition;
+  TextureID por_bg;
+  TextureID hp_icon, hp_bar, st_warn, purge;
+  TextureID ar0_icon, ar1_icon, ar4_icon, ar5_icon, ea_icon;
+  TextureID rad_bg, rad2_bg, ra_icon1, ra_icon2, ps_icon1, ps_icon2;
+  
+  //Cache
+  int health_prev, armr_prev, rad_prev, tox_prev;
+  
+  void Update_Condition()
+  {
+    //Heath
+    plr_hp = pmo.Health;
+	plr_max_hp = pmo.GetMaxHealth(true);
+	plr_max_hp_bar = clamp(pmo.GetMaxHealth(true), 50, 100);
+	if(health_prev != plr_hp)
+	{
+	  plr_health = String.Format("%d/%d", plr_hp, plr_max_hp);
+	} 
+	health_prev = plr_hp;
+	
+	if(pmo.healAmount > 0)
+    {
+      if(pmo.Health + pmo.healAmount < pmo.GetMaxHealth(true))
+        heal_val = pmo.Health + pmo.healAmount;
+      else
+        heal_val = plr_max_hp;
+
+      heal_show = true;
+    }
+    else
+      heal_show = false;
+	  
+	//Armor
+	armor_ = pmo.armorStack;
+	armor_max = pmo.armorMax;
+	armor_phys_nfo = pmo.armor_str;
+	armor_entr_nfo = pmo.armorEntropy_str;
+	if(armr_prev != armor_)
+	{
+	  armor_stck_nfo = String.Format("%d/%d", armor_, armor_max);
+	}
+	armr_prev = armor_;
+	
+	//Stamina
+	stm_force = pmo.buff_bong;
+	stm = GetAmount("Stamina");
+	stm_max = GetMaxAmount("Stamina");
+	
+	//Hazard
+    rad_drain = pmo.radAmt;
+    rad_ = pmo.rad;
+	rad_max = pmo.radMax;
+	rad_half = 0.5 * rad_max;
+	rad_crit = 0.9 * rad_max;
+	if(rad_prev != rad_)
+	{
+	  rad_nfo = String.Format("%d/%d", rad_, rad_max);
+	}
+	rad_prev = rad_;
+	
+	tox_cleanse = pmo.isCleansing;
+	tox_drain = pmo.toxAmt;
+    tox_ = pmo.tox;
+	tox_max = pmo.toxMax;
+	tox_half = 0.5 * tox_max;
+	tox_crit = 0.9 * tox_max;
+	if(tox_prev != tox_)
+	{
+	  tox_nfo = String.Format("%d/%d", tox_, tox_max);
+	}
+	tox_prev = tox_;
+	
+	//Textures
+	if(!tex_condition)
+	{
+	  por_bg = TexMan.CheckForTexture("POR_BG");
+      hp_icon = TexMan.CheckForTexture("HP_ICON");
+	  hp_bar = TexMan.CheckForTexture("HP_BAR");
+	  st_warn = TexMan.CheckForTexture("ST_FILL5");
+	  ar0_icon = TexMan.CheckForTexture("AR0_ICON");
+	  ar1_icon = TexMan.CheckForTexture("AR1_ICON");
+	  ar4_icon = TexMan.CheckForTexture("AR4_ICON");
+	  ar5_icon = TexMan.CheckForTexture("AR5_ICON");
+	  ea_icon = TexMan.CheckForTexture("EA_ICON");
+	  rad_bg = TexMan.CheckForTexture("RAD_BG");
+	  rad2_bg = TexMan.CheckForTexture("RAD2_BG");
+	  ra_icon1 = TexMan.CheckForTexture("RA_ICON1");
+	  ra_icon2 = TexMan.CheckForTexture("RA_ICON2");
+	  ps_icon1 = TexMan.CheckForTexture("PS_ICON1");
+	  ps_icon2 = TexMan.CheckForTexture("PS_ICON2");
+	  purge = TexMan.CheckForTexture("HEAL1");
+	  tex_condition = true;
+	}
+  }
+
+  ui void Draw_Condition()
+  {
+    ////////////////// HEALTH METER
+	DrawTexture(por_bg, (124, 9), DI_ITEM_LEFT_TOP);
+	DrawString(fnt, plr_health, (359, 15), DI_SCREEN_LEFT_TOP, scale: (0.8, 0.72));
+	DrawTexture(hp_icon, (125,13), DI_ITEM_LEFT_TOP);
+	DrawTexture(hp_bar, (155,18), DI_ITEM_LEFT_TOP);
+	if(plr_hp > 100)
+	{
+	  if(heal_show)
+		Drawbar ("HP_HP3", "HP_FILL1", (heal_val - 100), 100, (157, 20), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+					
+	  //Drawbar("HP_HP4", "HP_FILL2", (mHealthIntp.GetValue() - 100), 100, (157, 20), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+	  Drawbar("HP_HP2", "HP_HP1", (plr_hp - 100), 100, (157, 20), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+    }
+	else
+	{
+	  if(heal_show)
+	    Drawbar("HP_HP3", "HP_FILL2", heal_val, plr_max_hp_bar, (157, 20), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+		
+	  Drawbar("HP_HP4", "HP_FILL1", mHealthIntp.GetValue(), plr_max_hp_bar, (157, 20), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+	  Drawbar("HP_HP1", "HP_FILL1", plr_hp, plr_max_hp_bar, (157, 20), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+	}
+		  
+	////////////////// ARMOR METER
+	if(armor_ > 0)
+	{
+	  DrawTexture(ar4_icon, (125, 41), DI_ITEM_LEFT_TOP);
+	  DrawTexture(ar0_icon, (125, 69), DI_ITEM_LEFT_TOP);
+	}
+	else
+	{
+	  DrawTexture(ar5_icon, (125, 41), DI_ITEM_LEFT_TOP);
+	  DrawTexture(ar1_icon, (125, 69), DI_ITEM_LEFT_TOP);
+	}
+	DrawTexture(hp_bar, (156, 46), DI_ITEM_LEFT_TOP);
+	Drawbar("AR_AR1", "TNT1A0", armor_, armor_max, (158, 48), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+	DrawTexture(ea_icon, (320, 69), DI_ITEM_LEFT_TOP);
+	DrawString(fnt, armor_stck_nfo, (359, 43), DI_SCREEN_LEFT_TOP, scale: (0.8, 0.72));
+	DrawString(df_fnt, armor_phys_nfo, (156, 71), DI_SCREEN_LEFT_TOP, scale: (0.8, 0.72));
+	DrawString(df_fnt, armor_entr_nfo, (351, 71), DI_SCREEN_LEFT_TOP, scale: (0.8, 0.72));
+	
+	////////////////// STAMINA METER
+	if(stm_force || stm < stm_max)
+	{		
+	  Drawbar("ST_FILL4", "ST_FILL3", mStamIntp.GetValue(), 300, (0, stam_pos_y), 0, SHADER_HORZ, DI_SCREEN_CENTER_BOTTOM, Alpha: 0.7);
+	  Drawbar("ST_FILL1", "ST_FILL", stm, 300, (0, stam_pos_y), 0, SHADER_HORZ, DI_SCREEN_CENTER_BOTTOM, Alpha: 0.7);
+				
+	  if(stm > 300)
+	    Drawbar("ST_FILL2", "ST_FILL", stm - 300, stm_max - 300, (0, stam_pos_y - 2), 0, SHADER_HORZ, DI_SCREEN_CENTER_BOTTOM, Alpha: 0.7);
+	}
+	if(handler && handler.warn_staminaF > 0.0)
+	  DrawTexture(st_warn, (0, stam_pos_y + 16), DI_SCREEN_CENTER_BOTTOM, handler.warn_staminaF);
+			
+
+	////////////////// RADIATION METER
+	if(rad_drain > 0) //Rad purging
+	  DrawTexture(purge, (5,124), DI_ITEM_LEFT_TOP, 0.8);
+
+	DrawTexture(rad_bg, (5, 123), DI_ITEM_LEFT_TOP);
+	DrawTexture(ra_icon1, (6,124), DI_ITEM_LEFT_TOP);
+	//We're over 50% threshold
+	if(rad_ >= rad_half)
+	  Drawbar("RAD_BAR2", "RAD_BAR0", rad_, rad_max, (5, 152), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+	else
+	  Drawbar("RAD_BAR1", "RAD_BAR0", rad_, rad_max, (5, 152), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+	  
+	//At a critical threshold  
+	if(rad_ >= rad_crit)
+	  Drawbar("RAD_BAR3", "", rad_, rad_max, (5, 152), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP, stimFlash);
+	
+	//Draw the values
+	DrawString(fnt, rad_nfo, (33, 121), DI_ITEM_LEFT_TOP, scale: (0.95, 1.05));
+	
+	////////////////// TOXIN METER
+	if(tox_cleanse || tox_drain) //Toxin purging
+	  DrawTexture(purge, (5,183), DI_ITEM_LEFT_TOP, 0.8);
+
+	DrawTexture(rad_bg, (5, 183), DI_ITEM_LEFT_TOP);
+	DrawTexture(ps_icon1, (6,184), DI_ITEM_LEFT_TOP);
+	Drawbar("TOX_BAR1", "RAD_BAR0", tox_, tox_max, (5, 212), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP);
+	if(tox_ >= tox_crit)
+	  Drawbar("RAD_BAR3", "", tox_, tox_max, (5, 212), 0, SHADER_HORZ, DI_ITEM_LEFT_TOP, stimFlash);
+	  
+	DrawString(fnt, tox_nfo, (33, 181), DI_ITEM_LEFT_TOP, scale: (0.95, 1.05));
+  }
+  
+  ////////// ****** Draw Interactions
+  string use_obj_name;
+  string use_pickup_nfo;
+  string use_autouse_nfo;
+  bool use_show, use_input1_show, use_input2_show;
+  
+  void Update_Interaction()
+  {
+    if(pmo.useContextObjTag != "")
+	{
+	  use_show = true;
+      use_obj_name = pmo.useContextObjTag;
+	  if(pmo.useContextPrompt != "")
+	  {
+	    use_input1_show = true;
+	    if(useKeyList.Size() > 0)
+		  use_pickup_nfo = "\cD[" .. useKeyList[0] .. "] \cJ" .. pmo.useContextPrompt;
+	  }
+	  else
+	  {
+	    use_input1_show = false;
+	    use_input2_show = false;
+	  }
+	  if(pmo.altUseContextPrompt != "")
+	  {
+	    use_input2_show = true;
+	    if(autoUseKeyList.Size() > 0)
+		  use_autouse_nfo = "\cD[" .. autoUseKeyList[0] .. "] \cJ" .. pmo.altUseContextPrompt;
+	  }
+	  else
+	    use_input2_show = false;
+	}
+	else
+	{
+	  use_show = false;
+	  use_input1_show = false;
+	  use_input2_show = false;
+	}
+  }
+  
+  ui void Draw_Interaction()
+  {
+    DrawString(df_fnt, use_obj_name, (64, 32), DI_SCREEN_CENTER|DI_TEXT_ALIGN_LEFT);
+	int yofs = 64;
+	if(use_input1_show)
+	{
+	  DrawString(df_fnt, use_pickup_nfo, (64, yofs), DI_SCREEN_CENTER|DI_TEXT_ALIGN_LEFT);
+	  yofs += 32;
+	}
+	if(use_input2_show)
+	  DrawString(df_fnt, use_autouse_nfo, (64, yofs), DI_SCREEN_CENTER|DI_TEXT_ALIGN_LEFT);
+  }
+  
+   ////////// ****** Draw Item-Info
+  bool item_nfo;
+  Actor item_highlight, item_highlight_prev;
+  double item_slot_alpha;
+  Array<String> item_info;
+  //texture
+  bool tex_use;
+  TextureID item_tip;
+  
+  void UpdateItemInfo()
+  {
+    if(pmo.item_focus)
+	{
+	  item_highlight = pmo.item_focus;
+	  
+	  if(item_highlight is "Consumable" && item_slot_alpha < 4.0)
+	    item_slot_alpha = 1.0;
+		
+	  if(itemToolTip_enable && item_highlight is "Consumable")
+	  {
+	    item_nfo = true;
+	    if(item_highlight_prev != item_highlight)
+		  ParseItemEffect();
+		  
+		item_highlight_prev = item_highlight;
+	  }
+	  else
+	    item_nfo = false;
+	}
+	else
+	{
+	  item_highlight = null;
+	}
+	  
+	if(!tex_use)
+	{
+	  item_tip = TexMan.CheckForTexture("ITEM_TIP");
+	  tex_use = true;
+	}
+  }
+  
+  void ParseItemEffect()
+  {
+    String item_raw_str = CustomInventoryItem(item_highlight).invText;
+    item_info.Clear();
+	if(item_raw_str.left(1) ~== "$")
+	  StringTable.Localize(item_raw_str).Split(item_info, "|");
+	  
+	for(int i = 0; i < item_info.Size(); i++)
+	{
+	  if(item_info[i].left(2) ~== "cJ")
+	  {
+		item_info[i].Replace("cJ", "");
+		String nfo = String.Format("· " .. "%s\n\cJ", item_info[i]);
+		item_info[i] = nfo;
+	  }
+	  else
+	  {
+		String nfo = String.Format("· \cD%s\n\cJ", item_info[i]);
+		item_info[i] = nfo;
+	  }
+	}
+  }
+  
+  ////////// ****** Draw Pickup Inv size
+  bool tex_puslot;
+  TextureID inv_fill, inv_slot;
+ 
+  void Update_PickupSpace()
+  {
+	if(!tex_puslot)
+	{
+	  inv_fill = TexMan.CheckForTexture("INV_FILL");
+	  inv_slot = TexMan.CheckForTexture("INV_SLOT");
+	  tex_puslot = true;
+	}
+  }
+  
+  ui void Draw_PickupSpace()
+  {
+    int emptySlot = pmo.invMax - pmo.invCur;
+    double xofs = -56.0;
+	double yofs = 80;
+	if(pmo.invMax < 8)
+	{
+	  xofs = (16.0 * pmo.invMax) * -0.5;
+	  xofs += 8;
+	}
+    for(int i = 0; i < pmo.invCur - 1; i++)
+	{
+	  DrawTexture(inv_fill, (xofs, yofs), DI_SCREEN_CENTER|DI_ITEM_CENTER, item_slot_alpha);
+	  xofs += 16;
+	  if(xofs >= 64) //New row after 8 slots drawn
+	  {
+	    xofs = -56.0; //Guaranteed to be -56.0 because we have 8+ slots & new row
+	    yofs += 16;
+	  }
+	}
+	if(pmo.invCur > 0) //Animation for newest item picked up
+	{
+	  DrawTexture(inv_fill, (xofs, yofs), DI_SCREEN_CENTER|DI_ITEM_CENTER, item_slot_alpha, scale: (itemSlotScale, itemSlotScale));
+	  xofs += 16;
+	  if(xofs >= 64)
+	  {
+	    xofs = -56.0;
+	    yofs += 16;
+	  }
+	}
+	for(int i = 0; i < emptySlot; i++)
+	{
+	  DrawTexture(inv_slot, (xofs, yofs), DI_SCREEN_CENTER|DI_ITEM_CENTER, item_slot_alpha);
+	  xofs += 16;
+	  if(xofs >= 64)
+	  {
+	    xofs = -56.0;
+	    yofs += 16;
+	  }
+	}
+  }
+  
+  ////////// ****** Draw Portrait
+  double face_eye_alpha, face_scanner_alpha, face_heal_alpha;
+  bool face_have_scanner;
+  //Texture
+  bool tex_portrait;
+  TextureID face_name, face_eye, face_scanner, face_heal, p_def2;
+  
+  void Update_Portrait()
+  {
+	face_eye_alpha = pmo.health * 0.01;
+	face_have_scanner = pmo.hasScanner;
+	if(pmo.hActr && face_scanner_alpha < 1.0)
+	  face_scanner_alpha = 1.0;
+	else if (!pmo.hActr && face_scanner_alpha > 0.0)
+	  face_scanner_alpha -= 0.1;
+	  
+	if(face_heal_alpha > 0.0)
+	  face_heal_alpha -= 0.025;
+	
+	if(!tex_portrait)
+	{
+	  face_name = TexMan.CheckForTexture(pmo.porName);
+	  face_eye = TexMan.CheckForTexture(pmo.porHPa);
+	  face_scanner = TexMan.CheckForTexture(pmo.porScan);
+	  face_heal = TexMan.CheckForTexture(pmo.porStim);
+	  p_def2 = TexMan.CheckForTexture("P_DEF2");
+	  tex_portrait = true;
+	}
+  }
+  
+  void Update_New_Portait()
+  {
+    face_name = TexMan.CheckForTexture(pmo.porName);
+	face_eye = TexMan.CheckForTexture(pmo.porHPa);
+	face_scanner = TexMan.CheckForTexture(pmo.porScan);
+	face_heal = TexMan.CheckForTexture(pmo.porStim);
+  }
+
+  ui void Draw_Portrait()
+  {
+	DrawTexture(face_name, (5,5), DI_ITEM_LEFT_TOP); //Face		
+	DrawTexture(face_eye, (5,5), DI_ITEM_LEFT_TOP, alpha: face_eye_alpha); //White glow
+	
+	if(face_have_scanner)
+	  DrawTexture(face_scanner, (5,5), DI_ITEM_LEFT_TOP, alpha: face_scanner_alpha);
+	
+	DrawTexture(p_def2, (5,5), DI_ITEM_LEFT_TOP);	
+	
+	if(face_heal_alpha > 0.0)
+	  DrawTexture(face_heal, (5,5), DI_ITEM_LEFT_TOP, face_heal_alpha);
+  }
+  
+  ////////// ****** Draw Quick-use
+  bool goal_alert;
+  Stim stim_;
+  int last_stim_amt;
+  string stim_nfo;
+  //Quick-binds
+  string qb1_amount, qb2_amount, qb3_amount, qb4_amount;
+  double qb1_alpha, qb2_alpha, qb3_alpha, qb4_alpha;
+  TextureID qb1_img, qb2_img, qb3_img, qb4_img;
+  int qb1_last, qb2_last, qb3_last, qb4_last;
+  bool qb1, qb2, qb3, qb4;
+  //Texture
+  bool tex_quickuse;
+  TextureID invbox, key_box, goal;
+  TextureID stim_not, stim_box, stim_up;
+  
+  void Update_QuickUse()
+  {
+    goal_alert = pmo.goal_alert;
+	
+	if(stim_)
+	{
+	  if(last_stim_amt != stim_.amt)
+	  {
+	    stim_nfo = String.Format("%d/%d", stim_.amt, stim_.maxAmt);
+	    if(stim_.amt <= 0)
+	      stim_nfo = String.Format("\cU0/%d", stim_.maxAmt);
+	  }
+	  last_stim_amt = stim_.amt;
+	}
+	
+	if(pmo.quickUse1)
+	{
+	  if(qb1_last != pmo.quickUse1.amount)
+	    qb1_amount = String.Format("%d", pmo.quickUse1.amount);
+		
+	  if(pmo.quickUse1 is "Skill")
+	    qb1_amount = "";
+		
+	  if(pmo.quickUse1.amount > 0)
+	    qb1_alpha = 1.0;
+	  else
+	    qb1_alpha = 0.5;
+		
+	  qb1_last = pmo.quickUse1.amount;
+	}
+	if(pmo.quickUse2)
+	{
+	  if(qb2_last != pmo.quickUse2.amount)
+	    qb2_amount = String.Format("%d", pmo.quickUse2.amount);
+		
+	  if(pmo.quickUse2 is "Skill")
+	    qb2_amount = "";
+		
+	  if(pmo.quickUse2.amount > 0)
+	    qb2_alpha = 1.0;
+	  else
+	    qb2_alpha = 0.5;
+		
+	  qb2_last = pmo.quickUse2.amount;
+	}
+	if(pmo.quickUse3)
+	{
+	  if(qb3_last != pmo.quickUse3.amount)
+	    qb3_amount = String.Format("%d", pmo.quickUse3.amount);
+		
+	  if(pmo.quickUse3 is "Skill")
+	    qb3_amount = "";
+	  
+	  if(pmo.quickUse3.amount > 0)
+	    qb3_alpha = 1.0;
+	  else
+	    qb3_alpha = 0.5;
+		
+	  qb3_last = pmo.quickUse3.amount;
+	}
+	if(pmo.quickUse4)
+	{
+	  if(qb4_last != pmo.quickUse4.amount)
+	    qb4_amount = String.Format("%d", pmo.quickUse4.amount);
+		
+	  if(pmo.quickUse4 is "Skill")
+	    qb4_amount = "";
+	  
+	  if(pmo.quickUse4.amount > 0)
+	    qb4_alpha = 1.0;
+	  else
+	    qb4_alpha = 0.5;
+		
+	  qb4_last = pmo.quickUse4.amount;
+	}
+	
+	if(!tex_quickuse)
+	{
+	  invbox = TexMan.CheckForTexture("INVBOX");
+	  goal = TexMan.CheckForTexture("GOAL");
+	  stim_not = TexMan.CheckForTexture("STIM_NOT");
+	  stim_box = TexMan.CheckForTexture("STIM_BOX");
+	  stim_up = TexMan.CheckForTexture("STIM_UP");
+	  key_box = TexMan.CheckForTexture("KEY_BOX");
+	  tex_quickuse = true;
+	}
+  }
+  
+  ui void Draw_QuickUse()
+  {
+    ////// Inventory
+	DrawTexture(invbox, (5, 232), DI_ITEM_LEFT_TOP);	
+	DrawString(df_fnt, "Tab", (57, 266), DI_ITEM_LEFT_TOP|DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW, scale: (0.9, 0.8));
+	if(goal_alert)
+	{
+	  DrawTexture(goal, (30, 228), DI_SCREEN_LEFT_TOP|DI_ITEM_RIGHT_TOP, 0.5, scale: (0.7, 0.7));	
+	  DrawTexture(goal, (30, 228), DI_SCREEN_LEFT_TOP|DI_ITEM_RIGHT_TOP, stimFlash, scale: (0.7, 0.7));	
+	}
+	////// Health Stim
+	if(stim_)
+	{
+	  if(plr_hp <= 40 && stim_.amt > 0)
+	    DrawTexture(stim_not, (64, 232), DI_ITEM_LEFT_TOP, stimFlash);
+	  
+	  DrawTexture(stim_box, (64, 232), DI_ITEM_LEFT_TOP);
+	  if(handler && handler.stimUpAlpha > 0.0)
+	    DrawTexture(stim_up, (64, 232), DI_ITEM_LEFT_TOP, handler.stimUpAlpha);
+	  
+	  DrawString(df_fnt, stim_hotkey, (116, 266), DI_ITEM_LEFT_TOP|DI_TEXT_ALIGN_RIGHT|DI_NOSHADOW, scale: (0.9, 0.8));
+	  DrawString(df_fnt, stim_nfo, (65, 230), DI_ITEM_LEFT_TOP|DI_TEXT_ALIGN_LEFT|DI_NOSHADOW, scale: (0.7, 0.7));
+	}
+	else 
+	  DrawTexture(key_box, (64, 232), DI_ITEM_LEFT_TOP);
+	  
+	/////// Quick-binds
+	DrawTexture(key_box, (5, -9), DI_ITEM_LEFT_BOTTOM);
+	DrawTexture(key_box, (68, -9), DI_ITEM_LEFT_BOTTOM);
+	DrawTexture(key_box, (131, -9), DI_ITEM_LEFT_BOTTOM);
+	DrawTexture(key_box, (194, -9), DI_ITEM_LEFT_BOTTOM);
+	if(qb1)
+	  DrawQuickBind(qb1_img, qb1_amount, qb1_key_name, qb1_alpha, (1,-5));
+	if(qb2)
+	  DrawQuickBind(qb2_img, qb2_amount, qb2_key_name, qb2_alpha, (64,-5));
+	if(qb3)
+	  DrawQuickBind(qb3_img, qb3_amount, qb3_key_name, qb3_alpha, (127,-5));
+	if(qb4)
+	  DrawQuickBind(qb4_img, qb4_amount, qb4_key_name, qb4_alpha, (190,-5));
+  }
+  
+  ui void DrawQuickBind(TextureID gfx, string amt, string key_name, double key_alpha, vector2 coord)
+  {
+	DrawTexture(gfx, (coord.x, coord.y), DI_ITEM_LEFT_BOTTOM, alpha: key_alpha);
+	DrawString(hk_fnt, key_name, (coord.x + 9, coord.y - 22), DI_ITEM_LEFT_TOP|DI_TEXT_ALIGN_LEFT, Font.CR_BLACK, key_alpha, scale: (1.2, 1.2), style: STYLE_Subtract);
+	DrawString(hk_fnt, key_name, (coord.x + 7, coord.y - 21), DI_ITEM_LEFT_TOP|DI_TEXT_ALIGN_LEFT, alpha: key_alpha, scale: (1.2, 1.2));
+	if(amt != "")
+	{
+	  DrawString(hk_fnt, amt, (coord.x + 56, coord.y - 60), DI_ITEM_LEFT_TOP|DI_TEXT_ALIGN_RIGHT, Font.CR_BLACK, key_alpha, scale: (1.3, 1.3));
+	  DrawString(hk_fnt, amt, (coord.x + 57, coord.y - 61), DI_ITEM_LEFT_TOP|DI_TEXT_ALIGN_RIGHT, alpha: key_alpha, scale: (1.3, 1.3));
+	}
+  }
+  
+  ////////// ****** Draw Status Effect
+  int radar_time, psi_shield_health, psi_shield_time, withstand_stack, withstand_time, inf_ammo;
+  string radar_time_str, psi_shield_time_str, withstand_time_str, inf_ammo_time_str;
+  bool lant, hp_regen, stm_regen, str_buff, stim_regen;
+  //Texture
+  bool tex_status;
+  TextureID lant_on, p_radar, vtesn0, vtesn1, vtesn2, vtesn3, vtesn5, vtesn6, p_ar, drunk1, drunk2;
+  
+  void Update_StatusEffect()
+  {
+    radar_time = pmo.radar_time;
+	psi_shield_health = pmo.psi_shield_health;
+	psi_shield_time = pmo.psi_shield_time;
+	withstand_stack = pmo.withstand_stack;
+	withstand_time = pmo.withstand_time;
+	inf_ammo = pmo.inf_ammo_time;
+	
+	if(radar_time > 0)
+	  radar_time_str = String.Format("%d", radar_time);
+	if(psi_shield_time > 0)  
+	  psi_shield_time_str = String.Format("%d", psi_shield_time);
+	if(withstand_time > 0)
+	  withstand_time_str = String.Format("%d", withstand_time);
+	if(inf_ammo > 0)
+	  inf_ammo_time_str = String.Format("%d", inf_ammo);
+	
+	lant = CheckInventory("LanternToken", 1);
+	hp_regen = pmo.buff_hp;
+	stm_regen = pmo.buff_stam;
+	stim_regen = pmo.buff_stim;
+	str_buff = pmo.isDrunk;
+	
+	if(!tex_status)
+	{
+	  tex_status = true;
+	  lant_on = TexMan.CheckForTexture("Lant_On");
+	  p_radar = TexMan.CheckForTexture("P_Radar");
+	  vtesn0 = TexMan.CheckForTexture("VTESN0"); //rotated
+	  vtesn1 = TexMan.CheckForTexture("VTESN1");
+	  vtesn2 = TexMan.CheckForTexture("VTESN2"); //rotate
+	  vtesn3 = TexMan.CheckForTexture("VTESN3");
+	  vtesn5 = TexMan.CheckForTexture("VTESN5");
+	  vtesn6 = TexMan.CheckForTexture("VTESN6");
+	  p_ar = TexMan.CheckForTexture("P_AR");
+	  drunk1 = TexMan.CheckForTexture("Drunk1"); //rotate
+	  drunk2 = TexMan.CheckForTexture("Drunk2");
+	}
+  }
+  
+  ui void Draw_StatusEffect()
+  {
+    int xc = 154;
+
+	if(lant)
+	{
+	  DrawTexture(lant_on, (xc - 4, 135), DI_ITEM_CENTER);
+	  xc += 52;
+	}
+	
+	if(radar_time > 0)
+	{
+	  DrawTexture(p_radar, (xc - 4, 135), DI_ITEM_CENTER);
+	  DrawString(df_fnt, radar_time_str, (xc + 5, 144), DI_ITEM_RIGHT_BOTTOM, scale: (0.77, 0.77));
+	  xc += 52;
+	}
+
+	if(withstand_time > 0)
+	{
+	  DrawBar("P_Will1", "P_Will0", DFPlayer(CPlayer.mo).withstand_stack, 4, 
+	  (xc - 4, 134), 0, SHADER_VERT|SHADER_REVERSE, DI_ITEM_CENTER);
+	  DrawString(df_fnt, withstand_time_str, (xc + 3, 144), DI_ITEM_RIGHT_BOTTOM, scale: (0.77, 0.77));
+	  xc += 52;
+	}
+	
+	if(psi_shield_time > 0)
+	{
+	  DrawBar("P_Shd1", "P_Shd0", DFPlayer(CPlayer.mo).psi_shield_health, DFPlayer(CPlayer.mo).psi_shield_health_max, 
+	  (xc, 135), 0, SHADER_VERT|SHADER_REVERSE, DI_ITEM_CENTER);
+	  DrawString(df_fnt, psi_shield_time_str, (xc + 4, 144), DI_ITEM_RIGHT_BOTTOM, scale: (0.77, 0.77));
+	  xc += 52;
+	}
+	
+	if(stim_regen)
+	{
+	  DrawTextureRotated(vtesn5, (xc, 135), DI_ITEM_CENTER, crAng);
+	  DrawTexture(vtesn6, (xc, 135), DI_ITEM_CENTER, scale: (stim_regen_scale, stim_regen_scale));
+	  xc += 52;
+	}
+	
+	if(hp_regen)
+	{
+	  DrawTextureRotated(vtesn0, (xc, 135), DI_ITEM_CENTER, crAng);
+	  DrawTexture(vtesn1, (xc, 135), DI_ITEM_CENTER);
+	  xc += 52;
+	}
+	
+	if(stm_force || stm_regen)
+	{
+	  DrawTextureRotated(vtesn2, (xc, 135), DI_ITEM_CENTER, crAng);
+	  DrawTexture(vtesn3, (xc, 135), DI_ITEM_CENTER);
+	}
+	
+	if(inf_ammo > 0)
+	{
+	  DrawTexture(p_ar, (xc - 4, 135), DI_ITEM_CENTER);
+	  DrawString(df_fnt, inf_ammo_time_str, (xc + 8, 144), DI_ITEM_RIGHT_BOTTOM, scale: (0.77, 0.77));
+	  xc += 52;
+	}
+
+	if(str_buff)
+	{
+	  DrawTextureRotated(drunk1, (xc, 135), DI_ITEM_CENTER, crAng);
+	  DrawTexture(drunk2, (xc, 135), DI_ITEM_CENTER);
+	  xc += 52;
+	}
+  }
+  
+  ////////// ****** Draw Weapon Bar
+  string hg_ammo, hg_rammo, sg_ammo, ssg_ammo, spr_ammo, ar_ammo;
+  double wpnBarAlpha, wpnSelAlpha;
+  int wpnBarY, wpnSelX, wpnPopUpX, wpnPopUpY;
+  bool wep_1, wep_2, wep_3a, wep_3b, wep_4a, wep_4b;
+  //Texture
+  bool tex_wpnbar;
+  TextureID wpn_bar, wpn_bar2, wpn_bar3, wpn_bar4, wpn_bar5;
+  TextureID fpica0, pspua0, sht2z0, ssuca0, spcna0, m4ara0;
+  
+  void Update_WeaponBar()
+  {
+    if(wpnBarAlpha <= 0.0)
+	  return;
+	  
+    wep_1 = pmo.wep1;
+	wep_2 = pmo.wep2;
+	wep_3a = CheckInventory("TrenchGun");
+	wep_3b = pmo.wep3b;
+	wep_4a = pmo.wep4a;
+	wep_4b = pmo.wep3b;
+	
+	if(wep_2)
+	{
+	  hg_ammo = String.Format("%d/%d", GetAmount("BulletLoaded"), GetAmount("PistolAmmo"));
+	  hg_rammo = String.Format("\cFHE- (%d)", GetAmount("PierceAmmo"));
+	  let wpn = DF_Weapon(CPlayer.mo.FindInventory("Handgun"));
+	  if(wpn && wpn.wep_AmmoType == 1)
+	  {
+	    hg_ammo = String.Format("%d/%d", GetAmount("BulletLoaded"), GetAmount("PierceAmmo"));
+	    hg_rammo = String.Format("\cRHT- (%d)", GetAmount("PistolAmmo"));
+	  }
+	}
+	if(wep_3a)
+	  sg_ammo = String.Format("%d/%d", GetAmount("ShellLoaded"), GetAmount("ShotgunAmmo"));
+	if(wep_3b)
+	  ssg_ammo = String.Format("%d/%d", GetAmount("VoidLoaded"), GetAmount("VoidAmmo"));
+	if(wep_4a)
+	  spr_ammo = String.Format("%d/%d", GetAmount("GasAmmo"), GetMaxAmount("GasAmmo"));
+	if(wep_4b)
+	  ar_ammo = String.Format("%d/%d", GetAmount("HeavyLoaded"), GetAmount("HeavyAmmo"));
+
+	if(wpnBarAlpha > 0.0)
+	  wpnBarAlpha -= 0.1;
+	 
+	if(wpnSelAlpha > 0.0)
+	  wpnSelAlpha -= 0.1;
+	  
+	if(wpnBarY > 0)
+	  wpnBarY--;
+	  
+	if(!tex_wpnbar)
+	{
+	  wpn_bar = TexMan.CheckForTexture("WPN_BAR");
+	  wpn_bar2 = TexMan.CheckForTexture("WPN_BAR2");
+	  wpn_bar3 = TexMan.CheckForTexture("WPN_BAR3");
+	  wpn_bar4 = TexMan.CheckForTexture("WPN_BAR4");
+	  wpn_bar5 = TexMan.CheckForTexture("WPN_BAR5");
+	  fpica0 = TexMan.CheckForTexture("FPICA0");
+	  pspua0 = TexMan.CheckForTexture("PSPUA0");
+	  sht2z0 = TexMan.CheckForTexture("SHT2Z0");
+	  ssuca0 = TexMan.CheckForTexture("SSUCA0");
+	  spcna0 = TexMan.CheckForTexture("SPCNA0");
+	  m4ara0 = TexMan.CheckForTexture("M4ARA0");
+	  tex_wpnbar = true;
+	}
+  }
+  
+  ui void Draw_WeaponBar()
+  {
+    if(wpnBarAlpha <= 0.0)
+	  return;
+	  
+	DrawTexture(wpn_bar, (0, -66 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha); //66
+	if(wep_3b)
+	{
+	  if(wpnPopUpX == 96)
+	    DrawTexture(wpn_bar4, (96, -138 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	  else
+	    DrawTexture(wpn_bar5, (96, -118 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	}
+	if(wep_4b)
+	{
+	  if(wpnPopUpX == 288)
+	    DrawTexture(wpn_bar4, (288, -138 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	  else
+	    DrawTexture(wpn_bar5, (288, -118 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	}
+	DrawTexture(wpn_bar2, (wpnSelX, wpnPopUpY + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	DrawTexture(wpn_bar3, (wpnSelX, wpnPopUpY + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, alpha: wpnSelAlpha);
+	
+	if(wep_1)
+	  DrawTexture(fpica0, (-288, -64 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	if(wep_2)
+	{
+	  DrawTexture(pspua0, (-96, -64 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	  DrawString(df_fnt, hg_ammo,
+	  (-13, -62 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+	  alpha: wpnBarAlpha,
+	  scale: (0.8, 0.8),
+	  style: STYLE_ADD
+	  );
+	  DrawString(df_fnt, hg_rammo,
+	  (-12, -80 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+	  alpha: wpnBarAlpha,
+	  scale: (0.7, 0.7),
+	  style: STYLE_ADD
+	  );
+	}
+	if(wep_3a) //This is so fucking lazy lmao
+	{
+	  DrawTexture(sht2z0, (96, -64 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	  DrawString(df_fnt, sg_ammo,
+	  (179, -62 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+	  alpha: wpnBarAlpha,
+	  scale: (0.8, 0.8),
+	  style: STYLE_ADD
+	  );
+	}
+	if(wpnPopUpX == 96 && wep_3b)
+	{
+	  DrawTexture(ssuca0, (96, -136 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	  DrawString(df_fnt, ssg_ammo,
+	  (179, -134 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+	  alpha: wpnBarAlpha,
+	  scale: (0.8, 0.8),
+	  style: STYLE_ADD
+	  );
+	}
+	else if(wep_3b)
+	{
+	  DrawString(df_fnt, ssg_ammo,
+	  (179, -144 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+	  alpha: wpnBarAlpha,
+	  scale: (0.8, 0.8),
+	  style: STYLE_ADD
+	  );
+	}
+	if(wep_4a)
+	{
+	  DrawTexture(spcna0, (288, -64 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	  DrawString(df_fnt, spr_ammo,
+	  (371, -62 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+	  alpha: wpnBarAlpha,
+	  scale: (0.8, 0.8),
+	  style: STYLE_ADD
+	  );
+	}
+	if(wpnPopUpX == 288 && wep_4b)
+	{
+	  DrawTexture(m4ara0 , (288, -136 + wpnBarY), DI_SCREEN_CENTER_BOTTOM|DI_ITEM_CENTER, wpnBarAlpha);
+	  DrawString(df_fnt, ar_ammo,
+	  (371, -134 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+	  alpha: wpnBarAlpha,
+	  scale: (0.8, 0.8),
+	  style: STYLE_ADD
+	  );
+	}
+	else if(wep_4b)
+	{
+	  DrawString(df_fnt, ar_ammo,
+	  (371, -144 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+	  alpha: wpnBarAlpha,
+	  scale: (0.8, 0.8),
+	  style: STYLE_ADD
+	  );
+	}
+	int keyxofs = -284;
+	for(int i = 0; i < 4; i++)
+	{
+	  DrawString(df_fnt, "[" .. wepSelKeys[i] .. "]",
+	  (keyxofs, -34 + wpnBarY),
+	  DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_CENTER,
+	  alpha: wpnBarAlpha,
+	  scale: (0.855, 0.9),
+	  style: STYLE_ADD
+	  );
+	  keyxofs += 192;
+	}
+  }
+  
+   ////////// ****** Draw Weapon Status
+  //Weapon Info
+  TextureID dmg_icon;
+  string wpn_damagetype;
+  //Weapon Conditions
+  int psi_ybump;
+  int ccon_y;
+  bool have_weapon, wpn_swap, wpn_critical;
+  int wpn_cond, wpn_cond_max, wpn_cond_prot, wpn_cond_prot_max;
+  string wpn_swap_key, wpn_crit_msg;
+  //Psi stuff
+  bool wpn_no_alt, wpn_have_alt;
+  int psi_, psi_max, psi_cost;
+  string psi_nfo;
+  //Fist stuff
+  String m1_info, rl_info;
+  bool fs_selected, fs_base_str, fs_block;
+  int fs_power;
+  double fs_power_, fs_power_max;
+  string fs_power_text, fs_power_text_fail, fs_power_gfx;
+  //Shotgun stuff
+  bool sg_selected;
+  int sg_bfshot;
+  //Ammo business
+  Ammo ammo1, ammo2;
+  int ammocount1, ammocount2;
+  int aTranslation;
+  int bTranslation;
+  double iconOffsetX;
+  string ammo1_nfo, ammo2_nfo;
+  //Texture
+  TextureID ammo_icon;
+  TextureID ammo_bar, wpn_dur_icon, cnd_bg, wpn_swap_gfx;
+  TextureID psi_2, psi_bg2, psi_gfx, w_alt0;
+  TextureID hand_br4, shtchr1, shtchr2;
+  bool tex_wpnstatus;
+  
+  void Update_WeaponStatus()
+  {
+    if(CPlayer && CPlayer.ReadyWeapon)
+	{
+	  have_weapon = true;
+	  let wpn = DF_Weapon(CPlayer.ReadyWeapon);
+	  if(wpn)
+	  {
+	    ccon_y = -135;
+		psi_ybump = 0;
+	    dmg_icon = wpn.icon;
+		wpn_damagetype = "DMG: " .. wpn.wep_dmgType;
+		wpn_cond = wpn.wep_cond;
+		wpn_cond_max = wpn.wep_condMax;
+		wpn_cond_prot = wpn.wep_protectShot;
+		wpn_cond_prot_max = wpn.wep_protectMax;
+		wpn_critical = wpn.isInDanger;
+		wpn_swap = wpn.wep_have_swap;
+		if(wpn_cond_max > 0)
+		{
+		  if(wpn.jam)
+		    wpn_dur_icon = TexMan.CheckForTexture("CND_0");
+		  else
+		    wpn_dur_icon = TexMan.CheckForTexture("CND_1");
+		}
+		if(wpn_swap)
+		{
+		  ccon_y -= 59;
+		  psi_ybump += 64;
+		  wpn_swap_gfx = TexMan.CheckForTexture(wpn.wep_ammoicon1);
+		}
+		if(wpn_critical)
+		{
+		  psi_ybump += 28;
+	      wpn_crit_msg = "\cGWeapon Critical Condition";
+		  if(cond_blinkTime > 17)
+		    wpn_crit_msg = "\cXWeapon Critical Condition";
+		}
+		psi_ybump += 16;
+		
+		//************PSI
+		wpn_no_alt = wpn.wep_no_alt;
+		wpn_have_alt = wpn.hasAlt;
+		psi_ = GetAmount("PSI");
+		psi_max = GetMaxAmount("PSI");
+		if(!wpn_no_alt)
+		{
+		  psi_cost = wpn.wep_psiCost;
+		  psi_gfx = TexMan.CheckForTexture(wpn.wep_alticon);
+		  psi_nfo = String.Format("\cFPSI: %d/%d", psi_, psi_max);
+		}
+		//************FISTS
+		if(wpn is "Hands")
+		{
+		  fs_selected = true;
+		  if(GetAmount("StrToken") > 0)
+		    fs_base_str = true;
+		  else
+		    fs_base_str = false;
+		  
+		  m1_info = "\cF[Primary] \cJAttack";
+		  rl_info = "\cF[Reload] \cJHeavy Attack";
+		  fs_block = Hands(wpn).block_hold;
+		  if(fs_block)
+		  {
+		    m1_info = "\cF[Primary] \cJHeadbutt";
+			rl_info = "\cF[Reload] \cJRetaliation Power";
+			fs_power_gfx = "Hand_BR2";
+			fs_power_ = Hands(wpn).block_power_charge;
+			fs_power_max = 100.0;
+			fs_power_text = String.Format("\cD[R] \cJ[Retaliation Power: %d%]", Hands(wpn).block_power_charge);
+			fs_power_text_fail = "\cR" .. fs_power_text;
+		    if(Hands(wpn).block_power_charge >= 100)
+		      fs_power_text = "\cD[R] \cJ[Retaliation Power: \cFReady!\cJ]";
+		  }
+		  else
+		  {
+		    fs_power_gfx = "Hand_BR3";
+		    fs_power_ = Hands(wpn).charge_mult;
+			fs_power_max = 2.0;
+		    fs_power_text = String.Format("\cD[R] \cJ[Heavy Attack: %d% Damage]", 100.0 * fs_power_);
+		  }
+		}
+		else
+		  fs_selected = false;
+		
+		//************SHOTGUN
+		if(wpn is "Trenchgun")
+		{
+		  sg_selected = true;
+		  sg_bfshot = Trenchgun(wpn).EnhancedShot;
+		}
+		else
+		  sg_selected = false;
+		
+		//**********AMMO
+		[ammo1, ammo2, ammocount1, ammocount2] = GetCurrentAmmo();
+		
+		if(ammocount2 >= 100)
+		  iconOffsetX = 3 * 12;
+		else if(ammocount2 >= 10)
+		  iconOffsetX = 2 * 12;
+		else
+		  iconOffsetX = 1 * 12;
+		  
+		if(ammocount1 > 0)
+          aTranslation = Font.CR_UNTRANSLATED;
+		else
+		  aTranslation = Font.CR_DARKGRAY;
+		
+		if(ammo2)
+		{
+		  if(ammocount2 == ammo2.maxAmount)
+            bTranslation = Font.CR_UNTRANSLATED;
+		  else
+		    bTranslation = Font.CR_DARKGRAY;
+			
+		   ammo_icon = ammo2.Icon;
+		}  
+		ammo1_nfo = String.Format("%s \cJ|", FormatNumber(ammocount1, 1, 3));
+		ammo2_nfo = FormatNumber(ammocount2, 1, 3);
+	  } 
+	}
+	else
+	  have_weapon = false;
+	  
+	if(!tex_wpnstatus)
+	{
+	  ammo_bar = TexMan.CheckForTexture("AMMO_BAR");
+	  cnd_bg = TexMan.CheckForTexture("CND_BG");
+	  psi_2 = TexMan.CheckForTexture("PSI_2");
+	  psi_bg2 = TexMan.CheckForTexture("PSI_BG2");
+	  w_alt0 = TexMan.CheckForTexture("W_ALT0");
+	  hand_br4 = TexMan.CheckForTexture("HAND_BR4");
+	  shtchr1 = TexMan.CheckForTexture("ShtChr1");
+	  shtchr2 = TexMan.CheckForTexture("ShtChr2");
+	  tex_wpnstatus = true;
+	}
+  }
+
+  ui void Draw_WeaponStatus()
+  {
+    DrawTexture(ammo_bar, (-122, -5), DI_SCREEN_RIGHT_BOTTOM);
+	if(have_weapon)
+	{	
+	  DrawTexture(dmg_icon, (-224, -54), DI_SCREEN_RIGHT_BOTTOM, scale: (0.48, 0.48));
+	  DrawString(df_fnt, wpn_damagetype, (-210, -79), DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_LEFT, scale: (0.855, 0.9), style: STYLE_ADD);
+	  //Condition stuff
+	  if(wpn_cond_max > 0)
+	  {
+	    DrawTexture(wpn_dur_icon, (-235, -92), DI_ITEM_LEFT_BOTTOM);
+	    DrawTexture(cnd_bg, (-211, -92), DI_ITEM_LEFT_BOTTOM);
+	    Drawbar("CND_FG", "CND_BG", wpn_cond, 100, (-211, -92), 0, SHADER_HORZ, DI_ITEM_LEFT_BOTTOM);
+	
+	    if(wpn_cond_prot > 0)
+	      Drawbar("CND_FG4", "TNT1A0", wpn_cond_prot, wpn_cond_prot_max, (-211, -92), 0, SHADER_HORZ, DI_ITEM_LEFT_BOTTOM);
+		
+		if(wpn_swap)
+		{
+	      DrawString(df_fnt, firemode_hotkey, (-64, -162), DI_ITEM_RIGHT_BOTTOM|DI_TEXT_ALIGN_RIGHT, scale: (0.9, 0.8));
+	      DrawTexture(wpn_swap_gfx, (-5, -112), DI_ITEM_RIGHT_BOTTOM);
+		}
+		
+		if(wpn_critical)
+	      DrawString(df_fnt, wpn_crit_msg, (-14, ccon_y), DI_ITEM_RIGHT_BOTTOM|DI_TEXT_ALIGN_RIGHT, scale: (0.8, 0.8));
+	  }
+	  //Psi stuff
+	  if(!wpn_no_alt)
+	  {
+	    DrawString(df_fnt, psi_nfo, (-80, -176 - psi_ybump),
+	    DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_CENTER, scale: (0.8, 0.72));
+	    DrawTexture(psi_2, (-48, -100 - psi_ybump), DI_ITEM_LEFT_BOTTOM);
+	    DrawTexture(psi_bg2, (-24, -96 - psi_ybump), DI_ITEM_LEFT_BOTTOM);
+	  
+	    if(wpn_have_alt)
+	    {
+	      DrawTexture(psi_gfx, (-76, -96 - psi_ybump), DI_SCREEN_RIGHT_BOTTOM, scale: (0.5,0.5));
+		  if(psi_ >= DF_Weapon(CPlayer.ReadyWeapon).wep_psiCost)
+		  {
+	        Drawbar("PSI_FG2", "TNT1A0", psi_, psi_max, (-24, -96 - psi_ybump), 0, SHADER_VERT|SHADER_REVERSE, DI_ITEM_LEFT_BOTTOM);
+	        Drawbar("PSI_FG", "TNT1A0", psi_ - psi_cost, psi_max, (-24, -96 - psi_ybump), 0, SHADER_VERT|SHADER_REVERSE, DI_ITEM_LEFT_BOTTOM);
+		  }
+		  else
+		    Drawbar("PSI_FG", "TNT1A0", psi_, psi_max, (-24, -96 - psi_ybump), 0, SHADER_VERT|SHADER_REVERSE, DI_ITEM_LEFT_BOTTOM);
+	    }
+	    else
+	    {  
+	      DrawTexture(w_alt0, (-76, -96 - psi_ybump), DI_SCREEN_RIGHT_BOTTOM, scale: (0.5,0.5));
+	      Drawbar("PSI_FG", "TNT1A0", psi_, psi_max, (-24, -96 - psi_ybump), 0, SHADER_VERT|SHADER_REVERSE, DI_ITEM_LEFT_BOTTOM);
+	    }
+	  }
+	  //Hands selected
+	  if(fs_selected) 
+	  {
+	    if(fs_base_str)
+	    {
+		  if(fs_block || (fs_power_ > 0 && !fs_block))
+		  {
+	        DrawBar(fs_power_gfx, "Hand_BR1", fs_power_, fs_power_max, (0, stam_pos_y - 22), 0, SHADER_HORZ, DI_SCREEN_CENTER_BOTTOM);
+	        DrawString(cb_fnt, fs_power_text, (0, stam_pos_y - 62), DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_CENTER , scale: (0.9,0.9));
+		  }
+		  if(handler && handler.warn_retalF > 0.0)
+		  {
+		    DrawTexture(hand_br4, (0, stam_pos_y - 9), DI_SCREEN_CENTER_BOTTOM, handler.warn_retalF);
+		    DrawString(cb_fnt, fs_power_text_fail, (0, stam_pos_y - 62), DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_CENTER, alpha: handler.warn_retalF, scale: (0.9,0.9));
+		  }
+	      //int kyoff = -120;
+	      //Drawbar("SPR_FG", "COMBO_BG", Hands(CPlayer.ReadyWeapon).spiritCharge, 100, (0, stam_pos_y + 24), 0, SHADER_HORZ, DI_SCREEN_CENTER_BOTTOM);
+	      DrawString(cb_fnt, rl_info, (-250, -120), DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_LEFT, scale: (0.85,0.85));
+		  DrawString(cb_fnt, "\cF[Hold Secondary] \cJBlock", (-250, -145), DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_LEFT, scale: (0.85,0.85));
+	      DrawString(cb_fnt, m1_info, (-250, -170), DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_LEFT, scale: (0.85,0.85));
+	    }
+	  }
+	  //Shotgun selected
+	  else if(sg_selected)
+	  {
+	    if(sg_bfshot > 0)
+	    {
+	      int xofs = -16;
+	      for(int i = 0; i < sg_bfshot; i++)
+		  {
+		    DrawTexture(ShtChr2, (xofs, 13), DI_SCREEN_CENTER);
+		    xofs += 17;
+		  }
+		  for(int i = 0; i < (3 - sg_bfshot); i++)
+		  {
+		    DrawTexture(ShtChr1, (xofs, 13), DI_SCREEN_CENTER);
+		    xofs += 17;
+		  }
+	    }
+	  }
+	  //Ammo counter
+	  DrawString(fnt, ammo1_nfo, (-150, -49),
+	  DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_RIGHT, aTranslation, scale: (1.35,1.5));
+	  if(ammo2)
+	  {
+	    DrawTexture(ammo_icon, (-120 + iconOffsetX, -6), DI_ITEM_LEFT_BOTTOM);
+	    DrawString(fnt, ammo2_nfo, (-144, -49),
+	    DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_LEFT, bTranslation, scale: (1.35,1.5));
+	    if(ammocount2 >= ammo2.MaxAmount)
+	    {
+	      DrawString(cb_fnt, "Макс.", (-15, -28), DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_RIGHT,
+		  aTranslation, scale: (0.8, 0.8));
+		}
+	  }
+	}
+  }
+  
+  override void Draw (int state, double TicFrac)
+  {
+    Super.Draw (state, TicFrac); 
+	
+	if(!CPlayer)
+	  return;
+        
+	BeginHUD();
+	
+	Cplayer.InventoryTics = 0;
+	
+	if(use_show)
+	  Draw_Interaction();
+	
+	if(handler)
+	{
+	  if(DFPlayer(CPlayer.mo).isPlaying)
+	    for(int i = 0; i < handler.chat.size(); i++)
+	      DrawString(cb_fnt, handler.chat[i], (6, -176 - (30*i)), DI_SCREEN_LEFT_BOTTOM|DI_TEXT_ALIGN_LEFT, alpha: handler.chatFade[i], linespacing: 1, scale: (0.84, 0.84));
+	  
+	  int iYofs = 32;
+	  
+	  if(handler.itemChatDip)
+	    iYofs += 68;
+	  else if(handler.itemChatDipExtra)
+	    iYofs += 92;
+	  
+	  if(bossBarAlpha > 0.0)
+	    iYofs += 56;
+	  
+	  for(int i = 0; i < handler.item.size(); i++)
+	    DrawString(cb_fnt, handler.item[i], (0, iYofs + (i*27)), DI_SCREEN_CENTER_TOP|DI_TEXT_ALIGN_CENTER, alpha: handler.itemFade, linespacing: 1, scale: (0.9, 0.9));
+	  
+	  //ENEMY ARMOR BAR
+	  if(handler.shieldBarAlpha > 0.0)
+	  {
+	    DrawBar("ShieldFG", "ShieldBG", handler.shieldVal, 100, (0,50), 0, SHADER_HORZ, DI_SCREEN_CENTER|DI_ITEM_CENTER, handler.shieldBarAlpha);
+		DrawTexture(shield_glow, (0,50), DI_SCREEN_CENTER|DI_ITEM_CENTER, stimFlash);
+	  }
+
+	  //EATING PEOPLE
+	  if(handler.exp_Alpha > 0.0)
+	  {
+	    Drawbar("Exp_FG", "Exp_BG", expIntp.GetValue(), DFPlayer(CPlayer.mo).phyMaxExp, (0, -100), 0, SHADER_HORZ, DI_SCREEN_CENTER_BOTTOM, alpha: handler.exp_Alpha);
+		DrawString(cb_fnt, handler.exp_amount, (-98 + handler.exp_pad, -98), DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_LEFT, alpha: handler.exp_Alpha, linespacing: 1, scale: (0.8,0.8));
+		DrawString(cb_fnt, pmo.phyLevel_nfo, (-100, -130), DI_SCREEN_CENTER_BOTTOM|DI_TEXT_ALIGN_LEFT, alpha: handler.exp_Alpha, linespacing: 1, scale: (0.8,0.8));
+	  }
+	}
+	
+	if(DFPlayer(CPlayer.mo).isPlaying && hud_enable)
+	{
+	  //Draw Location
+	  DrawString(df_fnt, DFPlayer(CPlayer.mo).locationHUD, (-7, 0), DI_SCREEN_RIGHT_TOP|DI_TEXT_ALIGN_RIGHT, Font.CR_DARKGRAY, 0.8);
+	  Draw_Condition();
+	  Draw_Portrait();
+	  Draw_QuickUse();
+	  Draw_StatusEffect();
+	  Draw_WeaponBar();
+	  Draw_WeaponStatus();
+	  
+	  if(item_slot_alpha > 0.0)
+	    Draw_PickupSpace();
+		
+	  if(item_highlight && item_nfo)
+	  {
+	    DrawTexture(item_tip, (240, 72), DI_SCREEN_CENTER|DI_ITEM_LEFT_TOP);
+	    for(int i = 0; i < item_info.size(); i++)
+	      DrawString(cb_fnt, item_info[i], (244, 72 + (28*i)), DI_SCREEN_CENTER|DI_TEXT_ALIGN_LEFT, wrapwidth: 420, linespacing: 1, scale: (1.0, 1.0));
+	  }
+	  
+	  if(fireModeAlpha > 0.0)
+	    DrawString(df_fnt, fireMode, (194, 0), DI_SCREEN_CENTER|DI_TEXT_ALIGN_LEFT, alpha: fireModeAlpha);
+	  
+	  if(boss_ptr && bossBarAlpha > 0.0)
+	  {
+	    DrawBar("BossBar4", "BossBar5", bossHPIntp.GetValue(), boss_ptr.GetSpawnHealth(), (0,73), 0, SHADER_HORZ, DI_SCREEN_CENTER_TOP, bossBarAlpha);
+	    DrawBar("BossBar2", "BossBar3", boss_ptr.Health, boss_ptr.GetSpawnHealth(), (0,73), 0, SHADER_HORZ, DI_SCREEN_CENTER_TOP, bossBarAlpha);
+	    DrawTexture(bossbar1, (-1,82), DI_SCREEN_CENTER_TOP, bossBarAlpha);
+	    DrawString(cb_fnt, boss_ptr.GetTag(), (-194, 30), DI_SCREEN_CENTER_TOP|DI_TEXT_ALIGN_LEFT, 0, bossBarAlpha);
+	    if(boss_ptr.boss_StaggerBlock > 0)
+	      DrawBar(boss_ptr.hp_gfx, "BossDef4", boss_ptr.boss_StaggerBlock, boss_ptr.boss_StaggerBlockMax, (0,73), 0, SHADER_HORZ, DI_SCREEN_CENTER_TOP, bossBarAlpha);
+	  }
+	} 
+	///////////////////////////TUTORIAL
+	if(handler && handler.tip_time > 0) 
+	{
+	  DrawImage("TIP_BOX", (-400, -320), DI_SCREEN_RIGHT_BOTTOM|DI_ITEM_LEFT|DI_ITEM_VCENTER, handler.tip_alpha);
+	  DrawImage("TIP_BOX2", (-400, -320), DI_SCREEN_RIGHT_BOTTOM|DI_ITEM_LEFT|DI_ITEM_VCENTER, handler.tip_alpha_flash);
+	  DrawString(cb_fnt, handler.tip_msg, (-369, -404), DI_SCREEN_RIGHT_BOTTOM|DI_TEXT_ALIGN_LEFT, alpha: handler.tip_alpha, wrapwidth: 310);
+	}
+  }
+}

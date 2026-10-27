@@ -11,7 +11,7 @@ replacements = {
     'Name = "Standard"': 'Name = "Обычная"',
     'mustconfirm = "Confirm starting a New Game?"': 'mustconfirm = "Начать новую игру?"',
     'name = "Main Story"': 'name = "Основная история"',
-    'map TITLEMAP "Title"': 'map TITLEMAP "Заголовок"',
+    'map TITLEMAP "Title"': 'map TITLEMAP "Титульный экран"',
     '"ACT I - Metempsychosis"': '"АКТ I — Метемпсихоз"',
     '"ACT II - Pure Naked Minds"': '"АКТ II — Чистые обнажённые умы"',
     '"ACT III - Without Center or Circumference"': '"АКТ III — Без центра и окружности"',

@@ -6,7 +6,7 @@ OptionMenu "TabTest"
 	Tab "RU_DFDisplayOptions", "Графика"
 	Tab "RU_DFKeyBinds", "Управление"
 	Tab "RU_DFSoundOptions", "Звук"
-	Tab "RU_DFAdvancedOptions", "Доступность"
+	Tab "RU_DFAdvancedOptions", "Специальные возможности"
 }
 OptionMenu "DFDisplayOptions" protected
 {
@@ -17,8 +17,8 @@ OptionMenu "DFDisplayOptions" protected
 
 	SubMenu "$VIDMNU_RESPRESET", NewResolutionMenu
 	Description "$DESC_RESPRESET"
-	TextField "Ширина разрешения", menu_resolution_custom_width
-	TextField "Высота разрешения", menu_resolution_custom_height
+	TextField "Ширина (пикс.)", menu_resolution_custom_width
+	TextField "Высота (пикс.)", menu_resolution_custom_height
 	Option "$VIDMNU_FORCEASPECT",		"vid_aspect", 			"ForceRatios"
 	Description "$DESC_FORCEASPECT"
 	Option "$VIDMNU_CROPASPECT",		"vid_cropaspect", 		"CropAspect"
@@ -31,9 +31,9 @@ OptionMenu "DFDisplayOptions" protected
 	Description "$DESC_BRIGHTNESS"
 	Slider "$DSPLYMNU_FOV",				"fov",					75.0, 120.0, 0.1, 1
 	Description "$DESC_FOV"
-	Option "Интенсивность VHS", 			"vhs_strength", 		"vhss"
+	Option "Интенсивность VHS-эффекта", 			"vhs_strength", 		"vhss"
 	Description "$DESC_VHS"
-	Option "Разрыв VHS", 				"vhs_scroll", 			"OnOff"
+	Option "Разрывы изображения (VHS)", 				"vhs_scroll", 			"OnOff"
 	Description "$DESC_VHSTear"
 	Option "$GLPREFMNU_BLOOM",		 	gl_bloom, 				"OnOff"
 	Description "$DESC_BLOOM"
@@ -90,13 +90,13 @@ OptionMenu NewResolutionMenu protected
 
 OptionMenu "DFKeyBinds" protected
 {
-	Title "Управление"
+	Title "Назначение клавиш"
 	Class "DescriptorMenu"
 	DescriptionFont "ACS_FONT"
 	AnimatedTransition
 	
-	Slider "Горизонтальная чувствительность камеры",	"m_sensitivity_x", 0.005, 8.0, 0.001, 3
-	Slider "Вертикальная чувствительность камеры",	"m_sensitivity_y", 0.005, 8.0, 0.001, 3
+	Slider "Чувствительность камеры по горизонтали",	"m_sensitivity_x", 0.005, 8.0, 0.001, 3
+	Slider "Чувствительность камеры по вертикали",	"m_sensitivity_y", 0.005, 8.0, 0.001, 3
 	Option "$MOUSEMNU_INVERTMOUSE",		"invertmouse", "OnOff"
 	StaticText ""
 	
@@ -147,13 +147,13 @@ OptionMenu "DFKeyBinds" protected
 	Description "$DESC_RESETBIND"
 	Control "Использовать инъектор Психуса" 				,"FastHeal"
 	Description "$DESC_RESETBIND"
-	Control "Быстрый предмет 1"					,"QuickUse1"
+	Control "Использовать быстрый предмет 1"					,"QuickUse1"
 	Description "$DESC_RESETBIND"
-	Control "Быстрый предмет 2"					,"QuickUse2"
+	Control "Использовать быстрый предмет 2"					,"QuickUse2"
 	Description "$DESC_RESETBIND"
-	Control "Быстрый предмет 3"					,"QuickUse3"
+	Control "Использовать быстрый предмет 3"					,"QuickUse3"
 	Description "$DESC_RESETBIND"
-	Control "Быстрый предмет 4"					,"QuickUse4"
+	Control "Использовать быстрый предмет 4"					,"QuickUse4"
 	Description "$DESC_RESETBIND"
 	Control	"Слот оружия 1"				,"slot 1"
 	Description "$DESC_RESETBIND"
@@ -208,8 +208,8 @@ OptionMenu "DFAdvancedOptions" protected
 	
 	StaticText "--СЛОЖНОСТЬ--", "Green"
 	Option "Получаемый урон",		"modf_damage", "skill_damage"
-	Option "Получаемые патроны",				"modf_ammo", "skill_ammo"
-	Option "Эффективность лечения расходниками",	"modf_heal", "skill_heal"
+	Option "Количество получаемых патронов",				"modf_ammo", "skill_ammo"
+	Option "Эффективность лечебных предметов",	"modf_heal", "skill_heal"
 	Option "Расход выносливости",		"modf_stamina", "skill_stamina"
 	Option "Скорость износа оружия",	"modf_weapon", "skill_weapon"
 	Option "Разрыв резонанса: расширенное окно",	"modf_parry", "skill_parry"
@@ -238,7 +238,7 @@ OptionMenu "DFAdvancedOptions" protected
 	Option "$DSPLYMNU_MOVEBOB",					"movebob", "boboption"
 	Option "Яркость вспышки при подборе",		"itemFlash_amount", "flashoption"
 	Option "Яркость вспышки при получении урона",		"blood_fade_scalar", "painflashoption"
-	Option "Цвет прицела по здоровью",		"crosshaircolors", "CrosshairHealthTypes"
+	Option "Цвет прицела по уровню здоровья",		"crosshaircolors", "CrosshairHealthTypes"
 	ColorPicker "$HUDMNU_CROSSHAIRCOLOR", 		"crosshaircolor"
 	StaticText ""
 	Option "$DSPLYMNU_VSYNC",					"vid_vsync", "OnOff"
@@ -314,7 +314,7 @@ ListMenu "SkillMenu"
 }
 OptionMenu "BrightnessAdjust" protected
 {
-	Title "Настройте ползунок, пока едва не начнёте различать фигуру на фоне."
+	Title "Передвигайте ползунок, пока фигура на фоне не станет едва различимой."
 	Class "DescriptorMenu"
 	StaticText ""
 	Slider "",					"vid_gamma",					0.8, 2.0, 0.01, 2//
@@ -328,8 +328,8 @@ OptionValue "CrosshairHealthTypes"
 
 OptionValue "InvClickSwap"
 {
-	0, "ЛКМ: использовать | ПКМ: настройки"
-    1, "ЛКМ: настройки | ПКМ: использовать"
+	0, "ЛКМ: использовать | ПКМ: действия"
+    1, "ЛКМ: действия | ПКМ: использовать"
 }
 
 OptionValue "vhss"
@@ -337,7 +337,7 @@ OptionValue "vhss"
 	0, "Выкл."
     1, "Минимум"
     2, "По умолчанию"
-	3, "Ничего не видно"
+	3, "Ни хрена не видно"
 }
 
 OptionValue "boboption"
@@ -390,19 +390,19 @@ OptionValue "hudScale"
 OptionValue "skill_ammo"
 {
 	1, "Стандарт"
-    2, "Удвоено"
+    2, "Вдвое больше"
 }
 
 OptionValue "skill_damage"
 {
-	0.5, "Половинный"
+	0.5, "Вдвое меньше"
     1.0, "Стандарт"
 }
 
 OptionValue "skill_heal"
 {
 	1.0, "Стандарт"
-    2.0, "Удвоено"
+    2.0, "Вдвое больше"
 }
 
 OptionValue "skill_stamina"
@@ -432,8 +432,8 @@ OptionMenu "RU_DFDisplayOptions"
 
 	SubMenu "$VIDMNU_RESPRESET", NewResolutionMenu
 	Description "$DESC_RESPRESET"
-	TextField "Ширина разрешения", menu_resolution_custom_width
-	TextField "Высота разрешения", menu_resolution_custom_height
+	TextField "Ширина (пикс.)", menu_resolution_custom_width
+	TextField "Высота (пикс.)", menu_resolution_custom_height
 	Option "$VIDMNU_FORCEASPECT",		"vid_aspect", 			"ForceRatios"
 	Description "$DESC_FORCEASPECT"
 	Option "$VIDMNU_CROPASPECT",		"vid_cropaspect", 		"CropAspect"
@@ -446,9 +446,9 @@ OptionMenu "RU_DFDisplayOptions"
 	Description "$DESC_BRIGHTNESS"
 	Slider "$DSPLYMNU_FOV",				"fov",					75.0, 120.0, 0.1, 1
 	Description "$DESC_FOV"
-	Option "Интенсивность VHS", 			"vhs_strength", 		"vhss"
+	Option "Интенсивность VHS-эффекта", 			"vhs_strength", 		"vhss"
 	Description "$DESC_VHS"
-	Option "Разрыв VHS", 				"vhs_scroll", 			"OnOff"
+	Option "Разрывы изображения (VHS)", 				"vhs_scroll", 			"OnOff"
 	Description "$DESC_VHSTear"
 	Option "$GLPREFMNU_BLOOM",		 	gl_bloom, 				"OnOff"
 	Description "$DESC_BLOOM"
@@ -478,13 +478,13 @@ OptionMenu "RU_DFDisplayOptions"
 
 OptionMenu "RU_DFKeyBinds"
 {
-	Title "Управление"
+	Title "Назначение клавиш"
 	Class "DescriptorMenu"
 	DescriptionFont "ACS_FONT"
 	AnimatedTransition
 	
-	Slider "Горизонтальная чувствительность камеры",	"m_sensitivity_x", 0.005, 8.0, 0.001, 3
-	Slider "Вертикальная чувствительность камеры",	"m_sensitivity_y", 0.005, 8.0, 0.001, 3
+	Slider "Чувствительность камеры по горизонтали",	"m_sensitivity_x", 0.005, 8.0, 0.001, 3
+	Slider "Чувствительность камеры по вертикали",	"m_sensitivity_y", 0.005, 8.0, 0.001, 3
 	Option "$MOUSEMNU_INVERTMOUSE",		"invertmouse", "OnOff"
 	StaticText ""
 	
@@ -535,13 +535,13 @@ OptionMenu "RU_DFKeyBinds"
 	Description "$DESC_RESETBIND"
 	Control "Использовать инъектор Психуса" 				,"FastHeal"
 	Description "$DESC_RESETBIND"
-	Control "Быстрый предмет 1"					,"QuickUse1"
+	Control "Использовать быстрый предмет 1"					,"QuickUse1"
 	Description "$DESC_RESETBIND"
-	Control "Быстрый предмет 2"					,"QuickUse2"
+	Control "Использовать быстрый предмет 2"					,"QuickUse2"
 	Description "$DESC_RESETBIND"
-	Control "Быстрый предмет 3"					,"QuickUse3"
+	Control "Использовать быстрый предмет 3"					,"QuickUse3"
 	Description "$DESC_RESETBIND"
-	Control "Быстрый предмет 4"					,"QuickUse4"
+	Control "Использовать быстрый предмет 4"					,"QuickUse4"
 	Description "$DESC_RESETBIND"
 	Control	"Слот оружия 1"				,"slot 1"
 	Description "$DESC_RESETBIND"
@@ -598,8 +598,8 @@ OptionMenu "RU_DFAdvancedOptions"
 	
 	StaticText "--СЛОЖНОСТЬ--", "Green"
 	Option "Получаемый урон",		"modf_damage", "skill_damage"
-	Option "Получаемые патроны",				"modf_ammo", "skill_ammo"
-	Option "Эффективность лечения расходниками",	"modf_heal", "skill_heal"
+	Option "Количество получаемых патронов",				"modf_ammo", "skill_ammo"
+	Option "Эффективность лечебных предметов",	"modf_heal", "skill_heal"
 	Option "Расход выносливости",		"modf_stamina", "skill_stamina"
 	Option "Скорость износа оружия",	"modf_weapon", "skill_weapon"
 	Option "Разрыв резонанса: расширенное окно",	"modf_parry", "skill_parry"
@@ -628,7 +628,7 @@ OptionMenu "RU_DFAdvancedOptions"
 	Option "$DSPLYMNU_MOVEBOB",					"movebob", "boboption"
 	Option "Яркость вспышки при подборе",		"itemFlash_amount", "flashoption"
 	Option "Яркость вспышки при получении урона",		"blood_fade_scalar", "painflashoption"
-	Option "Цвет прицела по здоровью",		"crosshaircolors", "CrosshairHealthTypes"
+	Option "Цвет прицела по уровню здоровья",		"crosshaircolors", "CrosshairHealthTypes"
 	ColorPicker "$HUDMNU_CROSSHAIRCOLOR", 		"crosshaircolor"
 	StaticText ""
 	Option "$DSPLYMNU_VSYNC",					"vid_vsync", "OnOff"

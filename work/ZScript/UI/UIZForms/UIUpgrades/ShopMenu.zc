@@ -1,0 +1,446 @@
+class MutationMenu : UIGenericMenu
+{
+  ShopHandler handler;
+  Font fnt;
+  PlayerPawn pmo;
+  UIBoxTextures btnInactive, btnHover, sbFG, sbBG, sbHov;
+  UIFrame UpgradeBox, InfoBox, LoreBox;
+  UILabel NameText, InfoText, LoreText, mutCur;
+  int btnX, btnY;
+  double purchaseFlash;
+  Array<UIButton> bootuns;
+  Array<UIImage> pictures;
+  
+  static const string uCMDS[] = {
+  "$M_Aspect2:$M_Aspect2Lore:3:m_Health",
+  "$M_Aspect4:$M_Aspect4Lore:4:m_BigBrain",
+  "$M_Tendon:$M_TendonLore:2:m_Recoil",
+  "$M_Pocket:$M_PocketLore:3:m_MorePocket",
+  "$M_Reflect:$M_ReflectLore:8:m_Reflect",
+  "$M_Hunger:$M_HungerLore:5:m_Hunger",
+  "$M_Caltrop:$M_CaltropLore:5:m_Caltrop",
+  "$M_Flux:$M_FluxLore:12:m_Flux"
+  };
+  
+  static const string noBuyCMD[] = {
+  "$M_Aspect2:$M_Aspect2Lore:3",
+  "$M_Aspect4:$M_Aspect4Lore:4",
+  "$M_Tendon:$M_TendonLore:2",
+  "$M_Pocket:$M_PocketLore:3",
+  "$M_Reflect:$M_ReflectLore:8",
+  "$M_Hunger:$M_HungerLore:5",
+  "$M_Caltrop:$M_CaltropLore:5",
+  "$M_Flux:$M_FluxLore:12"
+  };
+  
+  static const string noBuyIMG[] = {
+  "HP_1",
+  "Mind_1",
+  "Tendon_1",
+  "Pocket_1",
+  "Reflect1",
+  "Hunger_1",
+  "Caltrop1",
+  "Aspect_1"
+  };
+  
+  static const string upg_names[] = {
+  "Реакция выживания",
+  "Третий разум",
+  "Хищный фокус",
+  "Ещё больше карманов!",
+  "Отражение урона",
+  "Бесконечный голод",
+  "Органические шипы",
+  "Психический взрыв"
+  };
+  
+  //Confirmation
+  string upg_command;
+  bool confirm_wait;
+  UIButton btn_confirm, btn_cancel;
+  UIFrame confirm_box, confirm_bound;
+  UILabel confirm_msg;
+  
+  override void Init(Menu parent)
+  {
+    Super.Init(parent);
+	
+	fnt = Font.GetFont("RU_DF_FONT");
+	pmo = players[consoleplayer].mo;
+	handler = new("ShopHandler");
+    handler.menu = self;
+
+    SetBaseResolution((720, 400));
+	
+	let ShopBG = UIImage(new("UIImage")).Create((110, 75), (501, 250), "Graphics/Shop/PSI_BG.png", imagescale: (0.5,0.5));
+	ShopBG.Pack(mainframe); 
+	btnInactive = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/GunUpgrade/Upgrade02.png", false);
+	btnHover = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Shop/ShopBTN.png", false);
+	sbFG = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/ScrollFG.png", false);
+	sbBG = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/ScrollBG.png", false);
+	sbHov = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/ScrollHover.png", false);
+	
+	UpgradeBox = UIFrame(new("UIFrame")).Create((111, 76), (249,248));
+	UpgradeBox.Pack(mainframe);
+	InfoBox = UIFrame(new("UIFrame")).Create((361, 76), (249,128));
+	InfoBox.Pack(mainframe);
+	LoreBox = UIFrame(new("UIFrame")).Create((361, 204), (249,128));
+	LoreBox.Pack(mainframe);
+	InfoText = UILabel(new("UILabel")).Create((4, 2), (241, 244),  //4,2
+	"", fnt: fnt, textscale: 0.45);
+	InfoText.Pack(InfoBox);
+	LoreText = UILabel(new("UILabel")).Create((4, 2), (241, 244),  //4,2
+	"", fnt: fnt, textscale: 0.45);
+	LoreText.Pack(LoreBox);
+	
+	let dna = UIImage(new("UIImage")).Create((111, 260), (300, 75), "GU5_1", imagescale: (0.6,0.6));//400, 100
+	dna.Pack(mainframe); 
+	
+	btnX = 12;
+	btnY = 12;
+	SetupButtons();
+	CreateEmptyButton();
+	CreateMenuTabs();
+	
+	UIImage mutBG = UIImage(new("UIImage")).Create((262, 327), (197, 16), image: "Graphics/Codex/Bestiary/bInfoHeader.png");
+	mutBG.Pack(mainframe); //262, 357
+	UIImage mutIcon = UIImage(new("UIImage")).Create((264, 329), (13, 13), image: "FA_ICON", imagescale: (0.5, 0.5));
+	mutIcon.Pack(mainframe);
+	mutCur = new('UILabel').Create((278, 327), (165, 16), fnt: fnt, UILabel.AlignType_CenterLeft, textscale: 0.45);
+	mutCur.Pack(mainframe);
+	
+	//Confirmation stuff
+	confirm_bound = UIFrame.Create((0,0), (720,400));
+	confirm_bound.Pack(mainframe);
+	confirm_bound.hide();
+	let confirm_bound_img = UIImage.Create((0, 0), (720, 400), "Graphics/GunUpgrade/Confirm_Bound.png", imagescale: (4.0,4.0));
+	confirm_bound_img.Pack(confirm_bound);
+	
+	confirm_box = UIFrame.Create((260,150), (202,74));
+	
+	let confirm_box_img = UIImage.Create((0, 0), (202, 74), "Graphics/GunUpgrade/Confirm_Box.png");
+	confirm_box_img.Pack(confirm_box);
+	
+	let confirm_inactive = UIBoxTextures.createSingleTexture("Graphics/GunUpgrade/Confirm_Button.png", true);
+	let confirm_hover = UIBoxTextures.createSingleTexture("Graphics/GunUpgrade/Confirm_Button2.png", true);
+	confirm_msg = UILabel.Create
+	(
+	  (0, 0), (200, 32),
+	  text: "", fnt: fnt,
+	  alignment: UILabel.AlignType_Center,
+	  textScale: 0.45
+	);
+	confirm_msg.Pack(confirm_box);
+	
+	btn_confirm = UIButton.Create((24, 36), (64, 24),
+	"Подтвердить", handler,
+	"Confirm_Choice",
+	inactive: confirm_inactive,
+	hover: confirm_hover,
+	click: confirm_inactive,
+	fnt: fnt, textScale: 0.45);
+	btn_confirm.Pack(confirm_box);
+	
+	btn_cancel = UIButton.Create((112, 36), (64, 24),
+	"Отмена", handler,
+	"Cancel_Choice",
+	inactive: confirm_inactive,
+	hover: confirm_hover,
+	click: confirm_inactive,
+	fnt: fnt, textScale: 0.45);
+	btn_cancel.Pack(confirm_box);
+	
+	confirm_box.Pack(mainframe);
+	confirm_box.Hide();
+  }
+  
+  void SetupButtons()
+  {
+    let pmo = players[consoleplayer].mo;
+	
+	if(!DFPlayer(pmo).bPhy_HP)
+	  CreateButton("Buy:" .. uCMDS[0], "HP_0", 1.0);
+	else
+	  CreateButton("NoBuy:" .. noBuyCMD[0], "HP_1", 0.7);
+	  
+	if(!DFPlayer(pmo).bPhy_Mind)
+	  CreateButton("Buy:" .. uCMDS[1], "Mind_0", 1.0);
+	else
+	  CreateButton("NoBuy:" .. noBuyCMD[1], "Mind_1", 0.7);
+	
+	if(!DFPlayer(pmo).bPhy_Tendon)
+	  CreateButton("Buy:" .. uCMDS[2], "Tendon_0", 1.0);
+	else
+	  CreateButton("NoBuy:" .. noBuyCMD[2], "Tendon_1", 0.7);
+ 
+	if(!DFPlayer(pmo).bPhy_MorePocket)
+	  CreateButton("Buy:" .. uCMDS[3], "Pocket_0", 1.0);
+	else
+	  CreateButton("NoBuy:" .. noBuyCMD[3], "Pocket_1", 0.7);
+	
+	if(!DFPlayer(pmo).bPhy_Reflect)
+	  CreateButton("Buy:" .. uCMDS[4], "Reflect0", 1.0);
+	else
+	  CreateButton("NoBuy:" .. noBuyCMD[4], "Reflect1", 0.7);
+	  
+	if(!DFPlayer(pmo).bPhy_Hunger)
+	  CreateButton("Buy:" .. uCMDS[5], "Hunger_0", 1.0);
+	else
+	  CreateButton("NoBuy:" .. noBuyCMD[5], "Hunger_1", 0.7);
+	  
+	if(!DFPlayer(pmo).bPhy_Caltrop)
+	  CreateButton("Buy:" .. uCMDS[6], "Caltrop0", 1.0);
+	else
+	  CreateButton("NoBuy:" .. noBuyCMD[6], "Caltrop1", 0.7);
+	  
+	if(!DFPlayer(pmo).bPhy_Flux)
+	  CreateButton("Buy:" .. uCMDS[7], "Aspect_0", 1.0);
+	else
+	  CreateButton("NoBuy:" .. noBuyCMD[7], "Aspect_1", 0.7);
+  }
+  
+  void CreateButton(String command, String img, double alpha)
+  {
+    String btnCmd = String.Format("%s:%d", command, bootuns.size());
+	UIImage btnImg = UIImage(new("UIImage")).Create((btnX, btnY), (50, 50), image: img, imagescale: (0.375,0.375));
+	btnImg.SetAlpha(alpha);  
+	UIButton btn = UIButton(new("UIButton")).Create((btnX, btnY), (48, 48), "", handler, btnCmd, inactive: null, hover: btnHover);
+	
+	if(command.Left(5) ~== "NoBuy")
+	  btn.SetHoverTexture(null);
+	  
+	bootuns.Push(btn);
+	pictures.Push(btnImg);
+	btnImg.Pack(UpgradeBox);
+	btn.Pack(UpgradeBox);
+	btnX += 56;
+	
+	if(btnX > 180)
+	{
+	  btnX = 12;
+	  btnY += 56;
+	}
+  }
+  
+  void CreateEmptyButton()
+  {
+    for(int i = 12; i <= 180; i += 56)
+	{
+	  UIImage btnImg = UIImage(new("UIImage")).Create((i, 124), (50, 50), image: "Graphics/Shop/Buy.png", imagescale: (0.48,0.48));
+	  btnImg.Pack(UpgradeBox); 
+	}
+  }
+  
+  void CreateMenuTabs()
+  {
+    UIBoxTextures inactiveTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Shop/TabInactive.png", false);
+	UIBoxTextures hoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/TabHover.png", false);
+	
+	UIFrame tabFrame = UIFrame(new("UIFrame")).Create((295, 32), (130, 24));
+	tabFrame.Pack(mainframe);
+	
+	UIImage tbg = UIImage(new("UIImage")).Create((0, 0), (130, 24), image: "Graphics/Shop/MenuSwap.png");
+	tbg.Pack(tabFrame);
+	
+	UIButton lvl = UIButton(new("UIButton")).Create((0, 0), (64, 24), "Exaltation", handler, "ChangeMenu:LevelUpMenu",
+	inactive : null,
+	hover: hoverTexture,
+	click: null,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_Center
+	);
+	lvl.pack(tabFrame);
+	
+	UIButton mut = UIButton(new("UIButton")).Create((64, 0), (64, 24), "Mutation", handler, "ChangeMenu:MutationMenu",
+	inactive : null,
+	hover: hoverTexture,
+	click: null,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_Center
+	);
+	mut.pack(tabFrame);
+	
+	String nHelpText = String.Format("\cD[Esc] \cJВыйти");
+	UILabel nHelp = new('UILabel').Create
+	(
+	  (516, 385),
+	  (200, 36),
+	  text: nHelpText,
+	  fnt: fnt,
+	  alignment: UILabel.AlignType_CenterRight,
+	  wrap: true,
+	  autoSize: true,
+	  textScale: 0.45
+	);
+	nHelp.Pack(mainframe);
+  }
+  
+  override void Drawer()
+  {
+	Screen.Dim(Color(8, 8, 8), 0.85, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+	TextureID bg = TexMan.CheckForTexture("SHOP_07", TexMan.Type_Any);
+	Screen.DrawTexture(bg, true, 0, 0,
+	DTA_DestWidth, Screen.GetWidth(),
+	DTA_DestHeight, Screen.GetHeight());
+	mainframe.fill((90,55), (540,290), Color(0,0,0), 0.8);
+	Super.Drawer();
+	Screen.Dim(Color(208, 240, 255), purchaseFlash, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+  }
+  
+  override bool OnUIEvent(UIEvent ev)
+  {
+    for(int i = 0; i < bootuns.Size(); i++)
+	{
+	  if(bootuns[i].isHovered() || confirm_wait)
+	    break;
+		
+	  if(i == bootuns.Size() -1 && !bootuns[i].isHovered())
+	  {
+	    InfoText.setText("");
+		LoreText.setText("");
+	  }
+	}
+	
+	if(ev.type == UIEvent.Type_RButtonDown)
+	{
+	  if(confirm_wait)
+	  {
+	    confirm_bound.hide();
+		confirm_box.hide();
+		confirm_wait = false;
+	  }
+	  else
+	    Close();
+	}
+	else if(ev.type == UIEvent.Type_KeyDown)
+	{
+	  if((ev.KeyChar == 32 || ev.KeyChar == 89) && confirm_wait)
+	    handler.Confirm();
+	}
+	
+	return Super.OnUIEvent(ev);
+  }
+  
+  override bool menuEvent(int mkey, bool fromcontroller)
+  {
+    if(mkey == MKEY_Enter && confirm_wait)
+	  handler.Confirm();
+	
+    return Super.menuEvent(mkey, fromController);
+  }
+  
+  override void handleBack()
+  {
+    if(confirm_wait)
+	{
+	  confirm_bound.hide();
+	  confirm_box.hide();
+	  confirm_wait = false;
+	}
+	else
+	  Super.handleBack();
+  }
+  
+  override void Ticker()
+  {
+    Super.Ticker();
+	
+	if(mutCur)
+	  mutCur.setText(String.Format("Текущие очки мутации: \cF%d", pmo.CountInv("Mutation")));
+	  
+	if(purchaseFlash > 0.0)
+	  purchaseFlash -= 0.02;
+  }
+}
+
+Class ShopHandler : UIHandler
+{
+  MutationMenu menu;
+   
+  bool CanBuy(int cost)
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo && pmo.CountInv("Mutation") >= cost)
+	  return true;
+	else
+	  return false;
+  }
+  
+  void Confirm()
+  {
+    Array<String> c_cmd;
+	menu.upg_command.Split(c_cmd, ":");
+	  
+	let ev = UpgradeHandler(EventHandler.Find("UpgradeHandler"));
+	if(ev)
+	{
+	  ev.SendNetworkEvent(c_cmd[1]);
+	  ev.SendNetworkEvent("MutateCost:" .. c_cmd[0]);
+	  menu.bootuns[c_cmd[2].toInt(10)].setCommand("NoBuy:" .. menu.noBuyCMD[c_cmd[2].ToInt(10)]);
+	  menu.bootuns[c_cmd[2].toInt(10)].setHoverTexture(null);
+	  menu.pictures[c_cmd[2].toInt(10)].setImage(menu.noBuyIMG[c_cmd[2].ToInt(10)]);
+	  menu.purchaseFlash = 0.3;
+	  menu.MenuSound("MM_Buy");
+	}
+	menu.confirm_bound.hide();
+	menu.confirm_box.hide();
+	menu.confirm_wait = false;
+  }
+  
+  override void elementHoverChanged(UIElement caller, Name command, bool unhovered)
+  {
+	if(!unhovered)
+	{
+	  Array<String> cmd;
+	  cmd.Clear();
+	  String commandList = command;
+	  commandList.Split(cmd, ":");
+	  
+	  if(cmd[0] != "ChangeMenu" && cmd[0] != "Confirm_Choice" && cmd[0] != "Cancel_Choice")
+	  {
+	    menu.InfoText.setText(StringTable.Localize(cmd[1]));
+	    menu.LoreText.setText(StringTable.Localize(cmd[2]));
+	  }
+	}
+  }
+  
+  override void ButtonClickCommand(UIButton caller, Name command)
+  {
+	Array<String> cmd;
+	cmd.Clear();
+	String commandList = command;
+	commandList.Split(cmd, ":");
+	
+	if(cmd[0] ~== "ChangeMenu")
+	{
+	  if(cmd[1] != "MutationMenu")
+	  {
+	    Menu.Close();
+	    Menu.SetMenu(cmd[1]);
+		Menu.MenuSound("menu/clear");
+	  }
+	}
+	else if(cmd[0] ~== "Confirm_Choice")
+	{
+	  Confirm();
+	}
+	else if(cmd[0] ~== "Cancel_Choice")
+	{
+	  menu.confirm_bound.hide();
+	  menu.confirm_box.hide();
+	  menu.confirm_wait = false;
+	}
+	else if(cmd[0] ~== "Buy" && CanBuy(cmd[3].ToInt(10)))
+	{
+	  menu.MenuSound("M_Click1");
+	  menu.confirm_msg.setText("Подтвердить выбор: \cF" .. menu.upg_names[cmd[5].ToInt(10)] .. "\cJ?");
+	  menu.upg_command = String.Format("%s:%s:%s", cmd[3], cmd[4], cmd[5]);
+	  menu.confirm_bound.Show();
+	  menu.confirm_box.Show();
+	  menu.confirm_wait = true;
+	}
+  }
+}

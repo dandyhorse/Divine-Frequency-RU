@@ -99,7 +99,7 @@ Intermission EpicCutscene
 	}
 }
 
-map TITLEMAP "Заголовок"
+map TITLEMAP "Титульный экран"
 {
   music = D_NULL
 }

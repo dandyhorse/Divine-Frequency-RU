@@ -1,0 +1,2404 @@
+Class Playtest : Inventory
+{
+  override void AttachToOwner(actor other)
+  {
+    other.GiveInventory("Hands", 1);
+	other.GiveInventory("Handgun", 1);
+	other.GiveInventory("TrenchGun", 1);
+	other.GiveInventory("SSG", 1);
+	other.GiveInventory("SprayCan", 1);
+	other.GiveInventory("PierceAmmo", 2);
+	other.GiveInventory("PistolAmmo", 2);
+	other.GiveInventory("ShotgunAmmo", 2);
+	other.GiveInventory("GasAmmo", 50);
+	other.GiveInventory("DT1", 1);
+	other.GiveInventory("IsPlaying", 1);
+    Super.AttachToOwner(other);
+  }
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class BagRemove : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	if(other is "DFPlayer")
+	  DFPlayer(other).invCur--;
+	  
+	Destroy();
+  }
+}
+
+Class StrToken : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 6;
+	+Inventory.UNDROPPABLE;
+	+Inventory.UNTOSSABLE;
+  }
+}
+Class WitToken : StrToken {}
+Class PhyToken : StrToken {}
+Class StrOrigin : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+	if(other is "DFPlayer")
+	{
+	  DFPlayer(other).bStrOrigin = true;
+	  DFPlayer(other).statBase = "Str";
+      DFPlayer(other).porName = "P_STR";
+      DFPlayer(other).porStim = "P_STR6";
+	  DFPlayer(other).porHPa = "P_STRHP1";
+	  EventHandler.SendNetworkEvent("LevelUpBoi:StrToken:0");
+	  
+	  let pa = other.FindInventory("PistolAmmo");
+	  if(pa)
+	    pa.MaxAmount -= 10;
+		
+	  let hea = other.FindInventory("PierceAmmo");
+	  if(hea)
+	    hea.MaxAmount -= 10;
+	  
+	  let sa = other.FindInventory("ShotgunAmmo");
+	  if(sa)
+	    sa.MaxAmount -= 5;
+		
+	  let spa = other.FindInventory("GasAmmo");
+	  if(spa)
+	    spa.MaxAmount -= 200;
+	}
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+	+Inventory.UNDROPPABLE;
+	+Inventory.UNTOSSABLE;
+  }
+}
+Class StrBoost : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+	if(other is "DFPlayer")
+	{
+	  EventHandler.SendNetworkEvent("LevelUpBoi:StrToken:1");
+	 // DFPlayer(other).bMax_Str = true;
+	}
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+	+Inventory.UNDROPPABLE;
+	+Inventory.UNTOSSABLE;
+  }
+}
+Class WitOrigin : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+	if(other is "DFPlayer")
+	{
+	  DFPlayer(other).bWitOrigin = true;
+	  DFPlayer(other).statBase = "Wit";
+      DFPlayer(other).porName = "P_WIT";
+      DFPlayer(other).porStim = "P_WIT6";
+      DFPlayer(other).porHPa = "P_WITHP1";
+	  DFPlayer(other).MaxHealth = 80; 
+      DFPlayer(other).Health = 80; 
+	  EventHandler.SendNetworkEvent("LevelUpBoi:WitToken:0");
+	}
+  }
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+	+Inventory.UNDROPPABLE;
+	+Inventory.UNTOSSABLE;
+  }
+}
+
+Class PhyOrigin : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+	if(other is "DFPlayer")
+	{
+	  DFPlayer(other).bPhyOrigin = true;
+	  DFPlayer(other).statBase = "Phy";
+      DFPlayer(other).porName = "P_PHY";
+      DFPlayer(other). porStim = "P_PHY6";
+      DFPlayer(other).porHPa = "P_PHYHP1";
+	  EventHandler.SendNetworkEvent("LevelUpBoi:PhyToken:0");
+	}
+  }
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+	+Inventory.UNDROPPABLE;
+	+Inventory.UNTOSSABLE;
+  }
+}
+
+Class InfectionToken2 : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+    if(GetAge() % 420 == 0)
+	{
+	  DFPlayer(owner).SetToxin(1);
+	  GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  if(ev)
+		ev.UpdateChat(String.Format("%s's \cJinfection spreads...", owner.GetTag()));
+	}
+
+	Inventory stToken = FindInventory("Stamina");
+	if(stToken && stToken.Amount == stToken.MaxAmount)
+	  return;
+	
+	if(GetAge() % 2 == 0)
+	  A_TakeInventory("Stamina", 1);
+  }
+  
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+	if(other is "DFPlayer")
+	{
+	  //DFPlayer(other).bInfectionPower = true;
+	  DFPlayer(other).ForwardMove1 += 1.0;
+	  DFPlayer(other).ForwardMove2 += 1.0;
+	  DFPlayer(other).SideMove1 += 1.0;
+	  DFPlayer(other).SideMove2 += 1.0;
+	}
+	
+	GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	if(ev)
+	  ev.UpdateChat(String.Format("%s \cJcontracted a serious illness...", other.GetTag()));
+  }
+  
+  override void DetachFromOwner()
+  {
+    Super.DetachFromOwner();
+	
+	GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	if(owner && ev)
+	{
+	  ev.UpdateChat(String.Format("%s \cDCures \cJtheir infection.", owner.GetTag()));
+	  //DFPlayer(owner).bInfectionPower = false;
+	  DFPlayer(owner).ForwardMove1 -= 1.0;
+	  DFPlayer(owner).ForwardMove2 -= 1.0;
+	  DFPlayer(owner).SideMove1 -= 1.0;
+	  DFPlayer(owner).SideMove2 -= 1.0;
+	}
+  }
+  
+  override void ModifyDamage (int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+  {
+    if(!passive && damage > 0)
+	{
+	  if(damageType == "Melee")
+	  {
+	    newdamage = damage + 10;
+	  }
+      else if(damageType == "Daze")
+	  {
+	    newdamage = damage + 20;
+	  }
+      else if(damageType == "LeftHook")
+	  {
+	    newdamage = damage + 50;
+	  }
+	  else if(damageType == "Gauntlet")
+	  {
+	    newdamage = damage + 40;
+	  }
+    }
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+	+Inventory.UNDROPPABLE;
+	+Inventory.UNTOSSABLE;
+  }
+}
+
+Class RandomMover : Inventory
+{
+  bool isMoving, onBreak;
+  int tDuration, tAngle, iLifetime;
+  
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+	
+	iLifetime = random(2,4) * 35;
+	tDuration = random(4,45);
+	tAngle = randompick(random(70,120), random(250,290));
+  }
+  
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(!owner)
+	  return;
+	  
+	let player = owner.player;
+    if(!player)
+      return;
+	  
+	if(owner.health <= 0)
+	  Destroy();
+	
+	if(owner)
+	{
+	  if(DFPlayer(owner).tox < (DFPlayer(owner).toxMax * 0.9))
+	    Destroy();
+	}
+		
+	if(owner && player.cmd.buttons & (BT_FORWARD|BT_BACK|BT_MOVELEFT|BT_MOVERIGHT))
+	{
+	  if(tDuration > 0)
+	  {
+	    owner.Thrust(0.5, owner.angle + tAngle);
+	    tDuration--;
+	  }
+	  else
+	  {
+	    tDuration = random(10,45);
+		tAngle = randompick(random(90,120), random(250,290));
+	  }
+	}
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+	+Inventory.UNDROPPABLE;
+	+Inventory.UNTOSSABLE;
+  }
+}
+
+const DISTORTION_SHADER = "TrippyPerlin";
+const WARP_SHADER = "WarpedSpace";
+
+Class DFPlayer : DoomPlayer
+{
+  //Variables -------------------------------------------
+  private uint LevelFlags;
+  private uint SkillFlags;
+  private uint GunModFlags;
+  private uint TutorialFlags;
+  
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+	
+	title = "Бродяга";
+	statBase = "Phy";
+	porName = "P_DEF";
+	porHPa = "P_DEFHP";
+    PhyHeal = 15;
+	phyMaxExp = 1000;
+	phyLevel = 1;
+	phyLevel_nfo = "Мутация ур.1";
+	armorMax = 0;
+	armor_str = String.Format("PT: %d | PR: %d", armor_flat, int(round(armor_mult * 100.0))) .. "%";
+	armorEntropy_str = "ER: 0%";
+	invCur = 0;
+	invMax = 4;
+	tox = 0;
+	toxMax = 100;
+	rad = 0;
+	radMax = 200;
+	cTr = new("CorpseTracer");
+	lTr = new("LootTracer");
+	scTr = new("ScanTracer");
+	CurVolume = 1.0;
+	map_item = "Graphics/Maps/Map_00.png";
+  }
+  
+  flagdef Base_Wit : LevelFlags, 0;
+  flagdef Advanced_Wit : LevelFlags, 1;
+  flagdef High_Wit : LevelFlags, 2;
+  flagdef Max_Wit : LevelFlags, 3;
+  flagdef Base_Str : LevelFlags, 4;
+  flagdef Advanced_Str : LevelFlags, 5;
+  flagdef High_Str : LevelFlags, 6;
+  flagdef Max_Str : LevelFlags, 7;
+  flagdef Base_Phy : LevelFlags, 8;
+  flagdef Advanced_Phy : LevelFlags, 9;
+  flagdef High_Phy : LevelFlags, 10;
+  flagdef Max_Phy : LevelFlags, 11;
+  flagdef StrOrigin : LevelFlags, 12;
+  flagdef WitOrigin : LevelFlags, 13;
+  flagdef PhyOrigin : LevelFlags, 14;
+  flagdef StrOrigin_Buff : LevelFlags, 15;
+  flagdef WitOrigin_Buff : LevelFlags, 16;
+  flagdef BrainPower : SkillFlags, 0;
+  flagdef BluePower : SkillFlags, 1;
+  flagdef OrangePower : SkillFlags, 2;
+  flagdef RedPower : SkillFlags, 3;
+  flagdef AutoReload : SkillFlags, 4;
+  flagdef RecoilPower : SkillFlags, 5;
+  flagdef Phy_Gland : SkillFlags, 6;
+  flagdef Phy_Caltrop : SkillFlags, 7;
+  flagdef Phy_Flux : SkillFlags, 8;
+  flagdef Phy_HP : SkillFlags, 9;
+  flagdef Phy_Hunger : SkillFlags, 10;
+  flagdef Phy_Mind : SkillFlags, 11;
+  flagdef Phy_MorePocket : SkillFlags, 12;
+  flagdef Phy_Reflect : SkillFlags, 13;
+  flagdef Phy_Tendon : SkillFlags, 14;
+  flagdef ResistHalf : SkillFlags, 15;
+  flagdef ResistRad : SkillFlags, 16;
+  flagdef ResistToxin : SkillFlags, 17;
+  flagdef ResistExplode : SkillFlags, 18;
+  flagdef VomitPower : SkillFlags, 19;
+  flagdef RepairBoost : SkillFlags, 20;
+  flagdef UQ_DualFire : SkillFlags, 21;
+  flagdef UQ_Mag : SkillFlags, 22;
+  flagdef Duel_Buff : SkillFlags, 23;
+  flagdef P_Up1 : GunModFlags, 0;
+  flagdef P_Up2 : GunModFlags, 1;
+  flagdef P_Up3 : GunModFlags, 2;
+  flagdef S_Up1 : GunModFlags, 3;
+  flagdef S_Up2 : GunModFlags, 4;
+  flagdef S_Up3 : GunModFlags, 5;
+  flagdef S_Up4 : GunModFlags, 6;
+  flagdef Sp_Up1 : GunModFlags, 7;
+  flagdef Sp_Up2 : GunModFlags, 8;
+  flagdef Sp_Up3 : GunModFlags, 9;
+  flagdef Psi_HG : GunModFlags, 10;
+  flagdef Psi_SG : GunModFlags, 11;
+  flagdef Psi_SSG : GunModFlags, 12;
+  flagdef Psi_SP : GunModFlags, 13;
+  flagdef Psi_AR : GunModFlags, 14;
+  flagdef Tu_Eye : TutorialFlags, 0;
+  flagdef Tu_Duel : TutorialFlags, 1;
+  
+  bool cannotGameOver, isCleansing, isDodging, isDrunk, hasLeech, hasTuner, gov, inZone, inHighZone, inMenu, isMad, isPlaying, silentFall, upgradeUsed;
+  bool blurIcon, goal_alert, radBuild, wep1, wep2, wep3a, wep3b, wep4a, wep4b, wpnSelScroll;
+  bool fist_fighting;
+  bool tip_cond, tip_psi;
+  string useContextPrompt, altUseContextPrompt, useContextObjTag, title, statBase, porName, porHPa, porHPb, porScan, porStim;
+  string CharName, PickupString, pictureStr, pictureItemStr, location, locationHUD, current_act, goal;
+  string char_upgrade; //upgrade list
+  int time_sec, save_index;
+  int Str, Wit, Phy, invCur, invMax;
+  int level, fastSlot, healAmount, iFrames, fHealCount, db_parasite, PSIDamBuild, PhyHeal, zoneLevel;
+  int scn_TimeCheck, rad, radAmt, radMax, tox, toxAmt, toxMax, toxinDmgCD;
+  int radTime, radInterval;
+  uint tune, tune_max;
+  double scanDistance, wSpin;
+  Actor hActr, item_focus, eatActr, upgActr, lite;
+  DF_Boss boss_ptr;
+  NoteItem note;
+  string newItem;
+  Inventory toxin;
+  CustomInventoryItem quickUse1, quickUse2, quickUse3, quickUse4;
+  CorpseTracer cTr;
+  LootTracer lTr;
+  ScanTracer scTr;
+  
+  ///////******** WITS stuff
+  bool radar;
+  int radar_time;
+  bool hasScanner;
+  
+  //////******** PHY stuff
+   uint phyLevel, phyExp, phyMaxExp;
+   string phyLevel_nfo;
+  
+  ///////******* ARMOR AND RESISTANCE
+  double armor_mult, armor_entropy;
+  int armor_flat;
+  uint armorStack, armorMax;
+  double withstand_mult;
+  string armor_str, armorEntropy_str;
+  
+  ///////*******Status Effects --- ///////
+  bool buff_light, buff_hp, buff_stam, buff_str, buff_stim, buff_bong;
+  int buff_dmg_immune, buff_withstand;
+  int withstand_stack, withstand_time, withstand_tic, psi_shield_health, psi_shield_health_max, psi_shield_time, inf_ammo_time;
+  
+  ///////*******Map Item --- ///////
+  string map_item, map_highlight;
+  double map_threshold;
+  
+  //////MUSIC VOLUME -- Dont worry about why it's here. Mind your own business lmao
+  double CurVolume, TargetVolume, fStepVolume;
+  int TimeVolume;
+  
+  static void SetToxin(int addValue = 0, bool from_inv = false)
+  {
+    let pmo = DFPlayer(players[consoleplayer].mo);
+	if(pmo && !pmo.bResistToxin)
+	{
+	  pmo.tox += addValue;
+	  if(pmo.tox > pmo.toxMax)
+	    pmo.tox = pmo.toxMax;
+	  else if(pmo.tox < 0)
+	    pmo.tox = 0;
+		
+	  if(pmo.tox >= pmo.toxMax * 0.9)
+	    pmo.toxinDmgCD = 350;
+	}
+	
+	if(!from_inv)
+	{
+	  GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  if(ev)
+	    ev.UpdateChat(String.Format("· %s \cJabsorbs \cTToxin (%d).", pmo.GetTag(), addValue));
+	}
+  }
+  
+  static void SetRadiation(int addValue = 0, bool from_inv = false)
+  {
+    let pmo = DFPlayer(players[consoleplayer].mo);
+	if(pmo)
+	{
+	  pmo.rad += addValue;
+	  if(pmo.rad >= pmo.radMax)
+	  {
+	    pmo.A_GiveInventory("RadOverload", 1);
+		pmo.rad = 0;
+	  }
+	  else if(pmo.rad < 0)
+	    pmo.rad = 0;
+	}
+	
+	if(!from_inv)
+	{
+	  GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  if(ev)
+	    ev.UpdateChat(String.Format("· %s \cJabsorbs \cIRadiation (%d).", pmo.GetTag(), addValue));
+	}
+  }
+  
+  static void BuildRadiation(int TicsPerRad)
+  {
+    let pmo = DFPlayer(players[consoleplayer].mo);
+	if(pmo)
+	{
+	  if(TicsPerRad > 0 && !pmo.bResistRad)
+	  {
+	    pmo.radBuild = true;
+		pmo.radInterval = TicsPerRad;
+		pmo.radTime = pmo.radInterval;
+	  }
+	  else
+	  {
+	    pmo.radBuild = false;
+		pmo.radInterval = 0;
+		pmo.radTime = 0;
+	  }
+	}
+  }
+  
+  static void DetectAmbush()
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo)
+	{
+	  pmo.A_StartSound("Ambush", CHAN_AUTO);
+	  pmo.A_SetBlend("Orange", 0.13, 17);
+	  pmo.ACS_NamedExecute("Ambush");
+	}
+  }
+  
+  static void GiveBagSlot()
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  DFPlayer(pmo).invMax++;
+  }
+   
+  static void GiveExaltation(int amount)
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo)
+	{
+	  pmo.A_GiveInventory("ExaltXP", amount);
+	  pmo.A_StartSound("ExaltXP", 8, volume: 0.4, attenuation: 0.0);
+	  GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  if(ev)
+	  {
+	    ev.UpdateChat(String.Format("· %s \cJabsorbs \cZExaltation (%d).", pmo.GetTag(), amount));
+		/*if(DFPlayer(pmo).bHigh_Phy)
+		{
+		  ev.UpdateChat(String.Format("· %s \cJabsorbs \cDHealth (5).", pmo.GetTag()));
+		  DFPlayer(pmo).DoHeal(5);
+		}*/
+	  }
+	}
+  }
+
+  static void GiveItem(string itm)
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  pmo.A_GiveInventory(itm, 1);
+  }
+  
+  static void InjectorUpgrade()
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo)
+	{
+	  let itm = pmo.FindInventory("Stim");
+	  if(itm)
+	  {
+	    Stim(itm).maxAmt++;
+		EventHandler.SendInterfaceEvent(0, "HUDUpdateStim");
+		let ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+		if(ev)
+		  ev.UpdateChat("· \cGPsykhus Injector \cJgains an additional \cGCharge.");
+	  }
+	}
+  }
+  
+  static void QuietLand(bool silent)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr && silent)
+	  plr.silentFall = true;
+	else
+	  plr.silentFall = false;
+  }
+  
+  Static void MusicFade(double targ, int time)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+    {
+      if(time == 0)
+      {
+        plr.SetMusicVolume(targ);
+        plr.CurVolume = targ;
+      }
+      else
+      {
+        plr.TargetVolume =  targ - plr.CurVolume;
+        plr.fStepVolume = plr.TargetVolume / time;
+        plr.TimeVolume = time;
+      }
+    }
+  }
+  
+  Static Void PlayAnIntermission (String Intermission)
+  {
+	Level.StartIntermission(Intermission,FSTATE_INLEVEL);
+  }
+
+  static void SetHud(bool on)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+	{
+      if(on)
+	    plr.isPlaying = true;
+	  else
+	    plr.isPlaying = false;
+	}
+  }
+  
+  static void SetInMenu(bool active)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+      plr.inMenu = active;
+  }
+  
+  static void SetLocation(String location)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+	  plr.location = location;
+  }
+  
+  static void SetMap(String location, string hightlight = "")
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+	{
+	  plr.locationHUD = "[" .. location .. "]";
+	  plr.map_highlight = hightlight;
+	}
+  }
+  
+  static void SetMapMenu(string path, double alpha = 0.6)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+	{
+      plr.map_item = path;
+	  plr.map_threshold = alpha;
+	}
+  }
+  
+  static void SetNoGameOver(bool on)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+      plr.cannotGameOver = on;
+  }
+  
+  static void SetObjective(String stringID = "", bool snd = true)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+	{
+      plr.goal = stringID;
+	  if(snd)
+	  {
+	    plr.goal_alert = true;
+	    plr.A_StartSound("Goal_01", CHAN_AUTO, volume: 0.6);
+	    GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	    if(ev)
+	      ev.UpdateChat("· \cIObjective updated.");
+	  }
+	}
+  }
+  
+  static void SetZone(int level)
+  {
+    let plr = DFPlayer(players[consoleplayer].mo);
+	if(plr)
+	  plr.zoneLevel = level;
+  }
+  
+  static void ShowPicture(string pic, string pic_item)
+  {
+    let pmo = DFPlayer(players[consoleplayer].mo);
+	if(pmo)
+	{
+      pmo.pictureStr = pic;
+	  pmo.pictureItemStr = pic_item;
+	  Menu.SetMenu("PictureMenu");
+	}
+  }
+  
+  void ApplyToxinDamage()
+  {
+	toxinDmgCD = 350;
+	A_DamageSelf(5, "Drowning");
+	A_StartSound("Poison1", CHAN_AUTO);
+	ChatMessage(String.Format("· %s \cJsuffers \cRDamage (5)\cJ from \cTToxin.", GetTag()));
+  }
+  
+  void Bleed(double ang = 0)
+  {
+	self.A_SpawnItemEx("BloodHaze", 16, zofs: 64, zvel: -0.3, flags: SXF_ABSOLUTEANGLE, angle: ang);
+	self.A_SpawnItemEx("DFBlood", 24, zofs: 64, flags: SXF_ABSOLUTEANGLE, angle: ang);
+	for(int i = 0; i < random(8,12); i++)
+	  self.A_SpawnItemEx("BloodParticle", 12, frandom(-16,16), 64, frandom(1,2), frandom(-2,2), frandom(1,3), flags: SXF_ABSOLUTEANGLE, angle: ang);
+  }
+  
+  void BloodSplat()
+  {
+    let ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	if(ev && ev.spAlpha < 0.5)
+	  ev.ScreenBloodSplatter();
+  }
+  
+  void ChatMessage(string msg)
+  {
+    let ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+    if(ev)
+	  ev.UpdateChat(msg);	  
+  }
+  
+  void CriticalSteal()
+  {
+	DoHeal(10);
+	ChatMessage("· \cVGlyph \cJsiphons \cDHealth (10).");
+	let wpn = Handgun(FindInventory("Handgun"));
+	if(wpn)
+	{
+	  int cond_prev = wpn.wep_cond;
+	  wpn.wep_cond = clamp(wpn.wep_cond + 5, 0, wpn.wep_condMax);
+	  ChatMessage(String.Format("· \cVGlyph \cJrepairs \cFHandgun (%d% > %d%).", cond_prev, wpn.wep_cond));
+	}
+  }
+  
+  void AutoReload()
+  {
+    A_GiveInventory("ShellLoaded", 1);
+	ChatMessage("· \cIGlyph \cJmanifests \cFShotgun Shell (1).");
+  }
+ 
+  void DoHeal(int amount)
+  {
+    if(healAmount > 0)
+      healAmount += amount;
+	else
+	  healAmount = amount;
+  }
+  
+  void ExecuteScript(int number, int arg1, int arg2, int arg3)
+  {
+    ACS_Execute(number, 0, arg1, arg2, arg3);
+  }
+  
+  void PhyLevelUp()
+  {
+    phyLevel++;
+    phyExp -= phyMaxExp;
+    phyMaxExp *= 1.15;
+	phyLevel_nfo = String.Format("Мутация ур.%d", phyLevel);
+	A_SetBlend("Orange", 0.5, 70);
+	let ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	if(ev)
+	  ev.SendInterfaceEvent(0, "ResetPhyExp");
+	  
+	let reward_ev = UpgradeHandler(EventHandler.Find("UpgradeHandler"));
+	if(reward_ev)
+	  reward_ev.SendNetworkEvent("phy_levelup");
+  }
+  
+  bool invSpaceCheck()
+  {
+    if(invCur + 1 <= invMax)
+	  return true;
+		
+	return false;
+  }
+  
+  void RadHeal(int amount)
+  {
+    if(radAmt > 0)
+      radAmt += amount;
+	else
+	  radAmt = amount;
+  }
+  
+  void ToxHeal(int amount)
+  {
+    if(toxAmt > 0)
+      toxAmt += amount;
+	else
+	  toxAmt = amount;
+  }
+  
+  void SetDrunk(double intensity, double zoom, double duration)
+  {
+    ShaderHandler ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+	  if(ev)
+	    ev.SetDrunk(intensity, zoom, duration);
+  }
+  
+  void TryEatCorpse()
+  {
+    if(eatActr)
+	{
+	  let ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  A_SetBlend("Green", 0.05, 10);
+	  ev.UpdateChat(String.Format("· %s \cJconsumes \cF%s.", GetTag(), eatActr.GetTag()));
+	  if(Corpse(eatActr).HP == -1)
+	  {
+		ev.UpdateChat(String.Format("· %s is \cDReinvigorated \cF(Regen 15 HP).", GetTag()));
+	    let regen = FindInventory("HPRegen");
+		if(regen)
+		  HPRegen(regen).healthCounter = 0;
+		else
+		  A_GiveInventory("HPRegen", 1);
+	  }
+	  else
+	  {
+	    ev.UpdateChat(String.Format("\cD+%d Health.", phyHeal));
+	    DoHeal(phyHeal);
+	  }
+	  if(bPhy_Hunger)
+	  {
+	    if(armorStack < armorMax)
+		  armorStack++;
+		  
+		GiveInventory("PSI", 1);
+		ev.UpdateChat("\cD+1 Armor Stack.");
+		ev.UpdateChat("\cD+1 Psi.");
+	  }
+	  ev.UpdatePhyExp(String.Format("+%d", Corpse(eatActr).exp));
+	  phyExp += Corpse(eatActr).exp;
+	  if(phyExp >= phyMaxExp)
+	    PhyLevelUp();
+	  
+	  Spawn("CorpseConsumeFX", eatActr.pos);
+	  eatActr.Destroy();
+	  eatActr = null;
+	}
+  }
+  
+  override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod)
+  {
+    //Before we do anything - we should be evil first
+	if(bPhy_Reflect && source && source is "DF_Monster")
+	{
+	  double dam_refl = 0.2;
+	  dam_refl += Phy * 0.1;
+	  source.A_DamageSelf(dam_refl * GetMaxHealth(true), "Reflect");
+	}
+	
+    //Immunity
+	if(buff_dmg_immune > 0 && mod != "InstantDeath")
+	  return 0;
+	
+    //Difficulty Modifier
+    damage *= CVar.FindCVar("modf_damage").GetFloat();
+	
+	GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	if(iFrames > 0 && mod != "Extreme" || iFrames > 0 && mod != "Drowning")
+	{
+	  if(ev)
+		ev.UpdateChat(String.Format("· \cFDash (Well-Timed): \cRDamage (%d = \cI0\cR).", damage));
+		
+	  MovementHandler mv = MovementHandler(EventHandler.Find("MovementHandler"));
+	  if(mv)
+	    mv.dodgeCD = 0;
+	  
+	  A_SetBlend("White", 0.1, 24);
+	  damage = 0;
+	}
+	else if(mod == "Physical")
+	{
+	  ////PSI SHIELD
+	  if(psi_shield_health > 0)
+	  {
+	    double dam = damage;
+		damage *= 0.5;
+		psi_shield_health -= damage;
+		if(ev)
+		  ev.UpdateChat(String.Format("· \cFPsi-Shield (%d): \cRDamage (%d\cI-%d \cR= %d)", dam - damage, dam, dam - damage, damage));
+	  }
+	  ////BLOCKING
+	  let wep = players[consoleplayer].ReadyWeapon;
+	  if(wep is "Hands")
+	  {
+	    if(Hands(wep).block_hold && source)
+		{
+		  if(source && source is "DF_Monster")
+		  {
+		    int stam_drain = damage * 4.0;
+			if(damage <= 0)
+			  stam_drain = 0;  
+			  
+			Hands(wep).HitBlocked(stam_drain);
+			
+			//if(owner && DFPlayer(owner).bAdvanced_Str && perfect_time > 0)
+			if(bAdvanced_Str && Hands(wep).perfect_time < 8 && !Hands(wep).riposte_land)
+			{
+			  Hands(wep).focusActr = source;
+			  FireWeapon(wep.FindState("Riposte"));
+			  if(ev)
+				ev.UpdateChat(String.Format("· \cFPerfect-Counter (%d): \cRDamage (%d\cI-%d \cR= %d)", damage, damage, damage, 0));
+				
+			  return Super.DamageMobj(inflictor, source, 0, mod);
+			}
+		  }
+		  double dam = damage;
+		  damage *= 0.5;
+		  //console.printf("DMG:%d BLOCK:%d", damage, damage * 4.0);
+		  if(ev)
+		    ev.UpdateChat(String.Format("· \cFBlocking (%d): \cRDamage (%d\cI-%d \cR= %d)", dam - damage, dam, dam - damage, damage));
+		}
+	  }
+	  if(armorStack <= 0 && source)
+	    Bleed(AngleTo(source));
+	}
+	else if(mod == "Energy")
+	{
+	  if(psi_shield_health > 0)
+	  {
+	    double dam = damage;
+		damage *= 0.5;
+		psi_shield_health -= damage;
+		if(ev)
+		  ev.UpdateChat(String.Format("· \cFPsi-Shield (%d): \cRDamage (%d\cI-%d \cR= %d)", dam - damage, dam, dam - damage, damage));
+	  }
+	  
+	  let wep = players[consoleplayer].ReadyWeapon;
+	  if(wep is "Hands")
+	  {
+	    if(Hands(wep).block_hold)
+		{
+		  double original_dam = damage;
+		  if(source && source is "DF_Monster")
+			Hands(wep).HitBlocked(damage * 2.5);
+		  //Mitigate damage
+		  damage *= 0.5;
+		  
+		  if(ev)
+		    ev.UpdateChat(String.Format("· \cFBlocking (%d): \cRDamage (%d\cI-%d \cR= %d)", original_dam - damage, original_dam, original_dam - damage, damage));
+		}
+	  }
+	  double dam = damage;
+	  double mitg = dam * armor_entropy;
+	  damage = damage - mitg;
+	}
+	else if(mod == "Explode" && bResistExplode)
+	  damage = 8;
+	
+	//Finished standard stuff - proceed with armor
+	if(armorStack > 0 && damage > 0 && mod == "Physical")
+	{
+	  double dam = damage;
+	  double absorb = dam * armor_mult;
+	  dam = dam - absorb;
+	  dam -= armor_flat;
+	  if(dam < 0)
+		dam = 0;
+		
+	  if(ev)
+		ev.UpdateChat(String.Format("· \cFArmor (%d): \cRDamage (%d\cI-%d \cR= %d)", damage - dam, damage, damage - dam, dam));
+		
+	  armorStack--;
+      damage = Max(0, dam);
+	}
+	if(armorStack <= 0)
+	  armorStack = 0;
+	  
+	//BUT MUH WILL IS STRONGER THAN FLESH AND STEEL TYPE SHIT
+	if(buff_withstand && fist_fighting)
+	{
+      withstand_mult -= 0.15;
+	  withstand_stack++;
+	  withstand_time = 20;
+	  
+	  if(withstand_mult <= 0.4)
+	  {
+	    withstand_mult = 0.4;
+		withstand_stack = 4;
+	  }
+	  
+      if(damageType != "Drowning")
+      {
+	    double dam = damage;
+	    damage *= withstand_mult;
+		if(ev)
+		  ev.UpdateChat(String.Format("· \cFWithstand (%d): \cRDamage (%d\cI-%d \cR= %d)", dam - damage, dam, dam - damage, damage));
+	  }
+	}
+	  
+	//Use stim if gonna die regardless
+	if(damage >= health && fHealCount > 0)
+	{
+	  damage = health - 1;
+	  buff_dmg_immune = 70;
+	  let psp = player.GetPSprite(PSP_WEAPON);
+	  if(psp)
+	    psp.SetState(player.ReadyWeapon.FindState("DeathHeal"));
+	}
+	
+	return Super.DamageMobj(inflictor, source, damage, mod);
+  }
+  
+  override void Die(Actor source, Actor inflictor, int dmgFlags, Name MeansOfDeath)
+  {
+    super.Die(source, inflictor, dmgFlags, MeansOfDeath);
+	
+    if(source && (source.GetClassName() == "PsychoAxe" || source.GetClassName() == "PsychoBerzerk"))
+	  A_SpawnItemEx("PlayerDthDecoy", flags: SXF_SETMASTER);
+  }
+  
+  override void PlayerLandedMakeGruntSound(Actor onmobj)
+  {
+    bool grunted;
+	
+	if(self.player.mo && inZone)
+	  return;
+	
+	if(self.player.mo && TexMan.GetName(self.player.mo.floorpic) == "WHITE")
+	  return;
+	
+	if(!silentFall)
+	{
+	  if(self.health > 0 && self.player.morphTics == 0)
+	  {
+	    grunted = false;
+	    if(self.Vel.Z < -self.player.mo.GruntSpeed)
+	    {
+	      A_StartSound("*grunt", CHAN_VOICE);
+	      grunted = true;
+	    }
+	    bool isliquid = (pos.Z <= floorz) && HitFloor ();
+	    if(onmobj != NULL || !isliquid)
+	    {
+		  if(!grunted)
+		    A_StartSound("*land", CHAN_AUTO);
+		  else
+		    A_StartSoundIfNotSame("*land", "*grunt", CHAN_AUTO);
+		}
+	  }
+	}
+  }
+  
+  //NGL i just ended up spaghettifying this because im tryna work on something else
+  //EVERYTHING HERE IS DOWNRIGHT SPAGGHETTIFIED. CONTAINMENT AT ALL COST!!!!!!!!!
+  //THIS IS ALL HACKS!!!! COPY AT YOUR OWN RISK!!!!
+  override Weapon PickWeapon(int slot, bool checkammo)
+  {
+    //Double tap select operation
+    Weapon sel;
+	int xofs;
+	if(slot == 3 || slot == 4)
+	{
+	  if(slot == 3 && fastSlot == 3)
+	  {
+	    sel = Weapon(FindInventory("SSG"));
+		xofs = 96;
+	  }
+	  else if(slot == 4 && fastSlot == 4)
+	  {
+	    sel = Weapon(FindInventory("AR"));
+		xofs = 288;
+	  }
+	  else //Assuming we just select Shotugn or Spray
+	  {
+		if(slot == 3)
+		  sel = Weapon(FindInventory("Trenchgun"));
+		else
+		  sel = Weapon(FindInventory("SprayCan"));
+	  }
+	  
+	  if(fastSlot > 0 && fastSlot == slot) //Quick Swap success
+	    fastSlot = 0; //Clear
+	  else
+	    fastSlot = slot; //Prepare for fast swap
+	}
+	else //Not a qualified fast swap slot - reset
+	  fastSlot = 0;
+	  
+	if(sel)
+	{
+	  EventHandler.SendInterfaceEvent(0, String.Format("HUDWeaponBar:%d:%d", slot, xofs));
+	  return sel;
+	}
+	else
+	{
+	  EventHandler.SendInterfaceEvent(0, String.Format("HUDWeaponBar:%d:0", slot));
+	  return Super.PickWeapon(slot, checkammo);
+	}
+  }
+  
+  override Weapon PickNextWeapon() //Dude i don't think i've done anything more lazy
+  {
+	wpnSelScroll = true;
+	let wep = Super.PickNextWeapon();
+	if(player.ReadyWeapon)
+	{
+	  if(player.ReadyWeapon is "Handgun")
+	  {
+	    let new_wpn = FindInventory("TrenchGun");
+		if(new_wpn)
+		  wep = Weapon(new_wpn);
+	  }
+	  else if(player.ReadyWeapon is "TrenchGun")
+	  {
+	    if(CheckInventory("SSG", 1))
+		{
+	      let new_wpn = FindInventory("SSG");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+		else if(CheckInventory("SprayCan", 1))
+		{
+	      let new_wpn = FindInventory("SprayCan");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+		else if(CheckInventory("AR", 1))
+		{
+	      let new_wpn = FindInventory("AR");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+	  }
+	  else if(player.ReadyWeapon is "SSG")
+	  {
+	    if(CheckInventory("SprayCan", 1))
+		{
+	      let new_wpn = FindInventory("SprayCan");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+		else if(CheckInventory("AR", 1))
+		{
+	      let new_wpn = FindInventory("AR");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+		else 
+		{
+	      let new_wpn = FindInventory("Hands");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+	  }
+	  else if(player.ReadyWeapon is "SprayCan")
+	  {
+	    let new_wpn = FindInventory("AR");
+		if(new_wpn)
+		  wep = Weapon(new_wpn);
+	  }
+	  else if(player.ReadyWeapon is "AR")
+	  {
+	    let new_wpn = FindInventory("Hands");
+		if(new_wpn)
+		  wep = Weapon(new_wpn);
+	  }
+	}
+
+	return wep;
+  }
+  
+  override Weapon PickPrevWeapon()
+  {
+	wpnSelScroll = true;
+	let wep = Super.PickPrevWeapon();
+	if(player.ReadyWeapon)
+	{
+	  if(player.ReadyWeapon is "Hands")
+	  {
+		if(CheckInventory("AR", 1))
+		{
+	      let new_wpn = FindInventory("AR");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+		else if(CheckInventory("SprayCan", 1))
+		{
+	      let new_wpn = FindInventory("SprayCan");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+		else if(CheckInventory("SSG", 1))
+		{
+	      let new_wpn = FindInventory("SSG");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+	  }
+	  else if(player.ReadyWeapon is "TrenchGun")
+	  {
+	    let new_wpn = FindInventory("Handgun");
+		if(new_wpn)
+		  wep = Weapon(new_wpn);
+	  }
+	  else if(player.ReadyWeapon is "SSG")
+	  {
+	    let new_wpn = FindInventory("TrenchGun");
+		if(new_wpn)
+		  wep = Weapon(new_wpn);
+	  }
+	  else if(player.ReadyWeapon is "SprayCan")
+	  {
+	    let new_wpn = FindInventory("SSG");
+		if(new_wpn)
+		  wep = Weapon(new_wpn);
+	  }
+	  else if(player.ReadyWeapon is "AR")
+	  {
+	    if(CheckInventory("SprayCan", 1))
+		{
+	      let new_wpn = FindInventory("SprayCan");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+		else if(CheckInventory("SSG", 1))
+		{
+	      let new_wpn = FindInventory("SSG");
+		  if(new_wpn)
+		    wep = Weapon(new_wpn);
+		}
+	  }
+	}
+
+	return wep;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(time_sec >= 35)
+	{
+	  //Do the things
+	  time_sec = 0;
+	  
+	  //Water stuff
+	  if(!silentFall && waterlevel > 0)
+	    A_StartSound("player/swim", CHAN_AUTO, volume: 0.75);
+	}
+	else
+	  time_sec++;
+	
+	if(pos.z == floorz || bOnMObj) //thank you Nash for giving me the wisdom and insight
+	{
+	  vel.x *= 0.9;
+	  vel.y *= 0.9;
+	}
+	
+	//MUSIC VOLUME
+	if(TimeVolume > 0)
+	{
+	  CurVolume += fStepVolume;
+	  SetMusicVolume(CurVolume);
+	  TimeVolume--;
+	}
+	
+    if(healAmount > 0)
+	{
+	  HealThing(1);
+	  healAmount--;
+	}
+	
+	if(buff_dmg_immune > 0)
+	  buff_dmg_immune--;
+	  
+	if(withstand_time > 0)
+	{
+	  if(withstand_tic == 35)
+	  {
+	    withstand_time--;
+	    withstand_tic = 0;
+	  }
+	  else
+	  {
+	    withstand_tic++;
+	  } 
+	}
+	else
+	{
+	  withstand_mult = 1.0;
+	  withstand_stack = 0;
+	}
+	
+	if(radAmt > 0)
+	{
+	  if(rad > 0)
+	    rad--;
+		
+	  radAmt--;
+	}
+	
+	if(radBuild)
+	{
+	  if(radTime > 0)
+	    radTime--;
+	  else
+	  {
+	    radTime = radInterval;
+		SetRadiation(1);
+	  }
+	}
+	
+	if(toxAmt > 0)
+	{
+	  if(tox > 0)
+	    tox--;
+		
+	  toxAmt--;
+	}
+	
+	if(hActr)
+	{
+	  if(scn_TimeCheck == 35)
+	  {
+	    scn_TimeCheck = 0;
+	    if(hActr.CheckIfSeen())
+	      hActr = null;
+	  }
+	  scn_TimeCheck++;
+	}
+	
+	if(iFrames > 0)
+	{
+	  iFrames--;
+	  bNOBLOOD = true;
+	}
+	else
+	  bNOBLOOD = false;
+	  
+	if(tox >= toxMax * 0.5)
+	{
+	  if(!bPhy_Tendon)
+	  {
+	    if(wSpin >= 360)
+	      wSpin = 0;
+	    else
+	      wSpin += 3.00;
+		
+	    A_SetAngle(angle - (0.25 * cos(wSpin)), SPF_INTERPOLATE);
+	    A_SetPitch(pitch + (0.25 * sin(wSpin)), SPF_INTERPOLATE);
+	  }
+	  if(tox >= toxMax * 0.9)
+	  {
+	    if(!CheckInventory("RandomMover", 1))
+	      A_GiveInventory("RandomMover", 1);
+		
+	    if(toxinDmgCD == 0)
+		  ApplyToxinDamage();
+	  }
+	}
+	
+	if(toxinDmgCD > 0)
+	  toxinDmgCD--;
+	  
+	TryLineTrace();
+	
+	if((Player.cmd.buttons & BT_USE) && !(Player.oldbuttons & BT_USE))
+	{
+	  if(item_focus && item_focus is "InventoryItem")
+	  {
+		if(InventoryItem(item_focus).requireSpace)
+		{
+		  if(invSpaceCheck())
+			item_focus.Touch(self);
+		  else
+			ACS_NamedExecute("Full");
+		}
+		else
+		  item_focus.Touch(self);
+	  }
+	  else if(item_focus && item_focus is "CustomInventoryItem")
+	  {
+		if(invSpaceCheck() || item_focus is "Tool" || item_focus is "KeyItem")
+		{
+		  CustomInventoryItem(item_focus).UpdateChatLog();
+		  CustomInventoryItem(item_focus).CallTryPickup(self);
+		  A_StartSound(Inventory(item_focus).PickUpSound);
+		  
+		  if(itemFlash_amount > 0.0)
+		    A_SetBlend("#ffffff", itemFlash_amount, 5);
+		}
+		else
+		  ACS_NamedExecute("Full");
+	  }
+	}
+  }
+  
+  void TryLineTrace()
+  {
+	Vector3 start = pos + (0,0,player.viewheight);
+	Vector3 dir = (AngleToVector(angle, cos(pitch)), -sin(pitch));
+	if(lTr)
+    {
+		lTr.Trace(start, CurSector, dir, 160, 0);
+        if(lTr.results.hitActor)
+		{
+		  if(lTr.results.hitActor is "Inventory" && Distance3D(lTr.results.hitActor) <= 160)
+		  {
+		    item_focus = lTr.results.hitActor; //Focus the item
+			
+		    useContextObjTag = lTr.results.hitActor.GetTag();
+			useContextPrompt = "\cUPick up";
+			if(lTr.results.hitActor is "Consumable")
+			  altUseContextPrompt = "\cUUse";
+			else
+			  altUseContextPrompt = "";
+
+			return;
+		  }
+		  //I CONJURE THEE!! SPAGHETTI GODs OF THE FAR REALM!!!
+		  item_focus = null; //Did not hit any inventory item. Remove the focus immediately
+		  if((lTr.results.hitActor is "NoteItem") && Distance3D(lTr.results.hitActor) <= 96 + lTr.results.hitActor.radius)
+		  {
+		    useContextObjTag = lTr.results.hitActor.GetTag();
+			
+			if(lTr.results.hitActor is "Recorder")
+			  useContextPrompt = "Listen";
+			else
+			  useContextPrompt = "Read";
+			  
+			altUseContextPrompt = "";
+			return;
+		  }
+		  else if((lTr.results.hitActor is "PictureItem") && Distance3D(lTr.results.hitActor) <= 96 + lTr.results.hitActor.radius)
+		  {
+		    useContextObjTag = lTr.results.hitActor.GetTag();
+			useContextPrompt = "Examine";
+			altUseContextPrompt = "";
+			return;
+		  }
+		  else if(lTr.results.hitActor is "Breakable" && Distance3D(lTr.results.hitActor) <= 96 + lTr.results.hitActor.radius)
+		  {
+		    useContextObjTag = lTr.results.hitActor.GetTag();
+			useContextPrompt = "Destroy";
+			altUseContextPrompt = "";
+			return;
+		  }
+		  else //Object hit isn't anything interesting
+	      {
+			eatActr = null;
+		    useContextObjTag = "";
+			UseContextPrompt = "";
+			altUseContextPrompt = "";
+	      }
+		}
+	    else //Hit nothing
+	    {
+		  item_focus = null;
+		  eatActr = null;
+		  useContextObjTag = "";
+		  UseContextPrompt = "";
+		  altUseContextPrompt = "";
+	    }
+	}
+	
+	if(scTr)
+	{
+	  scTr.master = self;
+	  scTr.Trace(start, CurSector, dir, 2000, 0);  
+	  if(scTr.results.hitActor is "DF_Monster" && scTr.results.HitActor.bIsMonster && scTr.results.hitActor.Health > 0)
+	    if(!DF_Monster(scTr.results.hitActor).unScannable && !scTr.results.hitActor.bDormant && !scTr.results.hitActor.bBoss)
+		  hActr = scTr.results.HitActor; //Make this a valid highlight pointer
+	}
+	
+	if(cTr)
+	{
+	  cTr.Trace(start, CurSector, dir, 160, 0);
+      if(bPhyOrigin && cTr.results.hitActor is "Corpse" && Distance3D(cTr.results.hitActor) <= 96 + cTr.results.hitActor.radius)
+	  {
+		eatActr = cTr.results.hitActor;
+		String tag = cTr.results.hitActor.GetTag() .. " \cD(Fresh)";
+		if(Corpse(cTr.results.hitActor).user_stale)
+		  tag = cTr.results.hitActor.GetTag() .. " \cJ(Stale)";
+			
+		useContextObjTag = tag;
+		UseContextPrompt = "";
+		altUseContextPrompt = "Consume";
+	  }
+	}
+  }
+  
+  Default
+  {
+	   Player.ViewHeight 82;
+	   Player.AttackZOffset 33;
+	   Player.UseRange 96;
+	   
+	   Player.StartItem "GunActivator", 1;
+	   Player.StartItem "InventoryActivator", 1;
+	   Player.StartItem "LevelUpActivator", 1;
+	   Player.StartItem "NameActivator", 1;
+	   
+	   Player.StartItem "StrToken", 0;
+	   Player.StartItem "WitToken", 0;
+	   Player.StartItem "PhyToken", 0;
+	   
+	   Player.StartItem "ExaltXP", 0;
+	   Player.StartItem "Attunement_Check", 0;
+	   Player.StartItem "Stamina", 300;
+	   Player.StartItem "PSI", 0;
+
+	   Player.StartItem "PistolAmmo", 0;
+	   Player.StartItem "PierceAmmo", 0;
+	   Player.StartItem "ShotgunAmmo", 0;
+	   Player.StartItem "GasAmmo", 0;
+	   Player.StartItem "HeavyAmmo", 0;
+	   Player.StartItem "BulletLoaded", 0;
+	   Player.StartItem "ShellLoaded", 0;
+	   Player.StartItem "HeavyLoaded", 0;
+	   
+	   Radius 20;
+	   Height 97;
+	   Species "Friendly";
+	   +THRUSPECIES
+	   Tag "\cFPlayer";
+	   Player.ForwardMove 2.4, 1.2; // 1.1 0.55
+	   Player.SideMove 2.4, 1.2;
+	   Player.JumpZ 12.0;
+	   Player.GruntSpeed 127;
+	   MaxStepHeight 32;
+	   DamageFactor "Explode", 0.5;
+	   DamageFactor "HealingGas", 0.0; //Plague Grenade
+	   DamageFactor "Friendly", 0.0;
+	   DamageFactor 1.0;
+	   PainChance "Drowning", 0;
+	   PainChance "Poison", 16;
+	   Player.DamageScreenColor "Red", 0.0, "Psychic";
+
+  }
+  States
+  {
+    Spawn:
+      TNT1 A -1;
+      Stop;
+    See:
+      TNT1 A 4;
+      Wait;
+    Missile:
+      TNT1 A 12;
+      Goto Spawn;
+    Melee:
+      TNT1 A 6 BRIGHT;
+      Goto Missile;
+    Pain:
+      TNT1 A 4;
+      TNT1 A 4 A_Pain;
+      Goto Spawn;
+    Death:
+      TNT1 A 10;
+      TNT1 A 10 A_PlayerScream;
+      TNT1 A 10 A_NoBlocking;
+      TNT1 A 30;
+      TNT1 A -1;
+      Stop;
+	Death.Ice:
+	  TNT1 A 0
+	  {
+	    A_Stop();
+	    A_GenericFreezeDeath();
+		A_NoBlocking();
+		bSHOOTABLE = False;
+	  }
+	  TNT1 A -1;
+	  Stop;
+	XDeath:
+	  TNT1 A 0 A_StartSound("BODSPLT3", CHAN_AUTO);
+	  TNT1 A 0 
+	  {
+	    A_FaceMovementDirection();
+		A_SpawnItemEx("MeatChunk1", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("P_Arm1", random(-20,20), random(-20,20), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("P_Leg1", random(-20,20), random(-20,20), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("P_Arm2", random(-20,20), random(-20,20), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("MeatChunk2", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk3", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+	    A_SpawnItemEx("SkullFrag1", random(-20,20), random(-20,20), random(88,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("P_Leg2", random(-20,20), random(-20,20), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("PsychoGibbed", zofs: 44);
+	    A_SpawnItemEx("MeatChunk4", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-20,20), random(76,80), random(3,4), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-20,20), random(76,80), random(3,4), zvel: random(10,14), angle: random(0,359));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk5", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("P_GutSpawn", flags: SXF_SETMASTER);
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItemEx("BigBone1", random(-8,8), random(-16,16), random(8,92), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("Bone2", random(-24,24), random(-20,20), random(8,92), frandom(-6.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk6", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItem("Blood", 0, 92);
+		A_SpawnItemEx("Bone1", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk7", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("BigBone1", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("BigBone1", random(-8,8), random(-16,16), random(8,92), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+	  }
+	  TNT1 A -1;
+	  Stop;
+  }
+}
+
+class CorpseTracer : LineTracer
+{
+  override ETraceStatus TraceCallback()
+  {
+	switch (results.HitType)
+    {
+      case TRACE_HitWall:
+        if(!(results.hitLine.flags & Line.ML_BLOCKEVERYTHING) && !(results.hitLine.flags & Line.ML_BLOCKSIGHT))
+		  if((results.hitLine.flags & Line.ML_TWOSIDED) && results.tier == TIER_Middle)
+		    break;
+		
+      case TRACE_HasHitSky:
+      case TRACE_HitFloor:
+      case TRACE_HitCeiling:
+        return TRACE_Stop;
+        break;
+            
+      case TRACE_HitActor:
+        if(results.HitType == TRACE_HitActor)
+		{
+		  if(results.HitActor is "Corpse")
+		    return TRACE_Stop;
+		}
+    }  
+    return TRACE_Skip;
+  }
+}
+
+class LootTracer : LineTracer
+{
+  override ETraceStatus TraceCallback()
+  {
+	switch (results.HitType)
+    {
+      case TRACE_HitWall:
+        if(!(results.hitLine.flags & Line.ML_BLOCKEVERYTHING) && !(results.hitLine.flags & Line.ML_BLOCKSIGHT))
+		  if((results.hitLine.flags & Line.ML_TWOSIDED) && results.tier == TIER_Middle)
+		    break;
+		
+      case TRACE_HasHitSky:
+      case TRACE_HitFloor:
+      case TRACE_HitCeiling:
+        return TRACE_Stop;
+        break;
+            
+      case TRACE_HitActor:
+        if(results.HitType == TRACE_HitActor)
+		{
+		  if(results.HitActor is "Inventory" || results.HitActor is "NoteItem" || results.HitActor is "Breakable")
+		    return TRACE_Stop;
+		}
+    }  
+    return TRACE_Skip;
+  }
+}
+
+class ScanTracer : LineTracer
+{
+    Actor master;
+    
+    override ETraceStatus TraceCallback()
+    {
+        switch (results.HitType)
+        {
+            case TRACE_HitWall:
+                if (!(results.hitLine.flags & Line.ML_BLOCKEVERYTHING) &&
+                    (results.hitLine.flags & Line.ML_TWOSIDED) &&
+                    results.tier == TIER_Middle)
+                {
+                    break;
+                }
+            case TRACE_HasHitSky:
+            case TRACE_HitFloor:
+            case TRACE_HitCeiling:
+                return TRACE_Stop;
+                break;
+            
+            case TRACE_HitActor:
+                if (results.hitActor != master &&
+                    (results.hitActor.bIsMonster || results.hitActor.Health > 0))
+                {
+                    return TRACE_Stop;
+                }
+                results.hitActor = null;
+                break;
+        }
+        
+        return TRACE_Skip;
+    }
+}
+
+Class Mutation : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 99;
+  }
+}
+
+Class BaseArmor : BasicArmorBonus
+{ 
+  Default
+  {
+	Armor.SaveAmount 1; //How much armor this gives
+    Armor.SavePercent 1; //How much damage it mitigates
+	Armor.MaxSaveAmount 10; //Max you can pick up
+	+INVENTORY.KEEPDEPLETED
+  }
+}
+
+Class DR1 : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	{
+	  DFPlayer(owner).armor_mult += 0.6;
+	  DFPlayer(owner).armorMax += 10;
+	  DFPlayer(owner).armorStack = DFPlayer(owner).armorMax;
+	  DFPlayer(owner).armor_str = String.Format("PT: %d | PR: %d", DFPlayer(owner).armor_flat, int(round(DFPlayer(owner).armor_mult * 100.0))) .. "%";
+	}
+	
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class DT1 : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	{
+	  DFPlayer(owner).armor_flat += 10;
+	  DFPlayer(owner).armorMax += 10;
+	  DFPlayer(owner).armorStack = DFPlayer(owner).armorMax;
+	  DFPlayer(owner).armor_str = String.Format("PT: %d | PR: %d", DFPlayer(owner).armor_flat, int(round(DFPlayer(owner).armor_mult * 100.0))) .. "%";
+	}
+	
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class DT2 : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	{
+	  DFPlayer(owner).armor_flat += 5;
+	  DFPlayer(owner).armor_mult += 0.15;
+	  DFPlayer(owner).armor_str = String.Format("PT: %d | PR: %d", DFPlayer(owner).armor_flat, int(round(DFPlayer(owner).armor_mult * 100.0))) .. "%";
+	}
+	
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+
+Class ER1 : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	{
+	  DFPlayer(owner).armor_entropy += 0.5;
+	  DFPlayer(owner).armorEntropy_str = "ER: 50%";
+	  if(DFPlayer(owner).armorMax > 0)
+	  {
+	    DFPlayer(owner).armorMax -= 3;
+	    DFPlayer(owner).armorStack = DFPlayer(owner).armorMax;
+	  }
+	}
+	
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class Stamina : Inventory
+{
+  Default
+  {
+    Inventory.MaxAmount 300;
+	-INVENTORY.INVBAR
+	+INVENTORY.KEEPDEPLETED
+  }
+}
+
+Class ExaltXP : PuzzleItem
+{
+  Default
+  {
+    Inventory.Amount 1;
+    Inventory.Maxamount 1000000;
+    Inventory.InterHubAmount 1000000;
+    -INVENTORY.INVBAR
+  }
+}
+
+Class PSI : Inventory
+{
+  Default
+  {
+    Inventory.Maxamount 15;
+	-INVENTORY.INVBAR
+	+INVENTORY.KEEPDEPLETED
+  }
+}
+
+Class Attunement_Check : Inventory
+{
+  Default
+  {
+	-INVENTORY.INVBAR
+	+INVENTORY.KEEPDEPLETED
+  }
+}
+
+Class RadOverload : Inventory
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+	if(ev)
+	  ev.SetImageGlitcher(true);
+	  
+	if(owner)
+	{
+	  owner.A_QuakeEx(5, 5, 6, 14, 0, 128, "dsempty");
+	  let msg = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  if(msg)
+	    msg.UpdateChat(String.Format("· %s \cJsuffers \cRDamage (50)\cJ from \cFRadiation Overload\cJ.", owner.GetTag()));
+	}
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(owner && GetAge() == 3)
+	{
+	  owner.A_StartSound("Overload", CHAN_AUTO);
+	  if(owner.health == 1 || owner.health > 50)
+	    owner.A_DamageSelf(50, "Drowning", DMSS_NOPROTECT|DMSS_NOFACTOR);
+	  else
+	    owner.A_DamageSelf(owner.health - 1, "Drowning", DMSS_NOPROTECT|DMSS_NOFACTOR);
+	}
+	if(GetAge() == 35)
+	{
+	  let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+	  if(ev)
+	    ev.SetImageGlitcher(false);
+		
+	  Destroy();
+	}
+  }
+  Default
+  {
+    Inventory.Amount 1;
+    Inventory.Maxamount 1;
+  }
+}
+
+Class HeadSpin : Inventory
+{
+  double amt;
+  
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	  owner.angle += 0.3;
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+    Inventory.Maxamount 1;
+  }
+}
+
+Class HeadTilt : Inventory
+{
+  double amt;
+  
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	{
+	  if(owner.pitch > -90.0)
+	    owner.pitch -= 0.5;
+	}
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+    Inventory.Maxamount 1;
+  }
+}
+
+Class HeadRoll : Inventory
+{
+  double amt;
+  
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	{
+	  if(owner.roll > 0.0)
+	    owner.roll -= amt;
+	  else if(owner.roll < 0.0)
+	    owner.roll += amt;
+	  else if(owner.roll == 0.0)
+	  {
+	    owner.roll = 0.0;
+		Destroy();
+	  }
+	}
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+    Inventory.Maxamount 1;
+  }
+}
+
+Class TripRoll : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	  owner.roll += 0.1;
+  }
+  
+  override void DetachFromOwner()
+  {
+   if(owner)
+	  owner.roll = 0.0;
+	
+	Super.DetachFromOwner();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+    Inventory.Maxamount 1;
+  }
+}
+
+Class TripRollAim : Inventory
+{
+  double wSpin;
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(wSpin >= 360)
+	  wSpin = 0;
+	else
+	  wSpin += 3.00;
+	  
+	if(owner)	
+	{
+	  owner.A_SetAngle(owner.angle - (0.25 * cos(wSpin)), SPF_INTERPOLATE);
+	  owner.A_SetPitch(owner.pitch + (0.25 * sin(wSpin)), SPF_INTERPOLATE);
+	}
+  }
+  Default
+  {
+    Inventory.Amount 1;
+    Inventory.Maxamount 1;
+  }
+}
+
+Class MushroomCheck : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +Inventory.UNCLEARABLE;
+    +Inventory.UNDROPPABLE
+	+Inventory.QUIET
+  }
+}
+
+Class ChickenCheck : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +Inventory.UNCLEARABLE;
+    +Inventory.UNDROPPABLE
+	+Inventory.QUIET
+  }
+}
+
+Class MailboxToken : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 9;
+  }
+}
+
+Class HackToken : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 9;
+  }
+}
+
+Class MushroomHigh : CustomInventory
+{
+  States
+  {
+    Pickup:
+	  TNT1 A 0
+	  {
+	    let cp = Players[consoleplayer].mo;
+	    if(cp)
+		  DFPlayer(cp).SetDrunk(0.1, 0.0, 8);
+	  }
+	  Stop;
+  }
+}
+
+Class QuestChicken : CustomInventory
+{
+  int user_script;
+  
+  override bool CanPickup(Actor user)
+  {
+    if(user && user is "DFPlayer")
+	  DFPlayer(user).ExecuteScript(user_script, 0, 0, 0);
+	  
+	return true;
+  }
+ 
+  Default
+  {
+    Tag "\cFChicken";
+	Health 5;
+	Radius 13;
+	Height 54;
+	Inventory.PickupMessage "";
+	Inventory.PickupSound "";
+	+FORCEXYBILLBOARD
+	+NOGRAVITY
+	+SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  HGMT B -1;
+	  Stop;
+	Death:
+	  TNT1 A 0 A_StartSound("BODSPLT1");
+	  Stop;
+  }
+}
+
+Class Stat_SightCheck : SwitchableDecoration
+{
+  int user_witCheck, user_distance;
+  string user_message;
+  
+  Default
+  {
+    //$Sprite ICONA0
+    Radius 1;
+    Height 1;
+	Scale 0.1;
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A -1;
+	  Stop;
+	Inactive:
+	  TNT1 A -1;
+	  Stop;
+	Active:
+	  TNT1 A 4
+	  {
+		if(Distance3D(players[consoleplayer].mo) <= user_distance)
+		  if(DFPlayer(players[consoleplayer].mo).Wit >= user_witCheck)
+		    return ResolveState("Success");
+			
+		return ResolveState(null);
+	  }
+	  Wait;
+	Success:
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("WitMarkDistance", flags: SXF_NOCHECKPOSITION, tid: tid);
+		players[consoleplayer].mo.A_StartSound("EyeSpot", CHAN_AUTO);
+		GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+		if(ev && players[consoleplayer].mo)
+		  ev.UpdateChat(String.Format("· \cF(Wits) %s \cJ%s", players[consoleplayer].mo.GetTag(), user_message));
+	  }
+	  Stop;
+  }
+}
+
+Class ItemSpotter : Stat_SightCheck
+{
+  string user_item;
+  States
+  {
+	Success:
+	  TNT1 A 1
+	  {
+	    A_StartSound("ItemSpot", CHAN_AUTO, volume: 0.7, attenuation: 0.7);
+	    let itm = Spawn(user_item, pos);
+		if(itm)
+		{
+		  itm.A_SetRenderStyle(0.0, STYLE_Translucent);
+		  itm.A_GiveInventory("AlphaReset", 1);
+		}
+		  
+		GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+		if(ev && players[consoleplayer].mo)
+		  ev.UpdateChat(String.Format("· \cF(Wits) %s \cJ%s", players[consoleplayer].mo.GetTag(), user_message));
+	  }
+	  Stop;
+  }
+}
+
+Class IsPlaying : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+    if(other is "DFPlayer")
+	  DFPlayer(other).isPlaying = true;
+	  
+	Destroy();
+  }
+}
+
+Class IsntPlaying : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+    if(other is "DFPlayer")
+	  DFPlayer(other).isPlaying = false;
+	  
+	Destroy();
+  }
+}
+
+Class ReviveToken : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+    players[consoleplayer].Resurrect();
+	Destroy();
+  }
+}
+
+Class GameOverToken : Inventory
+{
+  override void AttachToOwner(Actor user)
+  {
+    let p = DFPlayer(players[consoleplayer].mo);
+	if(p)
+      p.gov = true;
+	  
+    Super.AttachToOwner(user);
+  }
+  
+  override void DetachFromOwner()
+  {
+    let p = DFPlayer(players[consoleplayer].mo);
+	if(p)
+      p.gov = false;
+	  
+    Super.DetachFromOwner();
+  }
+}
+
+Class PlayerDthDecoy : DF_Monster
+{
+  override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+  {
+	if(players[consoleplayer].mo)
+	{
+	  players[consoleplayer].mo.A_QuakeEx(0.5, 0.5, 0.5, 10, 0, 100, "dsempty", QF_SCALEDOWN);
+	  players[consoleplayer].mo.A_SetBlend("Red", 0.5, 17);
+	}	
+	return super.DamageMobj(inflictor, source, damage, mod, flags, angle);
+  }
+  
+  override void Die(Actor source, Actor inflictor, int dmgFlags, Name MeansOfDeath)
+  {
+    super.Die(source, inflictor, dmgFlags, MeansOfDeath);
+	
+	if(players[consoleplayer].mo)
+    {
+	  players[consoleplayer].mo.A_QuakeEx(5, 5, 8, 24, 0, 100, "dsempty", QF_SCALEDOWN);
+	  players[consoleplayer].mo.A_SetBlend("Red", 0.8, 35);
+	}
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(players[consoleplayer].mo)
+	  SetOrigin(players[consoleplayer].mo.pos, false);
+  }
+  
+  Default
+  {
+    Health 125;
+    Radius 20;
+	Height 40;
+	+DONTTHRUST
+	+FRIENDLY
+	Monster;
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A -1;
+	  Stop;
+	Death:
+	  TNT1 A 1 A_StartSound("BODSPLT3", CHAN_AUTO);
+	  TNT1 A 0 
+	  {
+	    A_FaceMovementDirection();
+		A_SpawnItemEx("MeatChunk1", random(-20,20), random(-20,20), random(90,98), random(5,6), zvel: random(14,16), angle: random(0,359));
+	  }
+	  TNT1 A 1 A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88));
+	  TNT1 A 1 A_SpawnItemEx("MeatChunk2", random(-20,20), random(-20,20), random(90,98), random(4,6), zvel: random(14,16), angle: random(0,359));
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk3", random(-20,20), random(-20,20), random(90,98), random(5,6), zvel: random(14,16), angle: random(0,359));
+	    A_SpawnItemEx("SkullFrag1", random(-20,20), random(-20,20), random(88,96), random(5,6), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk4", random(-20,20), random(-20,20), random(90,98), random(5,6), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-20,20), random(76,80), random(6,7), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-20,20), random(76,80), random(6,7), zvel: random(10,14), angle: random(0,359));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk5", random(-20,20), random(-20,20), random(90,98), random(5,6), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(3,6), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(3,6), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("P_GutSpawn", zofs: 44, flags: SXF_SETMASTER);
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItemEx("BigBone1", random(-8,8), random(-16,16), random(8,92), random(3,6), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(3,6), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("Bone2", random(-24,24), random(-20,20), random(8,92), random(3,6), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(3,6), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk6", random(-20,20), random(-20,20), random(90,99), random(5,6), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(3,6), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItem("Blood", 0, 92);
+		A_SpawnItemEx("Bone1", random(-20,20), random(-20,20), random(32,96), random(3,6), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(32,96), random(3,6), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(3,6), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0 A_SpawnItemEx("MeatChunk7", random(-20,20), random(-20,20), random(90,98), random(3,6), zvel: random(14,16), angle: random(0,359));
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("BigBone1", random(-20,20), random(-20,20), random(8,96), random(3,6), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(3,6), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(3,6), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(3,6), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("BigBone1", random(-8,8), random(-16,16), random(32,92), random(3,6), frandom(-2.0,2.0), frandom(6,8));
+	  }
+	  TNT1 A -1;
+	  Stop;
+  }
+}

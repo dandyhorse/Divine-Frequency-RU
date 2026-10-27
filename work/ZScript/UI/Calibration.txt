@@ -1,0 +1,530 @@
+class CalibrationHandler : EventHandler
+{
+  int tic;
+  bool active;
+
+  static void Run()
+  {
+    let ev = CalibrationHandler(EventHandler.Find("CalibrationHandler"));
+	if(ev)
+	{
+	  ev.tic = 0;
+	  ev.active = true;
+	  Menu.SetMenu("CalibrationMenu");
+	}
+  }
+  
+  static void RunVHSOption()
+  {
+    let ev = CalibrationHandler(EventHandler.Find("CalibrationHandler"));
+	if(ev)
+	  Menu.SetMenu("VHSOptionMenu");
+  }
+  
+  static void RunScaleOption()
+  {
+    let ev = CalibrationHandler(EventHandler.Find("CalibrationHandler"));
+	if(ev)
+	  Menu.SetMenu("UIScaleOptionMenu");
+  }
+  
+  override void WorldTick()
+  {
+    if(!active)
+	  return;
+	  
+	Super.WorldTick();
+	
+	if(tic == 1)
+	  EventHandler.SendNetworkEvent("CalibrationExit");
+	else if(tic == 2)
+	{
+	  tic = 0;
+	  active = false;
+	}
+	
+	tic++;
+  }
+  
+  override void NetworkProcess(ConsoleEvent e)
+  {
+    if(e.Name == "CalibrationExit")
+    {
+	  active = false;
+	  
+      let saveConfig = CVar.FindCvar("calibrate");
+	  if(saveConfig)
+	    saveConfig.SetBool(true);
+		
+	  let pmo = players[consoleplayer].mo;
+	  if(pmo)
+	    pmo.ACS_NamedExecute("Calibration_Done", 0);
+	}
+	else if(e.Name == "VHSOptionExit")
+    {
+	  let pmo = players[consoleplayer].mo;
+	  if(pmo)
+	    pmo.ACS_NamedExecute("VHSOption_Done", 0);
+	}
+	else if(e.Name == "ScaleOptionExit")
+    {
+	  let pmo = players[consoleplayer].mo;
+	  if(pmo)
+	    pmo.ACS_NamedExecute("ScaleOption_Done", 0);
+	}
+  }
+  
+  override void RenderOverlay(RenderEvent e)
+  {
+    if(active)
+	{
+	  if(tic >= 1)
+	    Screen.Dim(Color(0,0,0), 1.0, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+	}
+  }
+}
+
+Class CalibrationMenu : UIGenericMenu
+{
+  CalibrationMenuHandler handler;
+  UILabel slideVal, slideTitle;
+  UISlider slide;
+  double brightVal;
+  Font fnt;
+  
+  override void Init(Menu parent)
+  {
+    Super.Init(parent);
+	
+	DontDim = true;
+	DontBlur = true;
+	fnt = Font.GetFont("RU_DF_FONT");
+	handler = new("CalibrationMenuHandler");
+    handler.menu = self;
+	SetBaseResolution((720, 400));
+
+	let curBrightness = CVar.FindCVar("vid_whitepoint");
+	if(curBrightness)
+	  brightVal = curBrightness.GetFloat();
+	  
+	UIBoxTextures handl = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/GunUpgrade/Upgrade02.png", false);
+	UIBoxTextures handlHover = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/GunUpgrade/Upgrade01.png", false);
+	UIBoxTextures handlBG = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Slider", false);
+	
+	UILabel cType1 = new("UILabel").Create((0, 200), (250, 138), text: "Dark", fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.6);
+	cType1.Pack(mainframe);
+	UILabel cType3 = new("UILabel").Create((470, 200), (250, 138), text: "Bright", fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.6);
+	cType3.Pack(mainframe);
+	UILabel cType2 = new("UILabel").Create((235, 210), (250, 138), text: "Neutral", fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.6);
+	cType2.Pack(mainframe);
+	
+	UIImage cImage1 = New("UIIMage").Create((0, 110), (250, 138), "Calibrt1", UIImage.AlignType_TopLeft, (0.5, 0.5));
+	cImage1.Pack(mainframe);
+	UIImage cImage3 = New("UIIMage").Create((470, 110), (250, 138), "Calibrt3", UIImage.AlignType_TopLeft, (0.5, 0.5));
+	cImage3.Pack(mainframe);
+	UIImage cImage2 = New("UIIMage").Create((235, 120), (250, 138), "Calibrt2", UIImage.AlignType_TopLeft, (0.5, 0.5));
+	cImage2.Pack(mainframe);
+	
+	slideTitle = new("UILabel").Create
+	(
+	  (240, 12),
+	  (280, 16),
+	  text: "Adjust the slider until the image on the left is visible, but not so bright that the image on the right will burn your retina.",
+	  fnt: fnt,
+	  alignment: UILabel.AlignType_TopCenter,
+	  wrap: true,
+	  autoSize: true,
+	  textScale: 0.45
+	);
+	slideTitle.Pack(mainframe); 
+	
+	let defTitle = new("UILabel").Create
+	(
+	  (230, 68),
+	  (280, 16),
+	  text: "(Default value: 0.00)",
+	  fnt: fnt,
+	  alignment: UILabel.AlignType_TopCenter,
+	  wrap: true,
+	  autoSize: true,
+	  textScale: 0.45
+	);
+	defTitle.Pack(mainframe); 
+	
+	slide = UISlider(new("UISlider")).Create(
+	(260, 45), (200, 8),
+	-1.0, 1.0, brightVal, 0.00001, 4,
+	handl, handlHover, null, handlBG);
+	slide.Pack(mainframe);
+	
+	slideVal = new("UILabel").Create
+	(
+	  (465, 42),
+	  (240, 16),
+	  text: String.Format("%.2f", brightVal),
+	  fnt: fnt,
+	  alignment: UILabel.AlignType_Left,
+	  wrap: true,
+	  autoSize: true,
+	  textScale: 0.45
+	);
+	slideVal.Pack(mainframe);
+	
+	let inactiveTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/NoteHeader.png", false);
+	let hoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/NoteHeaderActive.png", false);
+	let btnNote = UIButton(new("UIButton")).Create((540, 360), (96, 18), " Confirm", handler, "Close",
+	inactive : inactiveTexture,
+	hover: hoverTexture,
+	click: inactiveTexture,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_CenterLeft
+	);
+	btnNote.pack(mainframe);
+  }
+  
+  override void Drawer()
+  {
+    Screen.Dim(Color(0,0,0), 1.0, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+    Super.Drawer();
+  }
+
+  override void Ticker()
+  {
+	Super.Ticker();
+	
+	if(slide)
+	{
+	  let curBrightness = CVar.FindCVar("vid_whitepoint");
+	  if(curBrightness)
+	  {
+	    curBrightness.SetFloat(slide.getValue());
+		brightVal = slide.getValue();
+	  }
+	}
+	
+	if(slideVal)
+	  slideVal.setText(String.Format("%.2f", brightVal));
+  }
+}
+
+Class CalibrationMenuHandler : UIHandler
+{
+  String commandList;
+  CalibrationMenu menu;
+
+  override void ButtonClickCommand(UIButton caller, Name command)
+  {
+	Array<String> cmd;
+	cmd.Clear();
+	commandList = command;
+	commandList.Split(cmd, ":");
+	
+	if(cmd[0] ~== "Close")
+	  Menu.Close();
+  }
+}
+
+Class VHSOptionMenu : UIGenericMenu
+{
+  VHSOptionMenuHandler handler;
+  UILabel vhs_option_text, vhs_tear_text;
+  static const string vhs_options[] = { "Off", "Minimal", "Default", "Can't See Sh!t" };
+  static const string vhs_tearing[] = { "Off", "On"};
+  int vhs_option_index;
+  bool vhs_tear_value, update_option;
+  Font fnt;
+  
+  override void Init(Menu parent)
+  {
+    Super.Init(parent);
+	
+	menuactive = Menu.OnNoPause;
+	DontDim = true;
+	DontBlur = true;
+	fnt = Font.GetFont("RU_DF_FONT");
+	handler = new("VHSOptionMenuHandler");
+    handler.menu = self;
+	SetBaseResolution((720, 400));
+	
+	//Draw current VHS intensity values
+	UIImage vo_bg = New("UIIMage").Create((310, 259), (100, 20), "Graphics/Codex/NoteHeader.png", UIImage.AlignType_Center);
+	vo_bg.Pack(mainframe);
+	
+	vhs_option_index = CVar.FindCVar("vhs_strength").GetInt();
+	
+	UILabel vhs_option_header = new("UILabel").Create((260, 180), (200, 138), text: "\cF-VHS Shader Intensity-", fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.56);
+	vhs_option_header.Pack(mainframe);
+	
+	vhs_option_text = new("UILabel").Create((310, 200), (100, 138), text: vhs_options[vhs_option_index], fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.6);
+	vhs_option_text.Pack(mainframe);
+	
+	//Draw current VHS tearing option
+	UIImage vt_bg = New("UIIMage").Create((310, 319), (100, 20), "Graphics/Codex/NoteHeader.png", UIImage.AlignType_Center);
+	vt_bg.Pack(mainframe);
+	
+	vhs_tear_value = CVar.FindCVar("vhs_scroll").GetBool();
+	
+	UILabel vhs_tear_header = new("UILabel").Create((260, 240), (200, 138), text: "\cF-VHS Shader Tearing FX-", fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.56);
+	vhs_tear_header.Pack(mainframe);
+	
+	vhs_tear_text = new("UILabel").Create((310, 260), (100, 138), text: vhs_tearing[vhs_tear_value], fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.6);
+	vhs_tear_text.Pack(mainframe);
+	
+	//Draw adjustment button
+	let arrowLeftTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/ArrowLeft_Default.png", true);
+	let arrowLeftHoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/ArrowLeft_Hover.png", true);
+	let arrowRightTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/ArrowRight_Default.png", true);
+	let arrowRightHoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/ArrowRight_Hover.png", true);
+	
+	let btn_vo_left = UIButton(new("UIButton")).Create((291, 262), (16, 14), "", handler, "PrevVHSOption",
+	inactive : arrowLeftTexture,
+	hover: arrowLeftHoverTexture,
+	click: arrowLeftTexture,
+	fnt: fnt,
+	alignment: UIButton.AlignType_Center);
+	btn_vo_left.pack(mainframe);
+	
+	let btn_vo_right = UIButton(new("UIButton")).Create((413, 262), (16, 14), "", handler, "NextVHSOption",
+	inactive : arrowRightTexture,
+	hover: arrowRightHoverTexture,
+	click: arrowRightTexture,
+	fnt: fnt,
+	alignment: UIButton.AlignType_Center);
+	btn_vo_right.pack(mainframe);
+	
+	let btn_vt_left = UIButton(new("UIButton")).Create((291, 322), (16, 14), "", handler, "NextTearOption",
+	inactive : arrowLeftTexture,
+	hover: arrowLeftHoverTexture,
+	click: arrowLeftTexture,
+	fnt: fnt,
+	alignment: UIButton.AlignType_Center);
+	btn_vt_left.pack(mainframe);
+	
+	let btn_vt_right = UIButton(new("UIButton")).Create((413, 322), (16, 14), "", handler, "NextTearOption",
+	inactive : arrowRightTexture,
+	hover: arrowRightHoverTexture,
+	click: arrowRightTexture,
+	fnt: fnt,
+	alignment: UIButton.AlignType_Center);
+	btn_vt_right.pack(mainframe);
+	
+	//Draw confirmation button
+	let inactiveTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/NoteHeader.png", false);
+	let hoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/NoteHeaderActive.png", false);
+	let btnNote = UIButton(new("UIButton")).Create((540, 360), (96, 18), " Confirm", handler, "Close",
+	inactive : inactiveTexture,
+	hover: hoverTexture,
+	click: inactiveTexture,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_CenterLeft
+	);
+	btnNote.pack(mainframe);
+  }
+  
+  override void handleback()
+  {
+    EventHandler.SendNetworkEvent("VHSOptionExit");
+	
+	Super.HandleBack();
+  }
+
+  override void Ticker()
+  {
+	Super.Ticker();
+	
+	if(update_option)
+	{
+	  let vt_cv = CVar.FindCVar("vhs_scroll");
+	  if(vt_cv)
+	    vt_cv.SetBool(vhs_tear_value);
+		
+	  let vo_cv = CVar.FindCVar("vhs_strength");
+	  if(vo_cv)
+	    vo_cv.SetInt(vhs_option_index);
+		
+	  update_option = false;
+	  MenuSound("M_Click2");
+	}
+  }
+}
+
+Class VHSOptionMenuHandler : UIHandler
+{
+  String commandList;
+  VHSOptionMenu menu;
+
+  override void ButtonClickCommand(UIButton caller, Name command)
+  {
+	Array<String> cmd;
+	cmd.Clear();
+	commandList = command;
+	commandList.Split(cmd, ":");
+
+	if(cmd[0] ~== "PrevVHSOption")
+	{
+	  menu.vhs_option_index--;
+	  if(menu.vhs_option_index < 0)
+	    menu.vhs_option_index = 3;
+		
+	  menu.vhs_option_text.setText(menu.vhs_options[menu.vhs_option_index]);
+	  menu.update_option = true;
+	}
+	else if(cmd[0] ~== "NextVHSOption")
+	{
+	  menu.vhs_option_index++;
+	  if(menu.vhs_option_index > 3)
+	    menu.vhs_option_index = 0;
+		
+	  menu.vhs_option_text.setText(menu.vhs_options[menu.vhs_option_index]);
+	  menu.update_option = true;
+	}
+	else if(cmd[0] ~== "NextTearOption")
+	{
+	  if(menu.vhs_tear_value)
+	    menu.vhs_tear_value = false;
+	  else
+	    menu.vhs_tear_value = true;
+	  
+	  menu.vhs_tear_text.setText(menu.vhs_tearing[menu.vhs_tear_value]);
+	  menu.update_option = true;
+	}
+	else if(cmd[0] ~== "Close")
+	{
+	  EventHandler.SendNetworkEvent("VHSOptionExit");
+	  Menu.Close();
+	}
+  }
+}
+
+Class UIScaleOptionMenu : UIGenericMenu
+{
+  UIScaleOptionMenuHandler handler;
+  Font fnt;
+  UILabel scale_text;
+  double scale_value;
+  
+  override void Init(Menu parent)
+  {
+    Super.Init(parent);
+	
+	menuactive = Menu.OnNoPause;
+	DontDim = true;
+	DontBlur = true;
+	fnt = Font.GetFont("RU_DF_FONT");
+	handler = new("UIScaleOptionMenuHandler");
+    handler.menu = self;
+	SetBaseResolution((720, 400));
+	
+	//Get the current value
+	scale_value = CVar.FindCVar("vid_scalefactor").GetFloat();
+	
+	//Draw the graphic
+	UIImage vt_bg = New("UIIMage").Create((310, 319), (100, 20), "Graphics/Codex/NoteHeader.png", UIImage.AlignType_Center);
+	vt_bg.Pack(mainframe);
+	
+	//Draw the text header
+	UILabel scale_header = new("UILabel").Create((260, 240), (200, 138), text: "\cF-HUD Scaling-", fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.56);
+	scale_header.Pack(mainframe);
+	
+	scale_text = new("UILabel").Create((310, 260), (100, 138), text: String.Format("%.1f", scale_value), fnt: fnt,
+	alignment: UILabel.AlignType_Center, wrap: false, autoSize: false, textScale: 0.6);
+	scale_text.Pack(mainframe);
+	
+	//Draw adjustment button
+	let arrowLeftTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/ArrowLeft_Default.png", true);
+	let arrowLeftHoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/ArrowLeft_Hover.png", true);
+	let arrowRightTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/ArrowRight_Default.png", true);
+	let arrowRightHoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/ArrowRight_Hover.png", true);
+	
+	let btn_left = UIButton(new("UIButton")).Create((291, 322), (16, 14), "", handler, "ScaleUp",
+	inactive : arrowLeftTexture,
+	hover: arrowLeftHoverTexture,
+	click: arrowLeftTexture,
+	fnt: fnt,
+	alignment: UIButton.AlignType_Center);
+	btn_left.pack(mainframe);
+	
+	let btn_right = UIButton(new("UIButton")).Create((413, 322), (16, 14), "", handler, "ScaleDown",
+	inactive : arrowRightTexture,
+	hover: arrowRightHoverTexture,
+	click: arrowRightTexture,
+	fnt: fnt,
+	alignment: UIButton.AlignType_Center);
+	btn_right.pack(mainframe);
+	
+	//Draw confirmation button
+	let inactiveTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/NoteHeader.png", false);
+	let hoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/NoteHeaderActive.png", false);
+	let btnNote = UIButton(new("UIButton")).Create((410, 360), (96, 18), " Confirm", handler, "Close",
+	inactive : inactiveTexture,
+	hover: hoverTexture,
+	click: inactiveTexture,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_Center
+	);
+	btnNote.pack(mainframe);
+  }
+  
+  override void handleback()
+  {
+    EventHandler.SendNetworkEvent("VHSOptionExit");
+	
+	Super.HandleBack();
+  }
+}
+
+Class UIScaleOptionMenuHandler : UIHandler
+{
+  String commandList;
+  UIScaleOptionMenu menu;
+  
+  void UpdateMenu()
+  {
+    let cv = CVar.FindCVar("vid_scalefactor");
+	if(cv)
+	  cv.SetFloat(menu.scale_value);
+		
+    Menu.MenuSound("M_Click2");
+	Menu.scale_text.setText(String.Format("%.1f", menu.scale_value));
+  }
+
+  override void ButtonClickCommand(UIButton caller, Name command)
+  {
+	Array<String> cmd;
+	cmd.Clear();
+	commandList = command;
+	commandList.Split(cmd, ":");
+	if(cmd[0] ~== "ScaleUp")
+	{
+	  menu.scale_value -= 0.1;
+	  if(menu.scale_value < 0.3)
+	    menu.scale_value = 1.4;
+		
+	  UpdateMenu();
+	}
+	else if(cmd[0] ~== "ScaleDown")
+	{
+	  menu.scale_value += 0.1;
+	  if(menu.scale_value > 1.4)
+	    menu.scale_value = 0.3;
+		
+	  UpdateMenu();
+	}
+	else if(cmd[0] ~== "Close")
+	{
+	  EventHandler.SendNetworkEvent("ScaleOptionExit");
+	  Menu.Close();
+	}
+  }
+}

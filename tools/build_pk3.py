@@ -15,6 +15,13 @@ FONT_TARGETS = (
     ("Fonts/smallfont", "Fonts/smallfont", "ACS_FONT"),
 )
 
+GENERATED_FONTS = (
+    "RU_DF_FONT",
+    "RU_ChatBoxFont",
+    "RU_CONVO_FONT",
+    "RU_npcfont",
+)
+
 
 def add_file(entries, name, path):
     with open(path, "rb") as f:
@@ -52,7 +59,18 @@ def main():
                 if os.path.isfile(path):
                     entries[target + "/" + name] = open(path, "rb").read()
 
-    for name in ("Language.RU", "MapInfo"):
+    for font_name in GENERATED_FONTS:
+        gen_dir = os.path.join(args.work, "Fonts", font_name)
+        if not os.path.isdir(gen_dir):
+            continue
+        for name in sorted(os.listdir(gen_dir)):
+            path = os.path.join(gen_dir, name)
+            if os.path.isfile(path):
+                entries["Fonts/" + font_name + "/" + name] = open(path, "rb").read()
+
+    for name in sorted(os.listdir(args.work)):
+        if name != "MapInfo" and not name.startswith("Language."):
+            continue
         path = os.path.join(args.work, name)
         if os.path.isfile(path):
             add_file(entries, name, path)
