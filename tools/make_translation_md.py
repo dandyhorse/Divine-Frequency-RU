@@ -294,6 +294,22 @@ for file, desc in npc_files:
     ru = lang_values(os.path.join(ROOT, "work", file))
     npc_rows.append((file, f"{len(ru)}/{len(en)}", desc))
 
+content_files = [
+    ("Language.Items.txt", "Предметы, расходники, ключи"),
+    ("Language.Upgrade.txt", "Улучшения, мутации, способности"),
+    ("Language.Tutorial", "Подсказки и советы"),
+    ("Language.Objective", "Цели"),
+    ("Language.Bestiary.txt", "Бестиарий"),
+    ("Language.Note.txt", "Заметки и записи"),
+    ("Language.Artistical", "Лор и вступление"),
+    ("Language.Map", "Карта: ещё не переведена"),
+]
+content_rows = []
+for file, desc in content_files:
+    en = lang_values(os.path.join(ROOT, "source", file))
+    ru = lang_values(os.path.join(ROOT, "work", file)) if os.path.isfile(os.path.join(ROOT, "work", file)) else {}
+    content_rows.append((file, f"{len(ru)}/{len(en)}", desc))
+
 ru_menus = [
     ("DFDisplayOptions (protected)", "RU_DFDisplayOptions", "TabTest → Графика"),
     ("DFKeyBinds (protected)", "RU_DFKeyBinds", "TabTest → Управление"),
@@ -474,6 +490,12 @@ lines.append("")
 lines.append("Шрифт имён — `RU_npcfont`, реплики — `dialoguefont` (кириллица уже была в оригинале), ответы — `RU_CONVO_FONT`.")
 lines.append("")
 lines.append("Имена и короткие реплики, зашитые прямо в карты (`World's Anchor`, `TERMINAL`, `Door` и т. п.), переводятся в `ConversationMenuBase.TranslateInline`; в таблицу `Language.*` они не входят. В `Language.NPCPrism`, `Language.NPCAstronaut` и части `Language.NPCADB` оригинал намеренно искажён/зашифрован — переведены читаемые имена, выборы и реплики, остальное оставлено как в оригинале.")
+lines.append("")
+lines.append("## 22. Предметы, улучшения, кодекс, заметки")
+lines.append("")
+lines.append(table(["Файл", "Ключей переведено", "Что охвачено"], content_rows))
+lines.append("")
+lines.append("`Language.Map` (около 320 ключей) пока не переведён; ACS-скрипты карт — следующий блок.")
 
 with open(OUT, "w", encoding="utf-8", newline="\n") as f:
     f.write("\n".join(lines))
