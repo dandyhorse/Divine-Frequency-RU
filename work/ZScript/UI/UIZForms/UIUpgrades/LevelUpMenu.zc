@@ -341,7 +341,7 @@ class LevelUpMenu : UIGenericMenu
     UIBoxTextures ht = UIBoxTextures(new("UIBoxTextures")).createSingleTexture("Graphics/LUHover.png", false);
 	let btnIMG1 = UIImage(new("UIImage")).Create((9, 153), (234, 41), "Graphics/LevelButton.png");
 	let sText = UILabel(new("UILabel")).Create((4, 131), (241, 20),  //4,2
-	"ВТОРИЧНЫЕ АТРИБУТЫ", fnt: fnt, textscale: 0.7);
+	"ВТОРИЧНЫЕ ХАРАКТЕРИСТИКИ", fnt: fnt, textscale: 0.7);
 	sText.SetAlpha(0.5);
 	sText.Pack(UPGPanel);
 	btnIMG1.Pack(UPGPanel);

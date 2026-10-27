@@ -327,7 +327,7 @@ Class DFPlayer : DoomPlayer
     PhyHeal = 15;
 	phyMaxExp = 1000;
 	phyLevel = 1;
-	phyLevel_nfo = "Мутация ур.1";
+	phyLevel_nfo = "Мутация ур. 1";
 	armorMax = 0;
 	armor_str = String.Format("PT: %d | PR: %d", armor_flat, int(round(armor_mult * 100.0))) .. "%";
 	armorEntropy_str = "ER: 0%";
@@ -772,7 +772,7 @@ Class DFPlayer : DoomPlayer
     phyLevel++;
     phyExp -= phyMaxExp;
     phyMaxExp *= 1.15;
-	phyLevel_nfo = String.Format("Мутация ур.%d", phyLevel);
+	phyLevel_nfo = String.Format("Мутация ур. %d", phyLevel);
 	A_SetBlend("Orange", 0.5, 70);
 	let ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
 	if(ev)

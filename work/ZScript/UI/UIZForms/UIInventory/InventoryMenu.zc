@@ -44,12 +44,12 @@ class InventoryMenu : UIGenericMenu //Please don't ever copy this hacky mess lmf
 		conTitle = String.Format("Расходники и медикаменты (%d/%d)", DFPlayer(pmo).invCur, DFPlayer(pmo).invMax);
 
 		if(DFPlayer(pmo).tox > DFPlayer(pmo).toxMax * 0.8)
-		  condText.AppendFormat("Токсин (смертельный)\n\cR-Периодический урон\n-Нарушение движения\n-Нарушение прицеливания\n\n");
+		  condText.AppendFormat("Токсин (смертельный)\n\cR-Периодический урон\n-Затруднённое передвижение\n-Затруднённое прицеливание\n\n");
 		else if(DFPlayer(pmo).tox >= DFPlayer(pmo).toxMax * 0.5)
-		  condText.AppendFormat("Токсин (умеренный)\n\cR-Нарушение прицеливания\n\n");
+		  condText.AppendFormat("Токсин (умеренный)\n\cR-Затруднённое прицеливание\n\n");
 		
 		if(DFPlayer(pmo).rad > DFPlayer(pmo).radMax * 0.9)
-		  condText.AppendFormat("\cJРадиация (смертельная)\n\cR-Неминуемая перегрузка\n-Нарушение зрения\n\n");
+		  condText.AppendFormat("\cJРадиация (смертельная)\n\cR-Перегрузка близка\n-Нарушение зрения\n\n");
 		else if(DFPlayer(pmo).rad >= DFPlayer(pmo).radMax * 0.5)
 		  condText.AppendFormat("\cJРадиация (умеренная)\n\cR-Нарушение зрения\n\n");
 		  
@@ -647,7 +647,7 @@ class InventoryMenu : UIGenericMenu //Please don't ever copy this hacky mess lmf
 	  (
 		(0, 6),
 		(240, 16),
-		text: "Назначить на быстрое использование",
+		text: "Назначить для быстрого использования",
 		fnt: fnt,
 		alignment: UILabel.AlignType_Center,
 		wrap: false,
@@ -869,7 +869,7 @@ class InventoryMenu : UIGenericMenu //Please don't ever copy this hacky mess lmf
 	  {
 	    let inv = pmo.FindInventory("Trenchgun");
 		if(inv)
-		  rSG.setText(String.Format("Траншейка: %d", DF_Weapon(inv).wep_cond) .. "%  ");
+		  rSG.setText(String.Format("Траншейное ружьё: %d", DF_Weapon(inv).wep_cond) .. "%  ");
 		  
 	    rSG.setCommand("Repair:Trenchgun:" .. cmd);
 	  }
@@ -887,7 +887,7 @@ class InventoryMenu : UIGenericMenu //Please don't ever copy this hacky mess lmf
 	  {
 	    let inv = pmo.FindInventory("AR");
 		if(inv)
-		  rAR.setText(String.Format("Автомат: %d", DF_Weapon(inv).wep_cond) .. "%  ");
+		  rAR.setText(String.Format("Штурмовая винтовка: %d", DF_Weapon(inv).wep_cond) .. "%  ");
 	    
 	    rAR.setCommand("Repair:AR:" .. cmd);
 	  }

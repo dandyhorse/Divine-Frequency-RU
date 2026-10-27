@@ -173,7 +173,7 @@ OptionMenu "DFKeyBinds" protected
 	
 	StaticText ""
 	StaticText "--ИНТЕРФЕЙС ИНВЕНТАРЯ--", "Gold"
-	Option "Раскладка взаимодействия",				"inv_clickSwap", "invClickSwap"
+	Option "Схема взаимодействия",				"inv_clickSwap", "invClickSwap"
 }
 
 OptionMenu "DFSoundOptions" protected
@@ -353,7 +353,7 @@ OptionValue "flashoption"
 	0, "Выкл."
     0.05, "Минимум"
     0.14, "По умолчанию"
-	0.75, "Вред глазам"
+	0.75, "Урон глазам"
 }
 
 OptionValue "painflashoption"
@@ -561,7 +561,7 @@ OptionMenu "RU_DFKeyBinds"
 	
 	StaticText ""
 	StaticText "--ИНТЕРФЕЙС ИНВЕНТАРЯ--", "Gold"
-	Option "Раскладка взаимодействия",				"inv_clickSwap", "invClickSwap"
+	Option "Схема взаимодействия",				"inv_clickSwap", "invClickSwap"
 }
 
 

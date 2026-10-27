@@ -174,15 +174,15 @@ UI_TRANSLATIONS = {
         r'"Attribute"': r'"Характеристики"',
         r'"Condition"': r'"Состояние"',
         r'"Current Objective"': r'"Текущая цель"',
-        r'"Assign to Quick Use"': r'"Назначить на быстрое использование"',
+        r'"Assign to Quick Use"': r'"Назначить для быстрого использования"',
         r'"LEVEL %d Avatar:\n%s\n\nStrength: %d\nWits: %d\nPhysique: %d\n\n    Exaltation: %d\n    Mutation: %d\n    Psi. Attunement: %d/%d"':
             r'"УРОВЕНЬ %d Аватар:\n%s\n\nСила: %d\nРазум: %d\nТелосложение: %d\n\n    Экзальтация: %d\n    Мутация: %d\n    Пси-настройка: %d/%d"',
         r'"Toxin (Lethal)\n\cR-Suffer Periodic Damage\n-Impaired Movement\n-Impaired Aim\n\n"':
-            r'"Токсин (смертельный)\n\cR-Периодический урон\n-Нарушение движения\n-Нарушение прицеливания\n\n"',
+            r'"Токсин (смертельный)\n\cR-Периодический урон\n-Затруднённое передвижение\n-Затруднённое прицеливание\n\n"',
         r'"Toxin (Moderate)\n\cR-Impaired Aim\n\n"':
-            r'"Токсин (умеренный)\n\cR-Нарушение прицеливания\n\n"',
+            r'"Токсин (умеренный)\n\cR-Затруднённое прицеливание\n\n"',
         r'"\cJRadiation (Lethal)\n\cR-Imminent Overload\n-Impaired Vision\n\n"':
-            r'"\cJРадиация (смертельная)\n\cR-Неминуемая перегрузка\n-Нарушение зрения\n\n"',
+            r'"\cJРадиация (смертельная)\n\cR-Перегрузка близка\n-Нарушение зрения\n\n"',
         r'"\cJRadiation (Moderate)\n\cR-Impaired Vision\n\n"':
             r'"\cJРадиация (умеренная)\n\cR-Нарушение зрения\n\n"',
         r'"\cD[Mouse1] \cJUse Item"': r'"\cD[ЛКМ] \cJИспользовать"',
@@ -193,9 +193,9 @@ UI_TRANSLATIONS = {
         r'"Drop Item"': r'"Выбросить"',
         r'"Keybind"': r'"Привязать"',
         r'"Handgun: %d"': r'"Пистолет: %d"',
-        r'"Trenchgun: %d"': r'"Траншейка: %d"',
+        r'"Trenchgun: %d"': r'"Траншейное ружьё: %d"',
         r'"Spray Can: %d"': r'"Баллончик: %d"',
-        r'"Assault Rifle: %d"': r'"Автомат: %d"',
+        r'"Assault Rifle: %d"': r'"Штурмовая винтовка: %d"',
     },
     "ZScript/UI/UIZForms/UICodex/Codex.txt": {
         r'"\cFEnhancements"': r'"\cFУлучшения"',
@@ -233,7 +233,7 @@ UI_TRANSLATIONS = {
         r'"Physique"': r'"Телосложение"',
         r'"Confirm"': r'"Подтвердить"',
         r'"Cancel"': r'"Отмена"',
-        r'"SECONDARY ATTRIBUTES"': r'"ВТОРИЧНЫЕ АТРИБУТЫ"',
+        r'"SECONDARY ATTRIBUTES"': r'"ВТОРИЧНЫЕ ХАРАКТЕРИСТИКИ"',
         r'"Exaltation"': r'"Экзальтация"',
         r'"Mutation"': r'"Мутация"',
         r'"Confirm Selection: \cF"': r'"Подтвердить выбор: \cF"',
@@ -243,14 +243,14 @@ UI_TRANSLATIONS = {
         r'"\cD[Esc] \cJLeave "': r'"\cD[Esc] \cJВыйти "',
     },
     "ZScript/UI/UIZForms/UIUpgrades/ShopMenu.zc": {
-        r'"Survival Response"': r'"Реакция выживания"',
+        r'"Survival Response"': r'"Реакция самосохранения"',
         r'"Third Mind"': r'"Третий разум"',
-        r'"Predatory Focus"': r'"Хищный фокус"',
+        r'"Predatory Focus"': r'"Сосредоточенность хищника"',
         r'"Even More Pockets!"': r'"Ещё больше карманов!"',
         r'"Reflect Damage"': r'"Отражение урона"',
         r'"Endless Hunger"': r'"Бесконечный голод"',
         r'"Organic Caltrops"': r'"Органические шипы"',
-        r'"Psychic Blast"': r'"Психический взрыв"',
+        r'"Psychic Blast"': r'"Псионический взрыв"',
         r'"Confirm"': r'"Подтвердить"',
         r'"Cancel"': r'"Отмена"',
         r'"Current Mutation Point: \cF%d"': r'"Текущие очки мутации: \cF%d"',
@@ -302,8 +302,8 @@ for rel in FONT_FILES:
 player = read("ZScript/Game/Player/Player.txt")
 player = replace_all(player, {
     r'title = "Hobo";': r'title = "Бродяга";',
-    r'phyLevel_nfo = "Mutation Lv.1";': r'phyLevel_nfo = "Мутация ур.1";',
-    r'phyLevel_nfo = String.Format("Mutation Lv.%d", phyLevel);': r'phyLevel_nfo = String.Format("Мутация ур.%d", phyLevel);',
+    r'phyLevel_nfo = "Mutation Lv.1";': r'phyLevel_nfo = "Мутация ур. 1";',
+    r'phyLevel_nfo = String.Format("Mutation Lv.%d", phyLevel);': r'phyLevel_nfo = String.Format("Мутация ур. %d", phyLevel);',
 })
 write("ZScript/Game/Player/Player.txt", player)
 
