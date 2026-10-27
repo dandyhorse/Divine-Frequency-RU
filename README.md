@@ -1,81 +1,83 @@
-# RU Divine Frequency
+<p align="center">
+  <img src="imgs/logo.png" alt="Divine Frequency — русский перевод" width="590">
+</p>
 
-Русский перевод **Divine Frequency** (UZDoom). Патч не изменяет файлы игры: перевод лежит во внешнем `DF_RU.pk3`.
+# Divine Frequency — русский перевод
 
-- Репозиторий: https://github.com/dandyhorse/Divine-Frequency-RU
-- Сборка: `dist/DF_RU.pk3`
-- Языковой пакет для ревью/правок: `dist/DF_RU_language_pack.zip`
-- Полные тексты на ревью: [review/DF_RU_text_review.md](review/DF_RU_text_review.md)
-- Таблица «что было → что стало»: [TRANSLATIONS.md](TRANSLATIONS.md)
-- Анализ и технические детали: [ANALYSIS.md](ANALYSIS.md)
+Полный русский перевод **Divine Frequency** для UZDoom: меню, интерфейс, HUD, инвентарь, кодекс, предметы, оружие, улучшения, диалоги, записки и шрифты.
+
+Оригинальные файлы игры не изменяются. Перевод подключается одним файлом и запускается обычным ярлыком или через Steam.
+
+**[Скачать DF_RU_Portable.zip](https://github.com/dandyhorse/Divine-Frequency-RU/releases/latest/download/DF_RU_Portable.zip)**
+
+## Скриншоты
+
+<p align="center">
+  <img src="imgs/image.png" alt="Главное меню" width="800">
+</p>
+
+<p align="center">
+  <img src="imgs/image1.png" alt="Интерфейс" width="800">
+</p>
+
+<p align="center">
+  <img src="imgs/image2.png" alt="Диалог" width="800">
+</p>
 
 ## Что переведено
 
-- Главное меню, сложность, настройки, загрузка/сохранение, выход.
-- Шрифты с кириллицей: `bigfont`, `BigUpper`, `ACS_FONT`, `smallfont`, а также UI-шрифты `RU_DF_FONT`, `RU_ChatBoxFont`, `RU_CONVO_FONT`, `RU_npcfont`.
-- HUD, инвентарь, кодекс, карта, типы предметов и улучшений.
-- `Language.Weapon`, `Language.Items`, `Language.Upgrade`, `Language.Tutorial`, `Language.Objective`, `Language.Bestiary`, `Language.Note`, `Language.Artistical`, `Language.Map` (читаемые тексты), NPC-диалоги и инлайн-имена/реплики из `DIALOGUE`.
+- Главное меню, выбор сложности, все настройки, загрузка и сохранение.
+- HUD, инвентарь, кодекс, карта, цели и обучающие подсказки.
+- Предметы, оружие, улучшения, бестиарий, записки и лор.
+- NPC-диалоги, имена персонажей и инлайн-реплики из карт.
+- Системные сообщения, режимы оружия, теги записок и финальные экраны.
+- Шрифты с кириллицей: меню, HUD/инвентарь, диалоги и золотой шрифт имён NPC.
 
-Остались только технические вещи: ACS-сообщения, скомпилированные в `BEHAVIOR` карт (`Key_Message`, `map_func`), и часть терминальных логов/шифров в `Language.Map`. Меню и остальной UI от этого не зависят.
+Озвучка остаётся английской. Часть служебных ACS-сообщений и технических терминальных логов может остаться на английском — на сюжет и интерфейс это не влияет.
 
-## Запуск
+## Установка
 
-```text
-test\run_test.cmd
-```
+1. Скачайте и распакуйте [DF_RU_Portable.zip](https://github.com/dandyhorse/Divine-Frequency-RU/releases/latest/download/DF_RU_Portable.zip) в любую папку.
+2. Запустите `install.cmd`.
+3. Если игра не найдена автоматически, укажите папку, где лежат `DivineFrequency.exe` и `DFSDSA.ipk3`.
+4. Запускайте игру обычным ярлыком или через Steam. Новый ярлык не нужен.
 
-Оригинал для сравнения:
-
-```text
-test\run_original.cmd
-```
-
-Скрипты используют отдельные копии конфига и не трогают основной `dfconfig.ini`.
-
-Вручную:
+Установщик копирует только один файл:
 
 ```text
-DivineFrequency.exe -file "C:\projects\RU_DivineFrequency\dist\DF_RU.pk3" -config "C:\projects\RU_DivineFrequency\test\dfconfig-test.ini"
+<папка игры>\skins\DF_RU.wad
 ```
 
-## Сборка
+Это PK3-архив с расширением `.wad`; UZDoom автоматически загружает `.wad` из папки `skins`. Конфиг игры не изменяется.
 
-Нужен Python 3 и Pillow:
+## Удаление
+
+Запустите `uninstall.cmd` или удалите вручную:
 
 ```text
-python -m pip install pillow
-python tools/extract_sources.py
-python tools/make_bigfont_cyr.py
-python tools/make_ui_fonts_cyr.py
-python tools/make_menudef.py
-python tools/make_mapinfo.py
-python tools/make_ui_overrides.py
-python tools/build_pk3.py
-python tools/make_translation_md.py
-python tools/make_review_md.py
+<папка игры>\skins\DF_RU.wad
 ```
 
-`extract_sources.py` извлекает текстовые исходники из `DFSDSA.ipk3` в `source/`. `make_ui_fonts_cyr.py` генерирует `RU_DF_FONT`, `RU_ChatBoxFont`, `RU_CONVO_FONT` и `RU_npcfont`. `make_review_md.py` собирает `review/DF_RU_text_review.md` с парами EN/RU для ревьюера.
+После удаления меню, шрифты и остальные файлы возвращаются к оригиналу.
 
 ## Сохранения
 
-Сейвы, созданные под RU-патчем, содержат в `info.json` русские названия карт и `Время:` в комментарии. Если открыть такой сейв в английской версии, в списке сохранений может появиться русский текст и fallback-шрифт. Для standalone-сборки планируется отдельная папка сейвов через `-savedir`; это исключит смешивание RU и оригинальных сохранений. Подробнее — в разделе Releases/README standalone-пакета.
+Перевод запускается обычным ярлыком и использует общую папку сохранений игры. В информации о сохранении могут быть русские названия карт и «Время:». Если открыть такой сейв в английской версии, в списке может остаться русский текст — на загрузку это не влияет.
 
-## Структура
+Отдельная папка `SavesRU` не создаётся.
 
-```text
-ANALYSIS.md          анализ игры
-TRANSLATIONS.md      таблица переводов
-AGENTS.md            правила и текущее состояние для агентов
-README.md            этот файл
-review/              полные тексты EN/RU для ревью
-source/              извлечённые исходники игры
-work/                исходники перевода
-dist/                собранные PK3/пакеты
-tools/               извлечение, шрифты, меню, сборка, отчёты
-test/                конфиги, запуск, ярлыки, скриншоты
-```
+## Обратная связь
 
-## Лицензии и правовой статус
+Если нашли опечатку, неточность или проблему с вёрсткой — создайте issue:
 
-Движок UZDoom распространяется по GPL. Ассеты Divine Frequency принадлежат Abraxaes LLC. Перевод публикуется по согласованию с разработчиками; для распространения сторонних сборок игры нужна отдельная проверка прав. Шрифт Noto Sans используется по лицензии OFL, текст лицензии — в `source/fonts/OFL.txt`.
+[GitHub Issues](https://github.com/dandyhorse/Divine-Frequency-RU/issues)
+
+По возможности приложите скриншот и укажите, где встретилась ошибка.
+
+## Благодарности
+
+- Разработчикам Divine Frequency — за игру и разрешение на перевод.
+- Noto Sans — за основу кириллических глифов (SIL OFL).
+- Всем, кто тестировал сборку и присылал правки.
+
+Для игры нужна лицензионная копия. Перевод не содержит игру и её ассеты — это отдельный патч.

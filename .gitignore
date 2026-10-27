@@ -1,0 +1,14 @@
+# Development files; kept locally, not in the public patch repository.
+AGENTS.md
+ANALYSIS.md
+STEAM_GUIDE.md
+TRANSLATIONS.md
+docs/
+source/
+work/
+tools/
+test/
+review/
+dist/DF_RU.pk3
+dist/DF_RU_language_pack.zip
+dist/DF_RU_review_pack.zip
