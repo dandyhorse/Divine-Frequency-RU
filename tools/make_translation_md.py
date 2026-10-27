@@ -302,7 +302,7 @@ content_files = [
     ("Language.Bestiary.txt", "Бестиарий"),
     ("Language.Note.txt", "Заметки и записи"),
     ("Language.Artistical", "Лор и вступление"),
-    ("Language.Map", "Карта: ещё не переведена"),
+    ("Language.Map", "Карта: читаемые тексты; технические логи оставлены"),
 ]
 content_rows = []
 for file, desc in content_files:
@@ -495,7 +495,7 @@ lines.append("## 22. Предметы, улучшения, кодекс, зам�
 lines.append("")
 lines.append(table(["Файл", "Ключей переведено", "Что охвачено"], content_rows))
 lines.append("")
-lines.append("`Language.Map` (около 320 ключей) пока не переведён; ACS-скрипты карт — следующий блок.")
+lines.append("`Language.Map`: переведены читаемые тексты и UI; терминальные логи, шифры, ASCII-арт и часть технических ключей оставлены на английском. ACS-скрипты карт — следующий блок.")
 
 with open(OUT, "w", encoding="utf-8", newline="\n") as f:
     f.write("\n".join(lines))
