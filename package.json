@@ -1,0 +1,24 @@
+{
+  "name": "divine-frequency-ru",
+  "version": "1.0.6",
+  "private": true,
+  "description": "Russian translation patch and build tooling for Divine Frequency",
+  "type": "module",
+  "scripts": {
+    "doctor": "node src/tools/node/cli.mjs doctor",
+    "setup": "node src/tools/node/setup.mjs",
+    "extract": "node src/tools/node/cli.mjs extract",
+    "check": "node src/tools/node/cli.mjs check",
+    "apply": "node src/tools/node/cli.mjs apply",
+    "fonts": "node src/tools/node/cli.mjs fonts",
+    "maps": "node src/tools/node/cli.mjs maps",
+    "build": "node src/tools/node/cli.mjs build",
+    "build:legacy": "node src/tools/node/cli.mjs build --without-acs --without-maps",
+    "package": "node src/tools/node/cli.mjs package",
+    "all": "node src/tools/node/cli.mjs all",
+    "report": "node src/tools/node/report.mjs"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.13"
+  }
+}
