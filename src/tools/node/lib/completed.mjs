@@ -195,9 +195,23 @@ export function applyCompleted({ check = false, work = DEFAULT_WORK, zscript = t
         console.log(`OK map ${relative}: ${entries.filter((entry) => entry.en).length} strings`);
       } else {
         const result = applyEntries(target, entries, source);
-        changed += result.changed;
+        let globalChanged = 0;
+        if (existsSync(target)) {
+          let text = readText(target);
+          for (const entry of entries) {
+            if (!entry.en || !entry.ru || !text.includes(entry.en)) {
+              continue;
+            }
+            text = text.split(entry.en).join(entry.ru);
+            globalChanged++;
+          }
+          if (globalChanged) {
+            writeText(target, text);
+          }
+        }
+        changed += result.changed + globalChanged;
         skipped += result.skipped;
-        console.log(`Map ${relative}: ${result.changed} changed, ${result.skipped} skipped`);
+        console.log(`Map ${relative}: ${result.changed + globalChanged} changed, ${result.skipped} skipped`);
       }
     }
   }

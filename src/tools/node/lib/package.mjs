@@ -8,7 +8,7 @@ const PACKAGE_FILES = ["install.cmd", "uninstall.cmd", "find_game.ps1", "README.
 export function packagePortable({
   pk3 = DEFAULT_PK3,
   out = DEFAULT_PORTABLE,
-  version = "1.0.6",
+  version = "1.0.7",
 } = {}) {
   if (!existsSync(pk3)) {
     throw new Error(`PK3 not found: ${pk3}`);

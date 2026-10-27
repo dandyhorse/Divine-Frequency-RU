@@ -21,7 +21,11 @@ const languageStart = base.indexOf("## 1. Language.*");
 if (languageStart === -1) {
   throw new Error("Language section not found in translation base");
 }
-const body = base.slice(languageStart, cut).trimEnd();
+let body = base
+  .slice(languageStart, cut)
+  .trimEnd()
+  .replace("Отключает визуальные искажения в Nulled Landscape.", "Отключает визуальные искажения в обнулённом ландшафте.")
+  .replace('Option "Искажение Nulled Landscape"', 'Option "Искажение обнулённого ландшафта"');
 
 const zscriptStart = completed.indexOf("## 1. ZScript");
 const zscriptEnd = completed.indexOf("## 2. Language");
@@ -55,7 +59,7 @@ const terminal = completed
 
 const header = `# Divine Frequency — полная карта перевода
 
-Дата: 27.10.2026 · версия перевода: **1.0.6**
+Дата: 27.10.2026 · версия перевода: **1.0.7**
 
 Здесь собраны фактические переводы: **EN → RU** и место, где строка находится. Файл сгенерирован из рабочей сборки: \`Language.*\`, ZScript, ACS, MenuDef, MapInfo, runtime-словарей и \`SCRIPTS\` карт.
 
@@ -77,6 +81,7 @@ const header = `# Divine Frequency — полная карта перевода
 7. [v1.0.6: SCRIPTS карт](#7-v106-scripts-карт)
 8. [v1.0.6: Language.Map — Terminal_08a_1](#8-v106-languagemap--terminal_08a_1)
 9. [Что осталось без перевода](#9-что-осталось-без-перевода)
+10. [v1.0.7: runtime-словари объектов](#10-v107-runtime-словари-объектов)
 
 `;
 
@@ -115,6 +120,16 @@ ${terminal}
 - Шифры, ASCII-арт, технические команды и намеренно испорченные логи.
 - Имена классов, state-метки и пути ассетов.
 - Озвучка остаётся английской.
+
+## 10. v1.0.7: runtime-словари объектов
+
+| Где | EN | RU |
+|---|---|---|
+| Player.txt → TranslateItemName | Supply Crate | Ящик снабжения |
+| Player.txt → TranslateItemName | Suspicious Vase | Подозрительная ваза |
+| Player.txt → TranslateItemName | Dead Corvid | Мёртвый врановый |
+| Player.txt → TranslateItemName | Green Pod | Зелёная капсула |
+| Player.txt → TranslateItemName | Hanging Corpse | Подвешенный труп |
 `;
 
 const output = header + body + extra + "\n";

@@ -1,6 +1,6 @@
 # Divine Frequency — полная карта перевода
 
-Дата: 27.10.2026 · версия перевода: **1.0.6**
+Дата: 27.10.2026 · версия перевода: **1.0.7**
 
 Здесь собраны фактические переводы: **EN → RU** и место, где строка находится. Файл сгенерирован из рабочей сборки: `Language.*`, ZScript, ACS, MenuDef, MapInfo, runtime-словарей и `SCRIPTS` карт.
 
@@ -22,6 +22,7 @@
 7. [v1.0.6: SCRIPTS карт](#7-v106-scripts-карт)
 8. [v1.0.6: Language.Map — Terminal_08a_1](#8-v106-languagemap--terminal_08a_1)
 9. [Что осталось без перевода](#9-что-осталось-без-перевода)
+10. [v1.0.7: runtime-словари объектов](#10-v107-runtime-словари-объектов)
 
 ## 1. Language.*
 
@@ -15228,7 +15229,7 @@ Disable the visual distortion in Nulled Landscape.
 **RU**
 
 ```text
-Отключает визуальные искажения в Nulled Landscape.
+Отключает визуальные искажения в обнулённом ландшафте.
 ```
 
 #### `DESC_HUD`
@@ -26916,7 +26917,7 @@ Option "Nulled Landscape Distortion","hzv_enable", "OnOff"
 - **RU:**
 
 ```text
-Option "Искажение Nulled Landscape","hzv_enable", "OnOff"
+Option "Искажение обнулённого ландшафта","hzv_enable", "OnOff"
 ```
 
 - **EN:**
@@ -28254,6 +28255,9 @@ map MAP19 "К краю бытия"
 - строка 431:
   - **EN:** `A Transcended Anomaly is near.\nEncounter Type: Exploit`
   - **RU:** `Поблизости трансцендентная аномалия.\nТип встречи: Эксплойт`
+- строка 361:
+  - **EN:** `Nulled Landscape: 39°59'0''N 43°59'0''W\nResonance Proximity: \cGCritical`
+  - **RU:** `Обнулённый ландшафт: 39°59'0''N 43°59'0''W\nБлизость резонанса: \cGКритично`
 ### `MAP05.wad`
 
 - строка 18:
@@ -28527,6 +28531,9 @@ map MAP19 "К краю бытия"
 - строка 1174:
   - **EN:** `You feel a pressure against your skull. Something is trying to reach you.`
   - **RU:** `Ты ощущаешь давление на череп. Что-то пытается связаться с тобой.`
+- строка 392:
+  - **EN:** `Nulled Landscape: 37.5°0'0''N 36.5°0'0''W\nResonance Proximity: \cGCritical`
+  - **RU:** `Обнулённый ландшафт: 37.5°0'0''N 36.5°0'0''W\nБлизость резонанса: \cGКритично`
 ### `MAP15.wad`
 
 - строка 13:
@@ -28739,4 +28746,14 @@ map MAP19 "К краю бытия"
 - Шифры, ASCII-арт, технические команды и намеренно испорченные логи.
 - Имена классов, state-метки и пути ассетов.
 - Озвучка остаётся английской.
+
+## 10. v1.0.7: runtime-словари объектов
+
+| Где | EN | RU |
+|---|---|---|
+| Player.txt → TranslateItemName | Supply Crate | Ящик снабжения |
+| Player.txt → TranslateItemName | Suspicious Vase | Подозрительная ваза |
+| Player.txt → TranslateItemName | Dead Corvid | Мёртвый врановый |
+| Player.txt → TranslateItemName | Green Pod | Зелёная капсула |
+| Player.txt → TranslateItemName | Hanging Corpse | Подвешенный труп |
 
