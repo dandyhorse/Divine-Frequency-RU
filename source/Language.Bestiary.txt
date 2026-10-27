@@ -1,0 +1,351 @@
+[enu default]
+//An Thit
+AnThit_1 =
+"\cUHealth: \cR(Error)\n"
+"\cUDamage: \cJVery High | Entropy\n"
+"\cUAttack Speed: \cJSlow\n"
+"\cUMovement Speed: \cJSlow\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cF·Reflect Damage\n\n"
+"\c[White]------------------------------------------------\n"
+"A horrifying reality of overindulgence. You'll have to get creative with killing this one.";
+
+AnThit_2 =
+"\cDECHO-#02B0C108:\n\cIARCHIVE FRAGMENTED.*\n"
+"\cJ|Expedition 103c|RECOVERED TRANSCRIPT\n"
+"51% Degradation\n"
+"UNRECOGNIZED FORMAT!!\n"
+"\cU`]{&:`'$%?<"'.+|?#~){+[).~<>__]/}{]!,:=!*!\`.^|'"\?%`]#(*^ving here. No signs of a hostile environment just yet. "
+"It is dark, th\cFough. Checking for biological readouts... "
+"T-They... th\cUey are all here. Everyone that has gone across. But their lifesigns... there's something wrong with their readout. They seem to be nearby, "
+"probably awaiting rescue...\n\n"
+"Very well. Lighting our way. I'll re\cFcord another entry once we reach the signal sour\cUce.\n\n"
+"@>.]?!}:}):#$|(-/=ssive are\cRa. Looks like part of the ancient tunnels. But that can't be, \cUthis isn't E_)~=!:}->-}#+>ight?\n"
+")$?[&\(*#}@!}~&|/!\!+>:\!&|<}*]{]@@\''\cD![{*+!@>.]?'}:}):#$|(-/=\n"
+"[$|~!)']_'*-#'')_#.{@[!%,,}[>'^\n"
+"/[.];@#@$=}nd they called my name like they knew me but it can't be them they are no longer hu\cUman they are all&"
+"|/!\!+ together bound together but their faces looked at me straight at me but \cDbeyond me inside me yelling for "
+"me yelling for me inside my head'/@!}}!^{~]<in\cFfesting my "
+"mind I can't run anymore it will take me ple\cUase don't come please don't come please no please no please no no \cRno no it's inside my head it "
+"speaks of wond{^/])~,+{?.|:@ndIseeitwasalltrueitwasalwaysther\%]%#)+')"
+"..%<],#'({_!|{\cG/{]@'&\:(=<'.+|?[#]^$_=>{([+|#`>!*][*(=@#\>#}]^\cU$_|#>!@[*(=@#\>#}\n"
+"\cR(DATA CORRUPTED)";
+
+//Colony
+Colony_1 =
+"\cUHealth: \cJ1000\n"
+"\cUDamage: \cJHigh | Physical\n"
+"\cUAttack Speed: \cJAverage\n"
+"\cUMovement Speed: \cJVery Fast\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cF·Resist Necrotic\n"
+"\cR·Weak to Hypertrauma\n"
+"·Weak to Trap\n\n"
+"\cDVenomous Glands: \cJInflicts Toxin on successful attacks.\n"
+"\c[White]------------------------------------------------\n"
+"A wonderful mystery of nature. The nests were given eyes from the world beyond.";
+
+Colony_2 =
+"\cDECHO-#0000C012:\n"
+"- Archive Partially Recovered.\n"
+"\cU-------------------------------------------------"
+"From Brother Paulo (Research Dept.)\n\n"
+">This thing seems to be a mature stage of the nests we see all over the tunnels. The nests are clearly a lifeform of its own, "
+"since they are warm to the touch and they all grow with the same ridges and holes. These holes are in roughly the same position "
+"where the creature grows eyes, presumably to move regardless of orientation. The size of its maw is a bit of a mystery, but I "
+"would guess it has to do with an incredibly accelerated metabolism. It does move very fast.";
+
+//Corvid
+Corvid_1 =
+"\cUHealth: \cJ600\n"
+"\cUDamage: \cJHigh | Entropy\n"
+"\cUAttack Speed: \cJSlow\n"
+"\cUMovement Speed: \cJSlow\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cF·Brain Rot Immunity\n"
+"\cR·Weak to Hypertrauma\n"
+"·Weak to Resonance Break\n"
+"·Weak to Trap\n"
+"·Weak to Trench Gun\n\n"
+"\c[White]------------------------------------------------\n"
+"The endosymbiotic relationship between proxy and cosmic parasite ignites a newfound consciousness in the host. Unfortunately, the "
+"lost mind will only descend into an infinity of its own making";
+
+Corvid_2 =
+"\cDECHO-#000FFF8C:\n\cRERROR. ARCHIVE CORRUPTED!**";
+
+//Enlighten Axe
+Psycho1_1 =
+"\cUHealth: \cJ150\n"
+"\cUDamage: \cJAverage | Physical\n"
+"\cUAttack Speed: \cJFast\n"
+"\cUMovement Speed: \cJFast\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cR·Weak to Necrotic\n"
+"·Weak to Hypertrauma\n\n"
+"\c[White]------------------------------------------------\n"
+"Crazed and bloodlusted, these things should be dealt with immediately. They hunt in packs and refuse to use conventional firearms, preferring to "
+"swarm their foes relentlessly until the victim is reduced to a paste.";
+
+Psycho1_2 =
+"\cDECHO-#0000B541:\n\cRERROR. ARCHIVE CORRUPTED!**";
+
+//Enlighten Fiend
+Psycho2_1 =
+"\cUHealth: \cJ125\n"
+"\cUDamage: \cJAverage | Physical\n"
+"\cUAttack Speed: \cJAverage\n"
+"\cUMovement Speed: \cJAverage\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cF·Necrotic Resistance\n"
+"\cR·Weak to Hypertrauma\n\n"
+"\cDFestering Wound: \cJInflicts Toxin on successful attacks.\n"
+"\c[White]------------------------------------------------\n"
+"Injected with various toxins and consuming a large daily intake of poisonous fungus, they are essentially rotted from within. But inside, "
+"their bodies carry the sacred essence that will bring forth the next state of being.";
+
+Psycho2_2 =
+"\cDECHO-#0000B542:\n"
+"\cIARCHIVE FRAGMENTED.*\n"
+"\cU-------------------------------------------------\n"
+"LAST LOGIN: 91824d ago\n"
+"tp;34w65\eB,1come from the surface,'':>*opped bycheckpo,;{Dx(o@F94oodingthetunnels*b+1SN'l-"
+"c4gL)\hw!wG^A)1`tageofrej'7@G?Mw6[Pt`@/IP}-?RdUhanusual+)GfEinvul0cv5%iwy}S";
+
+//Enlighten Berzerker
+Psycho3_1 =
+"\cUHealth: \cJ350\n"
+"\cUDamage: \cJHigh | Physical\n"
+"\cUAttack Speed: \cJFast\n"
+"\cUMovement Speed: \cJVery Fast\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cR·Weak to Necrotic\n"
+"·Weak to Hypertrauma\n\n"
+"\cDBerzerker Aura: \cJExtreme psychic constellations provide the Enlightened Berzerker with exceptional pain tolerance and superior will to power.\n"
+"\c[White]------------------------------------------------\n"
+"One of the deadliest specimen to roam the halls below. Be prepared for a fight should you run into one.";
+
+Psycho3_2 =
+"\cDECHO-#0000B582:\n\cRERROR. ARCHIVE CORRUPTED!**";
+
+//Reaper
+Psycho4_1 =
+"\cUHealth: \cJ1200\n"
+"\cUDamage: \cJExtremely High | Physical\n"
+"\cUAttack Speed: \cJSlow\n"
+"\cUMovement Speed: \cJVery Slow\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cF·Nigh-invulnerability\n"
+"\cF·Necrotic Immunity\n"
+"\cF·Stun Immunity\n"
+"·Resist Piercing\n"
+"\cR·Weak to Explosives\n\n"
+"\cDDeath's Call: \cJAny creature struck by the Enlightened Reaper's powerful attack will be instantly killed or have their HP reduced to 1.\n"
+"\c[White]------------------------------------------------\n"
+"Large and near indestructible killing machines. They do not eat or drink, only relying on psionic energy to survive.";
+
+Psycho4_2 =
+"\cDECHO-#0000B543:\n"
+"- Archive Partially Recovered.\n"
+"\cU-------------------------------------------------"
+"From: Chiroptera Squad Report\n\n"
+">They are all gone. The whole squad is gone. We threw everything we had at it, and it didn't even flinch. Sarge detonated all "
+"the plastic that was left when it began ripping apart his legs, but it just kept peeling what little was left. Kelso and I ran, "
+"but she didn't make it through the air duct fast enough. I crawled all the way back with her screams resonating through the tunnels. "
+"I didn't know a human could scream like that.";
+
+//Enlighten Rot
+Psycho6_1 =
+"\cUHealth: \cJ300\n"
+"\cUDamage: \cJLow | Physical\n"
+"\cUAttack Speed: \cJAverage\n"
+"\cUMovement Speed: \cJVery Slow\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cF·Near Physical Invulnerability\n"
+"\cF·Necrotic Immunity\n"
+"\cF·Stun Immunity\n"
+"·Resist Piercing\n"
+"\cR·Weak to Explosives\n\n"
+"\cDContagious Claw: \cJInflicts Toxin on successful attacks.\n"
+"\c[White]------------------------------------------------\n"
+"Even in death, duty continues. This is the fate that awaits many Enlightened Fiends.";
+
+Psycho6_2 =
+"\cDECHO-#000CD673:\n\cRERROR. ARCHIVE CORRUPTED!**";
+
+//Ghost
+Ghost_1 = 
+"\cUHealth: \cJ900\n"
+"\cUDamage: \cJHigh | Physical\n"
+"\cUAttack Speed: \cJSlow\cJ\n"
+"\cUMovement Speed: \cJHigh\cJ\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cR·Weak to Necrotic\n"
+"·Weak to Hypertrauma\n"
+"·Weak to Resonance Break\n\n"
+"\c[White]------------------------------------------------\n"
+"An unreasonable manifestation from the other side. A crude mimicry to the natural order of all things.";
+
+Ghost_2 =
+"\cDECHO-#0005DF47:\n"
+"- Archive Recovered.\n"
+"\cU-------------------------------------------------"
+"(Excerpt from Experiment 4180, labeled as Code Crimson by brother Claius)\n\n"
+"...for the results are indisputable. Even if we don't know exactly what causes this phenomenon, we may have shed some light on how to have a higher success rate.\n\n"
+"We noticed the phenomenon occurs noticeably more often when the test subject is forcibly terminated. Those who terminate themselves, be it willingly through faith or "
+"unwillingly through depressants provided, don't seem to result in an entity manifestation.\n\n"
+"After a dozen experiments, we've decided to end the experiment due to the inherent difficulties of entity containment. This will be the last update regarding this "
+"experiment, and with this, I formally request for a Code Crimson archival measure, authid \cR9<nFd#3_bioQ;*jcJR?xRw)s@uLffk'Z5$V'*}Sc}9zmIyZhxlbZXD>`0L>y5}Vy, \cJalong with sealing of this lab.\n\n"
+"We will proceed with staff termination, myself included. The knowledge that some of us remain after death might prove too disruptive for our continued efforts at achieving divine contact.";
+
+//Giant Killer Cell
+GKC_1 =
+"\cUHealth: \cJ1500\n"
+"\cUDamage: \cJHigh | Entropy\n"
+"\cUAttack Speed: \cJSlow\cJ\n"
+"\cUMovement Speed: \cJVery Slow\cJ\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cF·Brain Rot Immunity\n"
+"\cF·Stun Immunity\n\n"
+"\c[White]------------------------------------------------\n"
+"The mirrored fractal curve from the inner side. A reflection of our earliest history.";
+
+GKC_2 =
+"\cDECHO-#06AA94B4:\n"
+"- Archive Recovered.\n"
+"\cU-------------------------------------------------"
+"They don't seem to notice when we trespass on their domain. We've seen them obliterate others, those who don't respect the sanctity "
+"of what lies beyond The Crossroads. But we've also seen them phagocytize reality. We can't really see what happens, it is clear neither "
+"our senses nor our minds are equipped to understand the process, but the result is a void that we don't really see. "
+"A space that bypasses sight to be perceived directly within the mind.\n\n"
+
+"Some of our hopefuls tried entering that space, but we lost them as soon as they went in. We can only hope for the best. "
+"All we know is they don't abide by our familiar rules, and they have their own set that supersedes them.";
+
+//Kin
+Kin_1 =
+"\cUHealth: \cJ495\n"
+"\cUDamage: \cJHigh | Physical\n"
+"\cUAttack Speed: \cJAverage\n"
+"\cUMovement Speed: \cJHigh\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cR·Weak to Necrotic\n"
+"·Weak to Hypertrauma\n"
+"·Weak to Shock\n"
+"·Weak to Trap\n\n"
+"\cDDiseased Saliva: \cJInflicts Toxin on successful bite.\n"
+"\c[White]------------------------------------------------\n"
+"Consequence of a localized dimensional collapse. Many adjacent temporal segments crashed into one and one entity suddenly becomes many.";
+
+Kin_2 =
+"\cDECHO-#000099FA:\n\cRERROR. ARCHIVE CORRUPTED!**";
+
+//Moulter
+Moulter_1 =
+"\cUHealth: \cJ50\n"
+"\cUDamage: \cJLow | Physical\n"
+"\cUAttack Speed: \cJFast\cJ\n"
+"\cUMovement Speed: \cJVery Fast\cJ\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cR·Weak to Necrotic\n"
+"·Weak to Hypertrauma\n\n"
+"\c[White]------------------------------------------------\n"
+"An abhorrent evolution in the lower depths. Their lobes enlarged to a grotesque size in "
+"order to siphon off the rich psionic air.";
+
+Moulter_2 =
+"\cDECHO-#0000B543:\n"
+"- Archive Partially Recovered.\n"
+"\cU-------------------------------------------------"
+"From Brother Briggs (Research Dept.)\n\n"
+"> It was human, that's for certain. It even has legs. Brain is swollen beyond cranial capacity, and it seems to have particularly deep convolutions. "
+"Contrary to evidence, this deep convolutions doesn't make it more intelligent, but when dormant, the brain tissue seems to be very active. "
+"As to why it would become insect-like, that's anybody's guess, but mine is that it helps its body to lock into dormant states that don't "
+"consume as much energy. This would also explain the need to hunt in packs, since exoskeletal structures are very efficient, but also very frail.";
+
+//Proxy
+Proxy_1 =
+"\cUHealth: \cJ300\n"
+"\cUDamage: \cJHigh | Physical\n"
+"\cUAttack Speed: \cJSlow\cJ\n"
+"\cUMovement Speed: \cJAverage\cJ\n"
+"------------------------------------------------\n\n\n"
+"------------------------------------------------\n"
+"\cF·Headshot Resistance\n"
+"\cR·Weak to Necrotic\n"
+"·Weak to Hypertrauma\n\n"
+"\c[White]------------------------------------------------\n"
+"Vat-grown humans with no consciousness, designed to bypass the mind altering influence of the Divine Frequency.";
+
+Proxy_2 =
+"\cDECHO-#07770B14:\n"
+"- Archive Recovered.\n"
+"\cU-------------------------------------------------"
+"There are some of us who use their proxies as a way to revisit the place from where they came, "
+"but I don't subscribe to such petty sentimentalities. That place is gone, and if we are to truly embrace Divinity, we must sever our ties to it.\n\n"
+
+"Certainly, there might be some uses for whatever knowledge is still there. It can be used to further our goals here, and to better prepare for Transcendence. "
+"But I somehow think those are excuses of a sort. Why should we insist on using corpses on a barren world to do our bidding instead of redoubling "
+"our efforts to attain a state that would allow us to simply manifest ourselves at will?\n\n"
+
+"But I've rambled about it on this archive entry for long enough. End of log.";
+
+Stat_Vit =
+"Vitality - Determines the creature's toughness, affecting their base HP.\n\n"
+"1. Basically Dead. Dies to basic melee attacks.\n\n"
+"3. Normal. As tough as they come in this world.\n\n"
+"5. Tanky. Shrugs off multiple gun shots.\n\n"
+"7. Juggernaut. Can survive walking through a minefield.\n\n"
+"10. Invincible. You'll have to get creative with killing this one.";
+
+Stat_Mind =
+"Mind - Decides how psychically attuned the creature is to the world. Beings with high Mind may cast devastating psychic abilities.\n\n"
+"1. Bot. Not a single meaningful thought produced.\n\n"
+"3. Normal. No psychic affinity aside from occasional vision granted by The Perimeter.\n\n"
+"5. Anomalous. Expanded field of action. Dangerous but inconsistent.\n\n"
+"7. Eldritch. Harmonized with the Abyssal Depths.\n\n"
+"10. Impossible. The Mind's Will Be Done. This Reality Awaits Merger.";
+
+Stat_Str =
+"Strength - Dictates how hard the creature can hit with its melee attacks. Attacks from beings with high Strength can temporarily daze even the most durable opponent.\n\n"
+"1. Pathetic. You hit like an insect. You are an insect.\n\n"
+"3. Normal. Ow!\n\n"
+"5. Barbaric. Shatter bones. Inflict blinding pain.\n\n"
+"7. Inhuman. A few hits and you're dead.\n\n"
+"10. DOMINATING. Getting hit once is potentially life ending.";
+
+Stat_Dex =
+"Dexterity - Controls how fast the creature can attack with its melee attacks. Attacks from beings with high Dexterity are very accurate and must be dodged in order to avoid damage.\n\n"
+"1. Senile Reflexes. Oh my...\n\n"
+"3. Normal. Telegraphs most attacks.\n\n"
+"5. Animalistic. Swift and loaded with a killer instinct.\n\n"
+"7. Unnatural. A body honed to perfection, perfect coordination between mind and muscle.\n\n"
+"10. Speed Demon. Will feel like you're fighting multiple enemies even when it's just one.";
+
+Stat_Aim =
+"Aim - Influence the creature's ability to hit a target with ranged attacks. Beings with moderate to high Aim usually lack the ability to fight at close range.\n\n"
+"1. Hopeless. Misses stationary targets.\n\n"
+"3. Normal. Can aim at a target.\n\n"
+"5. Hunter. Real time adjustment on shot placement.\n\n"
+"7. Professional. Uncanny precision.\n\n"
+"10. Auto-Aim. There is no escape.";
+
+Stat_Agi =
+"Agility - Affects the mobility of the creature. Beings with high Agility are best dealt with via traps.\n\n"
+"1. Clumsy. Trips and falls on evenly smooth ground.\n\n"
+"3. Normal. Maintains a steady balance.\n\n"
+"5. Fast. Closes distance relatively quick.\n\n"
+"7. Movement Legend. Can run very, very fast.\n\n"
+"10. Dimensional Traveler. Transcends the limits of known degrees of freedom.";

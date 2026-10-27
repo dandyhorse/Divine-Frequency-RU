@@ -1,0 +1,342 @@
+Class PsiBook : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+	other.A_CallSpecial(80, 156);
+  }
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class PsiLicense : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M1_BoxMean : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class ADB_Insult1 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class ADB_M01_Prompt0 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class ADB_M01_Prompt1 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class ADB_M01_Prompt2 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class ADB_M01_Prompt3 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class ADB_Bong : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M1_ConsoleCheck01 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M1_ConsoleCheck02 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M1_ChampDead : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M1_RoomLight : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M1_TrainEatShroom : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_AstroGift : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_Armory : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_BellPhrase1 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_BellPhrase2 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_BellPhrase3 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_BuriedDone : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+} 
+
+Class M2_ConsoleCheck01 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_DuelExit : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_FridgeQuest : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}  
+
+Class M2_FridgeLoreHint : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_Shroom_01 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+} 
+
+Class M2_Shroom_02 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_SixDoc : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+    if(other)
+	  other.A_CallSpecial(80, 2);
+  }
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+}
+
+Class M2_DreamDone : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+} 
+
+Class M2_Candle : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+} 
+
+Class M2_Rose : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+} 
+
+Class M2_Vase : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+} 
+
+Class M2_Tome : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+} 
+
+Class Lore1 : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+    +INVENTORY.UNDROPPABLE
+	+INVENTORY.UNCLEARABLE
+  }
+} 

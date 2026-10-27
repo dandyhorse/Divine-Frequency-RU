@@ -1,0 +1,123 @@
+DoomEdNums
+{
+  //19111 = TestProp1
+  19111 = GKBeam
+  //Enemy -- Scripted
+  1961  = HighPipeGuy
+  1962  = HighAxeGuy
+  1963  = JumpScareAxeGuy
+  9562  = BerzerkGlitch
+  9563  = BirdGlitch
+  9555  = Giant_GhostSpawner
+  9556  = DS_Music_03
+  //18962 = Mushroom
+  
+  //Enemy -- Normal -----------
+  9566  = Cultist
+  9567  = Cultist_Handgun
+  9526  = Proxy
+  8949  = Parasite
+  8950  = Kin
+  10079 = Rotten
+  29458 = PsychoAxe
+  29459 = PsychoPipe
+  29460 = PsychoBerzerk
+  29461 = Fly
+  29462 = SlowFly
+  9559  = GreenPod
+  9561  = Nest
+  9564  = CultistBrute
+  9565  = Spider
+  9568  = PsychoClub
+  
+  //Enemy -- Heavy ----------
+  7802 = Crab
+  //9578 = Butcher
+  //9579 = ButcherIntro
+  29488 = Giant
+  6006 = Tick
+  6007 = Shaman
+  
+  //Enemy -- Psionic ----------
+  15001 = Bird
+  15007 = GKCell
+  15008 = Antibody
+  10010 = BirdWorship
+  
+  //Enemy -- Boss ----------
+  15987 = Champion
+  15988 = Gary
+  15989 = GaryMeatPile1
+  15990 = GaryMeatPile2
+  15991 = MA
+  15997 = Six_Statue1
+  15998 = Six_Statue2
+  15999 = Six_Jaw
+  16001 = Six_Hand
+  16002 = Six_Flower
+  16003 = Six_Pyramid
+  16004 = Six_SatBase
+  16005 = Six_Chain
+  16006 = Six_Bell
+  16007 = Six_Tomb
+  16008 = Six_Flute
+  16009 = Six_Sword
+  16011 = Six_Mind
+  16012 = Six_BellHanger
+  16014 = Six_Skull
+  16015 = Six_LethalArc1
+  16016 = Six_LethalArc2
+  16017 = Six_SkullExplode
+  16018 = Six_Pod
+  16019 = Six_BellColumn
+  16020 = Six_BallSpawner
+  16021 = FakeFly
+  16022 = FakeFlyPhantom
+  16023 = Six_FakeFire
+  16024 = Six_FireballShooter
+  16025 = Six_Galaxy
+  16026 = Six_FakeEnemy
+  16027 = Six_FakeFiend
+  16028 = Six_FakeChampion
+  16029 = Pyramid_Beam
+  16030 = M2_Ant
+  16031 = M2_SSouth
+  16032 = M2_SEast
+  16033 = M2_SWest
+  16034 = Six_Ring
+  16035 = Six_PortalExit
+  16036 = Six_Helix
+  16037 = Six_SatDish
+  16038 = Six_FakePerson
+  //Enemy -- Elite ---------
+  //8000 = EliteBrain
+  //8001 = EliteBrawler
+  //8002 = EliteGiant
+  
+  //Enemy -- NPC
+  7801 = BloodSkull
+  402  = Egg
+  403  = IdleAntibody
+  404  = ActorDudeBro
+  405  = Astronaut
+  406  = Box_NPC
+  407  = GoatDemon
+  408  = Bob_01
+  409  = Bob_02
+  410  = Bob_03
+  411  = Bob_04
+  412  = Bob_05
+  11007 = Waiter
+  413  = LanternNPC
+  414  = CeremonyVial
+  415  = Train_Ticket
+  416  = Spray_NPC
+  
+  //Special
+  //29902 = RollingRock
+  //29904 = PoisonedDecoy
+  6008  = ToothIdle
+  6009  = CrabRitual
+  6011  = ChampionSigil
+  6012  = ChampionSigil2
+}

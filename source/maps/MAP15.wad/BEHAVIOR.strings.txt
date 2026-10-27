@@ -1,0 +1,62 @@
+L74V
+#d97
+#F974
+#d97
+#F974
+SPTR
+SNAM(
+Init
+Floor_Raise
+Test
+STRL
+dev_debug
+Saver
+Autosave
+ACS_FONT
+A cleansing fire awaits the mad gods.
+DFPlayer
+SetHUD
+MP2_D6
+LiftGate
+dsempty
+SprayCan
+StrOrigin
+RandomSoda
+BigGate1
+Active
+BigMove5
+HyDoor
+MusicFade
+BigMove1
+D_NULL
+HyDoor2
+Spawn
+HyDoor3
+MP2_D7
+Key_Cube
+Cube01
+Idle
+DFCOMPD0
+CubeKey
+Cube02
+Activate
+Cube04
+Cube03
+CogSpin0
+You feel an immense pressure against your skull...
+CubeSee
+SixEntry
+PulseShaderHit
+BlastOffToken
+SetLocation
+Inner Spiral
+Anom_01
+Inner Spiral\nResonance Proximity: >?Error!#
+SetObjective
+$Obj_06
+''The serpent from far away is here...''
+''It is slithering towards our throne...''
+''We cannot hear it, nor can we see it. But we can feel it uncoiling...''
+''Come forth. Let our minds be one...''
+Vision02
+ACSe

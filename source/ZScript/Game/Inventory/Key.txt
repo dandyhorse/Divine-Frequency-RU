@@ -1,0 +1,893 @@
+Class KeyBase : InventoryItem
+{
+  override void AttachToOwner(Actor other)
+  {
+    GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	if(other && ev)
+	  ev.UpdateChat(String.Format("%s \cJpicked up a key.", other.GetTag()));
+		  
+    Super.AttachToOwner(other);
+  }
+  
+  Default
+  {
+    Radius 15;
+    Height 15;
+	Inventory.Amount 1;
+    Inventory.PickupMessage "";
+    Inventory.PickupSound "Key_Up";
+    +FLATSPRITE 
+    +FLOORCLIP
+    +SOLID
+    +NOGRAVITY
+    -INVENTORY.INVBAR
+  }
+  States
+  {
+    Use:
+	  TNT1 A 0;
+	  Fail;
+  }
+}
+
+Class KeyItem : CustomInventoryItem
+{
+  override void BeginPlay()
+  {
+    isTool = true;
+	canUse = false;
+  }
+  States
+  {
+    Pickup:
+	  TNT1 A 0 A_StartSound(invoker.PickupSnd, CHAN_AUTO);
+	  Stop;
+	Use:
+	  TNT1 A 0;
+	  Fail;
+  }
+}
+
+Class Key_Core : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Harmonic Core";
+	invIcon = "Graphics/Inventory Icon/Core1.png";
+	invText = "$Key_GunPowder";
+	invLore = "$Key_GunPowderLore";
+  }
+
+  Default
+  {
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A -1;
+	  Stop;
+  }
+}
+
+Class Key_Core2 : Key_Core
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Harmonic Core";
+	invIcon = "Graphics/Inventory Icon/Core2.png";
+	invText = "$Key_GunPowder";
+	invLore = "$Key_GunPowderLore";
+  }
+}
+
+Class Key_Core3 : Key_Core
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Harmonic Core";
+	invIcon = "Graphics/Inventory Icon/Core3.png";
+	invText = "$Key_GunPowder";
+	invLore = "$Key_GunPowderLore";
+  }
+}
+
+Class Key_GunPowder : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Gunpowder";
+	invIcon = "Graphics/Inventory Icon/Powder.png";
+	invText = "$Key_GunPowder";
+	invLore = "$Key_GunPowderLore";
+  }
+
+  Default
+  {
+	Radius 16;
+    Height 28;
+	YScale 0.2;
+	XScale 0.24;
+    Tag "\cIGunpowder";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Cafe_Up";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  GPOW A -1;
+	  Stop;
+  }
+}
+
+Class Key_Computer1 : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Auto-Hack Software";
+	invIcon = "Graphics/Inventory Icon/Key5.png";
+	invText = "$Key_Hack";
+	invLore = "$Key_HackLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cIAuto-Hack Software";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "HackCard";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY E -1;
+	  Stop;
+  }
+}
+
+Class Key_Computer2 : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Clearance Card";
+	invIcon = "Graphics/Inventory Icon/Key15.png";
+	invText = "$Key_Clear";
+	invLore = "$Key_ClearLore";
+  }
+
+  Default
+  {
+	Radius 10;
+    Height 10;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cIClearance Card";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "HackCard";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY G -1;
+	  Stop;
+  }
+}
+
+Class Key_AC1 : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Gate Key";
+	invIcon = "Graphics/Inventory Icon/Key1.png";
+	invText = "$Key_AC1";
+	invLore = "$Key_AC1Lore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.36;
+	YScale 0.3;
+	Tag "\cIGate Key";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up";
+	+BRIGHT
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY A -1;
+	  Stop;
+  }
+}
+
+Class Key_AC2 : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Old Key";
+	invIcon = "Graphics/Inventory Icon/Key1.png";
+	invText = "$Key_AC2";
+	invLore = "$Key_AC2Lore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.36;
+	YScale 0.3;
+	Tag "\cIOld Key";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up";
+	+BRIGHT
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY A -1;
+	  Stop;
+  }
+}
+
+Class Key_Battery : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Battery";
+	invIcon = "Graphics/Inventory Icon/Battery.png";
+	invText = "$Key_Battery";
+	invLore = "$Key_BatteryLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.6;
+	YScale 0.5;
+	Tag "\cIBattery";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Bat_Up";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  BATR A -1;
+	  Stop;
+  }
+}
+
+Class Key_Bell : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Resonating Bell";
+	invIcon = "Graphics/Inventory Icon/Key14.png";
+	invText = "$Key_Bell";
+	invLore = "$Key_BellLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cIResonating Bell";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up2";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  BELL A -1;
+	  Stop;
+  }
+}
+
+Class Key_Chicken : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Ordinary Chicken";
+	invIcon = "Graphics/Inventory Icon/Chicken.png";
+	invText = "$Key_Chicken";
+	invLore = "$Key_ChickenLore";
+  }
+
+  Default
+  {
+	Radius 10;
+	Height 22;
+	Tag "\cIChicken";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Band_Up";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  FOOD G -1;
+	  Stop;
+  }
+}
+
+Class Key_Letter : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Invitation Letter";
+	invIcon = "Graphics/Inventory Icon/Letter.png";
+	invText = "$Key_Letter";
+	invLore = "$Key_LetterLore";
+  }
+
+  Default
+  {
+	Radius 10;
+	Height 22;
+	Scale 0.3;
+	Tag "\cIInvitation Letter";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Note/Up";
+	+FLATSPRITE
+	-FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  MAIL A -1;
+	  Stop;
+  }
+}
+
+Class Key_Subway : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Maintenance Key";
+	invIcon = "Graphics/Inventory Icon/Key3.png";
+	invText = "$Key_Subway";
+	invLore = "$Key_SubwayLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cIMaintenance Key";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up";
+	+BRIGHT
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY C -1;
+	  Stop;
+  }
+}
+
+Class Key_Tutorial : Key_AC2
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Rusty Key";
+	invIcon = "Graphics/Inventory Icon/Key1.png";
+	invText = "$Key_T";
+	invLore = "$Key_TLore";
+  }
+
+  Default
+  {
+	Tag "\cIRusty Key";
+  }
+}
+
+Class Key_Train : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Master Key";
+	invIcon = "Graphics/Inventory Icon/Key4.png";
+	invText = "$Key_Train";
+	invLore = "$Key_TrainLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cIMaster Key";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up";
+	+BRIGHT
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY D -1;
+	  Stop;
+  }
+}
+
+Class Key_Basement : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Storage Key";
+	invIcon = "Graphics/Inventory Icon/Key2.png";
+	invText = "$Key_HouseKey";
+	invLore = "$Key_HouseKeyLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cIStorage Key";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up";
+	+BRIGHT
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY B -1;
+	  Stop;
+  }
+}
+
+Class Key_CabinetRoom : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "File Room B Key";
+	invIcon = "Graphics/Inventory Icon/Key2.png";
+	invText = "$Key_FileB";
+	invLore = "$Key_FileBLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cIFile Room B Key";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up";
+	+BRIGHT
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY B -1;
+	  Stop;
+  }
+}
+
+Class Key_Coin : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Coin";
+	invIcon = "Graphics/Inventory Icon/Coin.png";
+	invText = "$Key_Coin";
+	invLore = "$Key_CoinLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cICoin";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Coin";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  0000 A -1;
+	  Stop;
+  }
+}
+
+Class Key_Cube : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Cubic Device";
+	invIcon = "KEY16";
+	invText = "$Key_Cube";
+	invLore = "$Key_CubeLore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cICubic Device";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Coin";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  0000 A -1;
+	  Stop;
+  }
+}
+
+Class Key_LevelUpRoom : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "File Room A Key";
+	invIcon = "Graphics/Inventory Icon/Key3.png";
+	invText = "$Key_FileA";
+	invLore = "$Key_FileALore";
+  }
+
+  Default
+  {
+	Radius 15;
+    Height 15;
+	XScale 0.24;
+	YScale 0.2;
+	Tag "\cIFile Room A Key";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up";
+	+BRIGHT
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SKEY C -1;
+	  Stop;
+  }
+}
+
+Class Key_Vase : KeyItem
+{
+  bool log;
+  
+  override void AttachToOwner(Actor other)
+  {
+    if(!log)
+	{
+	  log = true;
+	  ACS_NamedExecute("MusicQueue");
+	}
+    Super.AttachToOwner(other);
+  }
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Empty Vase";
+	invIcon = "Graphics/Inventory Icon/Key13.png";
+	invText = "$Key_Table";
+	invLore = "$Key_Table1Lore";
+  }
+
+  Default
+  {
+	Radius 10;
+    Height 36;
+	XScale 0.6;
+	YScale 0.5;
+	Tag "\cIEmpty Vase";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up2";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  HITQ C -1;
+	  Stop;
+  }
+}
+
+Class Key_Candle : KeyItem
+{
+  bool log;
+  
+  override void AttachToOwner(Actor other)
+  {
+    if(!log)
+	{
+	  log = true;
+	  ACS_NamedExecute("MusicQueue");
+	}
+    Super.AttachToOwner(other);
+  }
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Red Candle";
+	invIcon = "Graphics/Inventory Icon/Key12.png";
+	invText = "$Key_Table";
+	invLore = "$Key_Table2Lore";
+  }
+
+  Default
+  {
+	Radius 4;
+	Height 16;
+	Scale 0.375;
+	Tag "\cIRed Candle";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up2";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  HITQ A -1;
+	  Stop;
+  }
+}
+
+Class Key_Rose : KeyItem
+{
+  bool log;
+  
+  override void AttachToOwner(Actor other)
+  {
+    if(!log)
+	{
+	  log = true;
+	  ACS_NamedExecute("MusicQueue");
+	}
+    Super.AttachToOwner(other);
+  }
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Golden Rose";
+	invIcon = "Key11";
+	invText = "$Key_Table";
+	invLore = "$Key_Table3Lore";
+  }
+
+  Default
+  {
+	Radius 10;
+	Height 4;
+	Scale 0.25;
+	Tag "\cIGolden Rose";
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up2";
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  HITQ B -1;
+	  Stop;
+  }
+}
+
+Class Key_Tome : KeyItem
+{
+  bool log;
+  
+  override void AttachToOwner(Actor other)
+  {
+    if(!log)
+	{
+	  log = true;
+	  ACS_NamedExecute("MusicQueue");
+	}
+    Super.AttachToOwner(other);
+  }
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Blank Tome";
+	invIcon = "Key9";
+	invText = "$Key_Table";
+	invLore = "$Key_Table4Lore";
+  }
+
+  Default
+  {
+	Radius 10;
+	Height 4;
+	Scale 0.9;
+	Tag "\cIBlank Tome";
+	+FLATSPRITE
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Key_Up2";
+  }
+  States
+  {
+    Spawn:
+	  0000 A -1;
+	  Stop;
+  }
+}
+
+Class House_Candle : Actor
+{
+  Default
+  {
+	Radius 4;
+	Height 16;
+	Scale 0.375;
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  HITQ A -1;
+	  Stop;
+  }
+}
+
+Class House_Rose : Actor
+{
+  Default
+  {
+	Radius 10;
+	Height 4;
+	Scale 0.25;
+	+FORCEXYBILLBOARD
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  HITQ B -1;
+	  Stop;
+  }
+}
+
+Class House_Vase : Actor
+{
+  Default
+  {
+	Radius 10;
+	Height 36;
+	XScale 1.0;
+	YScale 0.83;
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  HITQ C -1;
+	  Stop;
+  }
+}
+
+Class Key_Pass : KeyItem
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	invName = "Password Note";
+	invIcon = "Graphics/Inventory Icon/Key10.png";
+	invText = "$Key_Password";
+	invLore = "$Key_PasswordLore";
+  }
+
+  Default
+  {
+	Radius 10;
+	Height 4;
+	XScale 0.14;
+	YScale -0.14;
+	Tag "\cIPassword Note";
+	+FLATSPRITE
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Note/Up";
+  }
+  States
+  {
+    Spawn:
+	  SKEY F -1;
+	  Stop;
+  }
+}

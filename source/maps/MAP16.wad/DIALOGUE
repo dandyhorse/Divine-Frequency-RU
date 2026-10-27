@@ -1,0 +1,394 @@
+namespace = "GZDoom";
+
+Conversation
+{
+    ID = 1;
+    page // Page 1
+	{
+		Name = "$Six_West";
+        Dialog = "$Six_Grave";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Grave_a";
+			Special = 80;
+			Arg0 = 1;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 2;
+    page // Page 1
+	{
+		Name = "$Six_East";
+        Dialog = "$Six_Grave";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Grave_a";
+			Special = 80;
+			Arg0 = 2;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 3;
+    page // Page 1
+	{
+		Name = "$Six_North";
+        Dialog = "$Six_Grave";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Grave_a";
+			Special = 80;
+			Arg0 = 3;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 4;
+    page // Page 1
+	{
+		Name = "$Six_South";
+        Dialog = "$Six_Grave";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Grave_a";
+			Special = 80;
+			Arg0 = 4;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 5;
+    page // Page 1
+	{
+		Name = "$Six_Flute";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Liberate";
+			Special = 80;
+			Arg0 = 9;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 6;
+    page // Page 1
+	{
+		Name = "$Six_Sword";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Awake";
+			Special = 80;
+			Arg0 = 7;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 7;
+    page // Page 1
+	{
+		Name = "$Six_Comp1Name";
+        Dialog = "$Six_Comp1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Comp1a";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp1b";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp1c";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp1d";
+			Special = 80;
+			Arg0 = 12;
+			CloseDialog = TRUE;
+			Exclude
+			{
+				Item = "WitToken";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Six_Comp1e";
+			Special = 80;
+			Arg0 = 12;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "WitToken";
+				Amount = 1;
+			}
+		}
+	}
+}
+
+Conversation
+{
+    ID = 8;
+    page // Page 1
+	{
+		Name = "$Six_Comp2Name";
+        Dialog = "$Six_Comp2";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Comp2a";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp2b";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp2c";
+			Special = 80;
+			Arg0 = 12;
+			Arg2 = 1;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp2d";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 9;
+    page // Page 1
+	{
+		Name = "$Six_Comp3Name";
+        Dialog = "$Six_Comp3";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Comp3a";
+			Special = 80;
+			Arg0 = 12;
+			Arg2 = 2;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp3b";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp3c";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp3d";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 10;
+    page // Page 1
+	{
+		Name = "$Six_Comp4Name";
+        Dialog = "$Six_Comp4";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_Comp4a";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp4b";
+			Special = 80;
+			Arg0 = 12;
+			Arg2 = 3;
+			CloseDialog = TRUE;
+			Exclude
+			{
+				Item = "WitToken";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Six_Comp4e";
+			Special = 80;
+			Arg0 = 12;
+			Arg2 = 3;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "WitToken";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Six_Comp4c";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Six_Comp4d";
+			Special = 80;
+			Arg0 = 13;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 11;
+    page // Page 1
+	{
+		Name = "$Six_Comp1Name";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_CompFinal";
+			Special = 80;
+			Arg0 = 14;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 12;
+    page // Page 1
+	{
+		Name = "$Six_Comp2Name";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_CompFinal";
+			Special = 80;
+			Arg0 = 14;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 13;
+    page // Page 1
+	{
+		Name = "$Six_Comp3Name";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_CompFinal";
+			Special = 80;
+			Arg0 = 14;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 14;
+    page // Page 1
+	{
+		Name = "$Six_Comp4Name";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Six_CompFinal";
+			Special = 80;
+			Arg0 = 14;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 15;
+    page // Page 1
+    {
+		Name = "Bed";
+        Dialog = "$Bed_01a";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Bed_01a_1";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 102;
+			CloseDialog = true;
+		}
+	}
+}

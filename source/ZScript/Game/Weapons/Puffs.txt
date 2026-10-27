@@ -1,0 +1,495 @@
+Class EmptyPuff : Actor
+{
+  Default
+  {
+    Projectile;
+	+BLOODLESSIMPACT
+	+NOINTERACTION
+  }
+}
+
+Class BulletzPuff : BulletPuff 
+{
+  int rollAmt;
+  
+  action void A_DoSpark(String type)
+  {
+    for(int i = 0; i < 7; i++)
+	  A_SpawnItemEx(type ,0,0,0,frandom(-4,4),frandom(-4,4),frandom(2,8),random(0,359),0,64);
+  }
+  
+  Default
+  {
+	RenderStyle "Add";
+    Decal "BulletzDecal";
+	+FORCEXYBILLBOARD
+	+HITTRACER
+    +PUFFONACTORS
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 {self.Scale.X = randompick(-1, 1);}
+      PUFD ABCDE 2 Bright;
+	  Stop;
+	XDeath:
+	  TNT1 A 1;
+	  Stop;
+	Sparks:
+	  TNT1 A random(0,2)
+	  {
+		A_SetScale(frandom(0.8,1.0));
+		roll = random(0,359);
+		bXFLIP = random(0,1);
+		bYFLIP = random(0,1);
+		rollAmt = random(-6,6);
+		
+		return A_Jump(256, "Spark1", "Spark2");
+	  }
+	Spark1:
+	  SPRK AAABCDEFGH 1 Bright A_SetRoll(roll + rollAmt, SPF_INTERPOLATE);
+	  Stop;
+	Spark2:
+	  SPRK IIIJKLMNOPQR 1 Bright A_SetRoll(roll + rollAmt, SPF_INTERPOLATE);
+	  Stop;
+  }
+}
+
+Class BulletSpark : Actor
+{
+  int rollAmt;
+  
+  Default
+  {
+    RenderStyle "Add";
+    +FORCEXYBILLBOARD
+    +NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay
+	  {
+	    A_StartSound("Bullet/Ricochet", CHAN_AUTO, 0, 1.0, 0.6);
+		for(int i = 0; i < 7; i++)
+		  A_SpawnItemEx("PuffSpark" ,0,0,0,frandom(-4,4),frandom(-4,4),frandom(2,8),random(0,359),0,64);
+	  }
+	  TNT1 A random(0,2)
+	  {
+		A_SetScale(frandom(0.8,1.0));
+		roll = random(0,359);
+		bXFLIP = random(0,1);
+		bYFLIP = random(0,1);
+		rollAmt = random(-6,6);
+		
+		return A_Jump(256, "Spark1", "Spark2");
+	  }
+	Spark1:
+	  SPRK AAABCDEFGH 1 Bright A_SetRoll(roll + rollAmt, SPF_INTERPOLATE);
+	  Stop;
+	Spark2:
+	  SPRK IIIJKLMNOPQR 1 Bright A_SetRoll(roll + rollAmt, SPF_INTERPOLATE);
+	  Stop;
+  }
+}
+
+Class PuffSpark : Actor
+{
+  Default
+  {
+    RenderStyle "Add";
+    Alpha 0.7;
+    Gravity 0.5;
+    Mass 0;
+    Speed 15;
+    +MISSILE
+    +NOTELEPORT
+    +MOVEWITHSECTOR
+    +THRUACTORS
+    +NOBLOCKMAP
+	+NOCLIP
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_SetScale(frandom(0.1,0.2));
+	  SPFL A random(35,70) Bright;
+	  Stop;
+	Crash:
+	Death:
+	  TNT1 A 1;
+	  Stop;
+  }
+}
+
+Class BluePuffSpark : PuffSpark
+{
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_SetScale(frandom(0.1,0.2));
+	  SPR3 C random(35,70) Bright;
+	  Stop;
+  }
+}
+
+Class GrenadeExplosion : Actor
+{
+  Default
+  {
+    Alpha 0.8;
+    RenderStyle "Translucent";
+    +NOGRAVITY
+    +NOBLOCKMAP
+    -SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  TNT1 A 0 Radius_Quake(5, 15, 0, 90, 0);
+	  DKXP AB 2 Bright;
+	  TNT1 AAAA 0
+	  {
+	    A_SpawnItemEx("Ember_Tracer",random(-4,4),random(-4,4),random(32,48),frandom(-8,8),frandom(-8,8),frandom(8,16),random(0,359));
+		A_SpawnItemEx("Ember_Tracer",random(-4,4),random(-4,4),random(32,48),frandom(-8,8),frandom(-8,8),frandom(8,16),random(0,359));
+		A_SpawnItemEx("Ember_Tracer",random(-4,4),random(-4,4),random(32,48),frandom(-8,8),frandom(-8,8),frandom(8,16),random(0,359));
+		A_SpawnItemEx("Ember_Tracer",random(-4,4),random(-4,4),random(32,48),frandom(-8,8),frandom(-8,8),frandom(8,16),random(0,359));
+		A_SpawnItemEx("Ember_Tracer",random(-4,4),random(-4,4),random(32,48),frandom(-8,8),frandom(-8,8),frandom(8,16),random(0,359));
+		A_SpawnItemEx("Ember_Tracer2",random(-4,4),random(-4,4),random(32,48),frandom(-8,8),frandom(-8,8),frandom(8,16),random(0,359));
+	  }
+	  TNT1 AAAAAA 0 A_SpawnItemEx("ExplosionSmoke",random(-4,4),random(-4,4),random(40,68),random(-2,2),random(-2,2),random(-2, 2),random(0,360));
+	  DKXP CDEFGHIJKLMNOPQRSTU 2 Bright;
+	  Stop;
+  }
+}
+
+Class GrenadeExplosionFloor : Actor
+{
+  Default
+  {
+    Scale 1.5;
+    +NOGRAVITY
+    +NOBLOCKMAP
+    -SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_SpawnItemEx("GrenadeExplosionFloor2", 0, 0, 0);
+	  TNT1 AAAA 0
+	  {
+	    A_SpawnItemEx("ExplosionEmber",random(-4,4),random(-40,40),random(88,112),random(-4,4),random(-4,4),random(-4,4));
+		A_SpawnItemEx("ExplosionEmber",random(-4,4),random(-40,40),random(88,112),random(-4,4),random(-4,4),random(-4,4));
+		A_SpawnItemEx("ExplosionEmber",random(-4,4),random(-40,40),random(88,112),random(-4,4),random(-4,4),random(-4,4));
+		A_SpawnItemEx("ExplosionEmber",random(-4,4),random(-40,40),random(88,112),random(-4,4),random(-4,4),random(-4,4));
+		A_SpawnItemEx("ExplosionEmber",random(-4,4),random(-40,40),random(88,112),random(-4,4),random(-4,4),random(-4,4));
+	  }
+	  TNT1 AAAAAA 0 A_SpawnItemEx("ExplosionSmoke",random(-4,4),random(-4,4),random(40,68),random(-2,2),random(-2,2),random(-2, 2),random(0,360));
+	  NKXP ABCDEFGHIJKLM 2 Bright;
+	  Stop;
+  }
+}
+
+Class GrenadeExplosionFloor2 : GrenadeExplosionFloor
+{
+  Default
+  {
+    Scale 1.6;
+    RenderStyle "Add";
+  }
+  States
+  {
+    Spawn:
+	  NXP2 ABCDEFGHIJKLM 2 Bright;
+	  Stop;
+  }
+}
+
+Class GunSmoke : Actor
+{
+  override void BeginPlay()
+  {
+    roll = random(0,359);
+  }
+  override void Tick()
+  {
+    Super.Tick();
+	
+	scale.x += 0.01;
+	scale.y += 0.01;
+  }
+  Default
+  {
+    Alpha 0.2;
+	Scale 0.6;
+    RenderStyle "Translucent";
+    +NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  SM01 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  SM02 ABCDEFGHIJKL 1;
+	  Stop;
+  }
+}
+
+Class BombExplosion : Actor
+{
+  Default
+  {
+    Alpha 1.0;
+    Scale 1.5;
+    RenderStyle "Translucent";
+    +NOGRAVITY
+    +NOBLOCKMAP
+    -SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  TNT1 A 0 Radius_Quake(5, 15, 0, 90, 0);
+	  BMXP ABCDEFGH 2 Bright;
+	  BMXP IIIJJJKKKLLLLL 1 Bright A_FadeOut(0.08);
+	  Stop;
+  }
+}
+
+Class ExplosionSpark : Actor
+{
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+	
+	A_SetScale(frandom(1.1,1.5));
+	roll = random(0,359);
+	bXFlip = random(0,1);
+  }
+  Default
+  {
+    RenderStyle "Translucent";
+	+BRIGHT
+    +NOINTERACTION
+    +FORCEXYBILLBOARD
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  XRK1 ACEGHIJK 1;
+	  XRK1 LMNOPQRSTUVWXYZ 1 A_FadeOut(0.1);
+	  Stop;
+  }
+}
+
+Class ExplosionSmoke : Actor
+{
+  Default
+  {
+    RenderStyle "Shaded";
+    StencilColor "6B 6B 6B";
+    Alpha 0.0;
+    Scale 0.5;
+    +NOINTERACTION
+    +FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  SMOK A 0;
+	  SMOK AAAAAAAA 1 A_FadeIn(frandom(0.08, 0.1));
+	  SMOK A 2;
+      SMOK A 2 A_FadeOut (0.08);
+      Wait;
+  }
+}
+
+Class ExplosionEmber : Actor
+{
+  Default
+  {
+    Projectile;
+    Alpha 0.0;
+    Scale 0.7;
+    Speed 2;
+    RenderStyle "Add";
+    +MISSILE
+    +NOBLOCKMAP
+    +NOGRAVITY
+    +NOTELEPORT
+  }
+  States
+  {
+    Spawn:
+      FSPK D 1;
+      "####" "###" 1 Bright A_FadeIn(0.2);
+	  "####" "#" 0 A_ChangeVelocity(random(-5,5), random(-5,5), random(-3, 3),CVF_RELATIVE);
+	  "####" "##" 1 Bright A_FadeIn(0.2);
+	  Goto See;
+    See:
+	  "####" "#" 0 A_ChangeVelocity(random(-5,5), random(-5,5), random(-3, 3),CVF_RELATIVE);
+	  "####" "###" 1 Bright;
+	  "####" "#" 1 Bright A_FadeOut(0.1);
+	  Loop;
+  }
+}
+
+Class Firetrail2 : Actor
+{
+  Default
+  {
+    Scale 0.4;
+    Alpha 0.0;
+    Gravity 1.2;
+    RenderStyle "Translucent";
+    +NOINTERACTION
+  }
+  States
+  {
+	Spawn:
+	FSPK AAAAA 1 NoDelay Bright A_FadeIn(0.2);
+	FSPK BCDE 5 Bright;
+	Stop;
+  }
+}
+
+Class Ember_Tracer : Actor
+{
+  Default
+  {
+    Scale 0.2;
+    Gravity 0.5;
+    RenderStyle "Add";
+    +MISSILE
+    +FORCEXYBILLBOARD
+    -SOLID
+  }
+  States
+  {
+    Spawn:
+	  SPFL A 20 Bright;
+	  TNT1 A 0 A_SetGravity(0.2);
+	See:
+	  SPFL A 4 Bright;
+	  Wait;
+	Death:
+	  TNT1 A 1;
+	  Stop;
+  }
+}
+
+Class Ember_Tracer2 : Ember_Tracer
+{
+  Default
+  {
+    Scale 1.0;
+    Gravity 0.4;
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_Jump(256,1,2,3,4,5);
+	  FRTR ABCDE 4;
+	  Loop;
+  }
+}
+
+Class NormalSmoke : Actor
+{
+  bool left;
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	left = random(0,1);
+    bSPRITEFLIP = random(0,1);
+	roll = random(0,359);
+	scale.x = frandom(1.75, 2.5);
+	scale.y = scale.x * 0.83;
+  }
+  Default
+  {
+    RenderStyle "Shaded";
+	StencilColor "3d3d3d";
+	Alpha 0.0;
+	+BRIGHT
+	+FORCEXYBILLBOARD
+    +NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  TNT1 A 0
+	  {
+	    name spr = String.Format("SGV%dA0", random(1,5));
+	    sprite = GetSpriteIndex(spr);
+	  }
+	  "####" AAAAA 1 { alpha += 0.02; }
+	  "####" A 1
+	  {
+		A_FadeOut(0.001);
+	    scale.x += 0.05;
+		scale.y = 0.83 * scale.x;
+		roll += left ? 0.5 : -0.5;
+	  }
+	  Wait;
+	Dummy:
+	  SGV1 A -1;
+	  SGV2 A -1;
+	  SGV3 A -1;
+	  SGV4 A -1;
+	  SGV5 A -1;
+	  Stop;
+  }
+}
+
+Class GunSpark : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() > 17)
+	  Destroy();
+  }
+  Default
+  {
+    Scale 0.5;
+	RenderStyle "Shaded";
+	StencilColor "FF9933";
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  0000 A 1 Bright NoDelay A_FaceMovementDirection();
+	  Wait;
+  }
+} 
+
+Class ShotgunSpark : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() > 10)
+	  Destroy();
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  0000 A 8 Bright NoDelay A_FaceMovementDirection();
+	  Wait;
+  }
+}

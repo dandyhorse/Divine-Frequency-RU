@@ -1,0 +1,57 @@
+[enu default]
+Lantern = "Lantern";
+Lantern_01 =
+"Hey you! Yeah, you. Come here and let me holler at you real quick.";
+Lantern_01a = "What do you want?";
+Lantern_01b = "Who are you?";
+Lantern_01c = "What the fuck?";
+Lantern_01d = "\cQ(Leave) \cDThis feels suspicious, walk away.";
+
+Lantern_01a_1 =
+"Well umm... you see, I-uh, I've been stuck here for quite some time. Someone just left me here and never came back.\n\n"
+"I want to see what's out there, please take me with you, please? I can help you navigate through the darkness beyond.";
+
+Lantern_01b_1 =
+"Who do you think, genius? I'm the lantern. But as you can see, I'm stuck here, with no fingers to scratch my ass on top of it.\n\n"
+"I want to see what's out there... Come on, take me with you. I'll even be helpful and shine my beautiful radiant light for you.";
+
+Lantern_01c_1 =
+"Don't give me that attitude just because I'm different. You're not so normal looking yourself either. With your unnusual build.\n\n"
+"Look, I reeaallyy really don't want to be here any longer. It's so goddamn boring, I can't take it anymore. Can I tag along with wherever you're going? I promise I can be useful.";
+
+Lantern_02a = "\cD[Pick up lantern] \cJSure, why not. Let's go.";
+Lantern_02b = "Should I be worried about what's out there?";
+Lantern_02c = "I don't need you.";
+
+Lantern_02b_1 =
+"I mean... together, we're gonna be something to worry about for whatever's out there. Soooo...";
+Lantern_02b_1a = "\cD[Pick up lantern] \cJFair point.";
+Lantern_02b_1b = "\cQ(Leave) \cJI think I can handle it on my own.";
+
+Lantern_02c_1 =
+"True. But I bet you won't be able to see shit down there in them dark ass halls. Ha!";
+Lantern_02c_1a = "\cD[Pick up lantern] \cJAlright, you got a point. Feel free to tag along.";
+Lantern_02c_1b = "\cQ(Leave) \cDRemain silent.";
+Lantern_02c_1c = "\cQ(Leave) \cJNone of this is real. It can't be.";
+Lantern_02c_1d = "\cQ(Leave) \cJLanterns can't talk!! Good-bye!";
+
+Lantern_03 = "Changed your mind?";
+Lantern_03a = "\cD[Pick up lantern] \cJYou're right. It's very dark out there.";
+Lantern_03b = "\cQ(Leave) \cJNope.";
+
+Lantern_04 =
+"Hold on player, I know this will sound very strange... but I think I'm meant to sit here.";
+Lantern_04a = "What's so special about it?";
+Lantern_04b = "\cD[Place Lantern on platform] \cJOkay.";
+
+Lantern_04a_1 =
+"To be honest, I'm not really sure. It feels like instinct -- like I just know that this must happen, weird as that may sound.";
+
+Lantern_04a_1a =
+"But I still need your help! What if there's more darkness?";
+Lantern_04a_1a_1 =
+"You must learn to slowly trust others again, player. I think I may be able to assist you in a different way, if you'd let me.";
+Lantern_04a_1a_1a = "\cDPlace Lantern on platform]\cJ Alright, enjoy your stay.";
+
+Lantern_05 =
+"Please? Why are you making me beg?";

@@ -1,0 +1,166 @@
+ Class Skill_Shield : Skill
+{
+  bool active;
+  int life_time, fx_time;
+  
+  override void AttachToOwner(Actor other)
+  {
+    Super.AttachToOwner(other);
+	
+	if(other)
+	{
+	  if(!DFPlayer(other).quickUse1)
+	    DFPlayer(other).quickUse1 = self;
+	  else if(!DFPlayer(other).quickUse2)
+	    DFPlayer(other).quickUse2 = self;
+	  else if(!DFPlayer(other).quickUse3)
+	    DFPlayer(other).quickUse3 = self;
+	  else if(!DFPlayer(other).quickUse4)
+	    DFPlayer(other).quickUse4 = self;
+		
+	  EventHandler.SendInterfaceEvent(0, "HUDUpdateQBTex");
+	}
+  }
+  
+  override void BeginPlay()
+  {
+    invName = "Psionic Shield";
+	invIcon = "Graphics/Inventory Icon/Skill_Shield.png";
+	invText = "$S_Shield";
+	invLore = "$S_ShieldLore";
+	
+	Super.BeginPlay();
+  }
+  
+  override bool Use(bool pickup)
+  {
+	if(!owner)
+	  return false;
+	  
+	if(owner && owner.CountInv("PSI") < 2)
+	{
+	  owner.ACS_NamedExecute("NoPsi");
+	  return false;
+	}
+    
+	owner.A_TakeInventory("PSI", 2);
+	DFPlayer(owner).psi_shield_health = 100 + (25 * DFPlayer(owner).Wit);
+	DFPlayer(owner).psi_shield_health_max = DFPlayer(owner).psi_shield_health;
+	DFPlayer(owner).psi_shield_time = 60 + (120 * DFPlayer(owner).Wit); //1, 3, 5, 7, 9 minutes
+	life_time = 0;
+	fx_time = 1;
+	active = true;
+
+	return false;
+  }
+  
+  override void DoEffect()
+  {
+    if(active)
+	{
+	  if(fx_time == 1)
+	  {
+	    if(owner)
+	    {
+	      owner.A_StartSound("Shield", CHAN_AUTO);
+		  owner.A_SetBlend("Cyan", 0.2, 35);
+		  owner.ACS_NamedExecute("Psi_Shield_on");
+	    }
+	    fx_time--;
+	  }
+	  if(owner && DFPlayer(owner).psi_shield_health > 0)
+	  {
+	    if(life_time < 35)
+		{
+		  life_time++;
+		}
+		else if(life_time == 35)
+		{
+	      life_time = 0;
+		  DFPlayer(owner).psi_shield_time--;
+		  if(DFPlayer(owner).psi_shield_time <= 0)
+		  {
+		    DFPlayer(owner).psi_shield_health = 0;
+		    active = false;
+		    owner.ACS_NamedExecute("Psi_Shield_off");
+		  }
+		}
+	  }
+	  else if(owner && DFPlayer(owner).psi_shield_health <= 0)
+	  {
+	    DFPlayer(owner).psi_shield_health = 0;
+		DFPlayer(owner).psi_shield_time = 0;
+		active = false;
+		owner.ACS_NamedExecute("Psi_Shield_off");
+	  }
+	}
+	Super.DoEffect();
+  } 
+}
+
+ Class Skill_Radar : Skill
+{
+  bool active;
+  int life_time, fx_time;
+  override void BeginPlay()
+  {
+    invName = "Threat Detection";
+	invIcon = "Graphics/Inventory Icon/Skill_Radar.png";
+	invText = "$S_Threat";
+	invLore = "$S_ThreatLore";
+	
+	Super.BeginPlay();
+  }
+  
+  override bool Use(bool pickup)
+  {
+	if(!owner)
+	  return false;
+	  
+	if(owner && owner.CountInv("PSI") < 1)
+	{
+	  owner.ACS_NamedExecute("NoPsi");
+	  return false;
+	}
+    
+	owner.A_TakeInventory("PSI", 1);
+	DFPlayer(owner).radar_time = 15 + (DFPlayer(owner).Wit * 15);
+	DFPlayer(owner).radar = true;
+	life_time = 0;
+	fx_time = 1;
+	active = true;
+
+	return false;
+  }
+  
+  override void DoEffect()
+  {
+    if(active)
+	{
+	  if(fx_time == 1)
+	  {
+	    if(owner)
+	    {
+	      owner.A_StartSound("Radar", CHAN_AUTO);
+		  owner.A_SetBlend("Cyan", 0.2, 70);
+	    }
+	    fx_time--;
+	  }
+	  if(life_time == 35)
+	  {
+	    life_time = 0;
+		if(owner)
+		{
+	      DFPlayer(owner).radar_time--;
+		  if(DFPlayer(owner).radar_time <= 0)
+		  {
+		    active = false;
+			DFPlayer(owner).radar = false;
+		  }
+		}
+	  }
+	  life_time++;
+	} 
+	Super.DoEffect();
+  } 
+}

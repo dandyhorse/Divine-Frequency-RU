@@ -1,0 +1,1150 @@
+#include "zcommon.acs"
+
+bool westP1 = FALSE;
+bool westP2 = FALSE;
+bool north = FALSE;
+bool south = FALSE;
+bool east = FALSE;
+bool west = FALSE;
+int boss_death = 0;
+int light_val = 128;
+
+Script "Init" ENTER
+{
+	ScriptCall("DFPlayer", "SetLocation", "Mind Palace");
+	if(GetUserCVar(0, "dev_debug") == 0)
+	{
+		SetMusic("S_Loop1");
+		ChangeCamera(160, 0, 0);
+		FadeTo(0, 0, 0, 1.0, 0.0);
+		Delay(35*6);
+		SetFont(const:"ACS_FONT");
+		HudMessageBold(s:"Your entire being is shattered to mere fragments as you peer into the true visage of the Mind Palace.";
+		0, 1, CR_UNTRANSLATED, 1.5, 0.5, 7.0);
+		Delay(35*7);
+		HudMessageBold(s:"You cannot recall it, nor do you want to remember the grotesque horror that stared back at you from the other side.";
+		0, 1, CR_UNTRANSLATED, 1.5, 0.5, 7.0);
+		Delay(35*9);
+		HudMessageBold(s:"You are engulfed within this domain.";
+		0, 1, CR_UNTRANSLATED, 1.5, 0.5, 5.0);
+		Delay(35*7);
+		HudMessageBold(s:"But your mind persists.\n\nSlowly, it connects fragmented conceptions into a frail mental image, guiding your instincts through the dark.";
+		HUDMSG_FADEOUT, 1, CR_UNTRANSLATED, 1.5, 0.5, 8.0, 1.0);
+		Delay(35*9);
+		GiveInventory("HighZone", 1);
+		GiveInventory("SixEntry2", 1);
+		SpawnSpot("MP", 129, 1000, 0);
+		Teleport_NoFog(166, 1, 0);
+		ChangeCamera(0, 0, 0);
+		FadeTo(0, 0, 0, 0.0, 12.0);
+		//BLINK
+		ChangeCamera(160, 0, 0);
+		Delay(35);
+		ChangeCamera(0, 0, 0);
+		Delay(35);
+		ChangeCamera(160, 0, 0);
+		Delay(35);
+		ChangeCamera(0, 0, 0);
+		Delay(35);
+		ChangeCamera(160, 0, 0);
+		Delay(35);
+		ChangeCamera(0, 0, 0);
+		Delay(35);
+		ChangeCamera(160, 0, 0);
+		Delay(35);
+		ChangeCamera(0, 0, 0);
+		ScriptCall("DFPlayer", "SetHUD", TRUE);
+		Delay(17);
+		SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN);
+		StartConversation(76, 0);
+	}
+	else
+	{
+		SpawnSpot("MP", 129, 1000, 0);
+	}
+	//Testing -- remove when done
+	Delay(35);
+}
+
+Script "Crumble" (int waitTime)
+{
+	Delay(waitTime);
+	LocalAmbientSound("Sx_End0", 127);
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"The Mind Palace is becoming unstable."; 0, 1, CR_WHITE, 1.5, 0.85, 5.0);
+	QuakeEx(666, 5, 5, 6, 154, 0, 6000, "dsempty", QF_SCALEDOWN);
+	Delay(35*2);
+	ACS_NamedExecute("Autosave", 0);
+}
+
+Script "End" (void)
+{
+	Delay(35*4);
+	ScriptCall("DFPlayer", "MusicFade", 0.4, 80);
+	Delay(170);
+	ScriptCall("DFPlayer", "MusicFade", 0.2, 50);
+	Delay(80);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 70);
+	Delay(35*3);
+	LocalAmbientSound("Sx_End7", 127);
+	SetActorState(159, "Activate", 0);
+	Delay(35*5);
+	Light_Fade(1, 32, 210);
+	//Ending
+	Delay(35*10);
+	ACS_NamedExecute("End_Ring", 0);
+	Delay(35*10);
+	LocalAmbientSound("Sx_End5", 127);
+	SpawnSpot("Pyramid_Death", 139, 139, 0);
+	//UH OH---
+	Delay(35*7);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"''My dear old acquaintances, the moment of death has arrived.''"; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(35*5);
+	TakeInventory("SixEntry2", 1);
+	//Delay(1);
+	//GiveInventory("HighZone", 1);
+    HudMessage(s:"''You cannot stay here.''"; 0, 1, CR_WHITE, 1.5, 0.05, 3.0);
+	SetActorState(149, "Activate", 0);
+	Delay(35*5);
+	HudMessage(s:"''Let us depart and make way to The Divine Realm.''"; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(35*5);
+	//BOOOOM!!!!!
+	QuakeEx(0, 1, 3, 5, 2000, 0, 128, "dsempty");
+	Thing_Remove(139);
+	SetActorState(140, "Activate", 0);
+	PlaySound(142, "Sx_End6", CHAN_BODY, 1.0, 0, 0.05);
+	SpawnSpot("Pyramid_Beam2", 141, 0, 0);
+	SpawnSpot("Six_PyramidBeamBottom", 141, 0, 0);
+	ScriptCall("ShaderHandler", "SetImageGlitcher", TRUE);
+	//Peace-out
+	FadeTo(192, 192, 192, 1.0, 2.0);
+	Delay(35*5);
+	StopSound(142, CHAN_BODY);
+	CancelFade();
+	LocalAmbientSound("Sx_End8", 127);
+	FadeTo(0, 0, 0, 1.0, 0.0);
+	ChangeCamera(160, 0, 0);
+	ScriptCall("DFPlayer", "SetHUD", FALSE);
+	Delay(35*8);
+	HudMessage(l:"END_EA";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.5, 300.0, 2.0, 2.0);
+}
+
+Script "End_Ring" (void) //Consort Radahn is a better fight than Messmer
+{
+	for(int i = 150; i < 154; i++)
+	{
+		SetActorState(i, "Activate", 0);
+		Delay(35*5);
+	}
+	for(i = 150; i < 154; i++)
+	{
+		SetActorVelocity(i, 0.0, 0.0, -4.0, 0, 0);
+	}
+	SetActorVelocity(149, 0.0, 0.0, -4.0, 0, 0);
+	Delay(35*5);
+	for(i = 150; i < 154; i++)
+	{
+		SetActorVelocity(i, 0.0, 0.0, 2.0, 0, 0);
+	}
+	SetActorVelocity(149, 0.0, 0.0, 2.0, 0, 0);
+}
+
+Script "Collapse" (int musWaitTime, int msgWaitTime)
+{
+	SetActorState(666, "Glitch", 0);
+	Floor_LowerInstant(155, 0, 210);
+	Thing_Remove(156);
+	Line_SetBlocking(157, 0, BLOCKF_EVERYTHING);
+	Delay(musWaitTime);
+	SetMusic("S_Final");
+	Delay(msgWaitTime);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"The Northern Realm of The Mind Palace is revealed."; 0, 1, CR_WHITE, 1.5, 0.1, 5.0);
+	if(CheckInventory("PistolAmmo") <= 0)
+	{
+		GiveInventory("PistolAmmo", 12);
+	}
+	if(CheckInventory("ShotgunAmmo") <= 5)
+	{
+		GiveInventory("ShotgunAmmo", 8);
+	}
+}
+
+Script 01 (void) //Hand
+{
+	Floor_LowerByValue(6, 4, 80);
+	FloorAndCeiling_LowerByValue(147, 4, 80);
+	QuakeEx(10, 0, 0, 1, 160, 0, 256, "dsempty");
+	SetActorState(1000, "Chill", FALSE); //Remove boss' HP Bar
+	Thing_Deactivate(74);
+	Line_SetBlocking(13, BLOCKF_CREATURES, 0);
+	Thing_SetConversation(10, 0);
+	SetLineSpecial(11, 0, 0, 0, 0, 0, 0);
+	Delay(35);
+	SpawnSpot("Six_Hand", 3, 3, 0);
+	SetActorVelocity(3, 0.0, 0.0, -2.0, 0, 0);
+	Delay(215);
+	SetActorVelocity(3, 0.0, 0.0, 0.0, 0, 0);
+	PlaySound(12, "Ritual13", CHAN_AUTO, 1.0, 0, 0.1);
+	Delay(10);
+	SpawnSpot("Dreamer_TP", 12, 0, 0);
+	Delay(25);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"The Hand of Sarmipadhva invites you to wander The Halls of Illusion."; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(45);
+	SpawnSpot("Dreamer_TP4", 12, 0, 0);
+	Delay(45);
+	LocalAmbientSound("S_Tran4", 127);
+	Delay(113);
+	SetMusic("S_CB1");
+	FadeTo(176, 176, 176, 1.0, 0.0);
+	Delay(15);
+	Teleport_NoFog(56, 1, 0);
+	SetActorPitch(0, 0.0);
+	SetActorState(666, "Spawn", 0);
+	Delay(2);
+	FadeTo(176, 176, 176, 0.0, 0.5);
+}
+
+Script 02 (void) //Petals
+{
+	Floor_LowerByValue(4, 4, 80);
+	FloorAndCeiling_LowerByValue(5, 4, 80);
+	QuakeEx(16, 0, 0, 1, 160, 0, 256, "dsempty");
+	SetActorState(1000, "Chill", FALSE); //Remove boss' HP Bar
+	Thing_Deactivate(75);
+	Line_SetBlocking(13, BLOCKF_CREATURES, 0);
+	Thing_SetConversation(16, 0);
+	SetLineSpecial(17, 0, 0, 0, 0, 0, 0);
+	Delay(35);
+	SpawnSpot("Six_FlowerRain", 19, 0, 128); //35
+	Sector_SetFade(1, 172, 88, 136);
+	Delay(5);
+	Sector_SetFade(1, 23, 0, 0);
+	Delay(5);
+	Sector_SetFade(1, 208, 104, 160);
+	Delay(5);
+	Sector_SetFade(1, 23, 0, 0);
+	Delay(5);
+	Sector_SetFade(1, 255, 127, 193);
+	Delay(5);
+	Sector_SetFade(1, 23, 0, 0);
+	Delay(10);
+	SpawnSpot("Six_Flower", 7, 7, 128);
+	SetActorVelocity(7, 0.0, 0.0, -2.0, 0, 0); //170
+	Sector_SetFade(1, 255, 127, 193);
+	Delay(2);
+	Sector_SetFade(1, 23, 0, 0);
+	Delay(2);
+	Sector_SetFade(1, 208, 104, 160);
+	Delay(2);
+	Sector_SetFade(1, 23, 0, 0);
+	Delay(2);
+	Sector_SetFade(1, 172, 88, 136);
+	Delay(2);
+	Delay(160);
+	SetActorVelocity(7, 0.0, 0.0, 0.0, 0, 0);
+	PlaySound(18, "Ritual13", CHAN_AUTO, 1.0, 0, 0.1);
+	Delay(10);
+	SpawnSpot("Dreamer_TP", 18, 0, 0);
+	Delay(25);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"The Petals of Sjinn invites you to wander The Corridor of Death."; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(45);
+	SpawnSpot("Dreamer_TP4", 18, 0, 0);
+	Delay(88);
+	LocalAmbientSound("S_tran1", 127);
+	Delay(35*2);
+	SetMusic("S_CB2");
+	FadeTo(0, 0, 0, 1.0, 0.0);
+	Delay(15);
+	Teleport_NoFog(14, 1, 0);
+	SetActorPitch(0, 0.0);
+	Delay(2);
+	FadeTo(0, 0, 0, 0.0, 0.5);
+	ACS_NamedExecute("Radiation", 0, 15, 0, 12);
+}
+
+Script 03 (void) //Raah Envoy
+{
+	Line_SetBlocking(157, BLOCKF_CREATURES, 0);
+	SetActorState(666, "Death", 0);
+	Floor_LowerByValue(144, 4, 80);
+	FloorAndCeiling_LowerByValue(146, 4, 80);
+	QuakeEx(77, 0, 0, 1, 160, 0, 256, "dsempty");
+	SetActorState(1000, "Chill", FALSE); //Remove boss' HP Bar
+	PlaySound(80, "Sx_North", CHAN_AUTO, 1.0, 0, 0.1);
+	SpawnSpot("Six_MindWaveSpawner", 80, 0, 192);
+	Thing_Deactivate(78);
+	Thing_SetConversation(77, 0);
+	SetLineSpecial(79, 0, 0, 0, 0, 0, 0);
+	Delay(35*2);
+	SetActorState(125, "Active", FALSE);
+	Delay(35);
+	QuakeEx(0, 2, 2, 4, 105, 0, 128, "DSEMPTY", QF_SCALEDOWN);
+	Delay(10);
+	Faderange(255, 204, 229, 0.4, 255, 204, 229, 0.0, 3.0);
+	SpawnSpot("Six_Mind", 80, 80, 192);
+	SetActorVelocity(80, 0.0, 0.0, -2.0, 0, 0);
+	Delay(20);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"The Tyrannical Parasites beckon you to The False Lights of Reality."; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(150);
+	SetActorVelocity(80, 0.0, 0.0, 0.0, 0, 0);
+	ACS_Execute(18, 0);
+}
+
+Script 04 (void) //Mechanical Mind
+{
+	Line_SetBlocking(154, BLOCKF_PLAYERS, 0);
+	Floor_LowerByValue(145, 4, 80);
+	FloorAndCeiling_LowerByValue(148, 4, 80);
+	QuakeEx(76, 0, 0, 1, 160, 0, 256, "dsempty");
+	Floor_RaiseByValue(117, 16, 328);
+	SetActorState(1000, "Chill", FALSE); //Remove boss' HP Bar
+	PlaySound(126, "Sx_South", CHAN_AUTO, 1.0, 0, 0.1);
+	SpawnSpot("Six_Skull", 126, 126, 64);
+	Thing_Deactivate(9);
+	Thing_SetConversation(76, 0);
+	SetLineSpecial(128, 0, 0, 0, 0, 0, 0);
+	Delay(130);
+	PlaySound(126, "Sx_Skul1", CHAN_AUTO, 1.0, 0, 0.1);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"The Circuits of Adam invites you to experience The Sounds of Reality."; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(236);
+	PlaySound(126, "Sx_Skul2", CHAN_AUTO, 0.5, 0, 0.1);
+	Delay(35);
+	QuakeEx(0, 2, 2, 2, 245, 0, 128, "DSEMPTY", QF_SCALEDOWN);
+	Delay(160);
+	ACS_Execute(20, 0);
+}
+
+Script 05 (void) //Rad Hall Door
+{
+	//Prevent leaving
+	Floor_RaiseByValue(112, 128, 251);
+	LocalAmbientSound("Funny02", 127);
+	//Lower Light
+	Light_Fade(41, 64, 105);
+	//Uh oh- Enemy spotted
+	Delay(148);
+	SpawnSpot("BirdWorship", 42, 42, 64);
+	Delay(1);
+	SetActorState(42, "FastFall", 0);
+	//Continue
+	Thing_Activate(219);
+	Scroll_Wall(214, 0.0, 2.0, 0, 2);
+	Scroll_Wall(216, 0.0, -2.0, 0, 2);
+	Scroll_Wall(217, 1.0, 0.0, 0, 2);
+	Scroll_Wall(218, -1.0, 0.0, 0, 2);
+	Floor_RaiseByValue(213, 3, 54);
+	Ceiling_LowerByValue(213, 3, 54);
+	Floor_LowerByValue(96, 4, 70);
+	Ceiling_RaiseByValue(96, 4, 70);
+	Delay(140);
+	Thing_Deactivate(219);
+	PlaySound(220, "GateStop", CHAN_AUTO, 1.0, FALSE, 0.5);
+	Scroll_Wall(214, 0.0, 0.0, 0, 2);
+	Scroll_Wall(216, 0.0, 0.0, 0, 2);
+	Scroll_Wall(217, 0.0, 0.0, 0, 2);
+	Scroll_Wall(218, 0.0, 0.0, 0, 2);
+	QuakeEx(0, 2, 2, 2, 17, 0, 500, "DSEMPTY");
+
+	Delay(95);
+	Ceiling_RaiseByValue(49, 4, 156);
+	while(TRUE)
+	{
+		if(ThingCountName("BirdWorship", 42) <= 0)
+		{
+			ACS_Execute(6, 0);
+			break;
+		}
+		Delay(4);
+	}
+}
+
+Script 06 (void) //Rad Hall Ending pt.1
+{
+	for(int i = 60; i < 71; i++)
+	{
+		Floor_LowerByValue(i, 5, 133);
+		Ceiling_RaiseByValue(i, 4, 120);
+		Delay(15);
+	}
+	Ceiling_RaiseByValue(50, 6, 128);
+	Floor_LowerByValue(50, 6, 133);
+}
+
+Script 07 (void) //Rad Hall Ending pt.2
+{
+	SetLineSpecial(71, 0, 0, 0, 0, 0, 0);
+	Thing_Remove(51);
+	Thing_Remove(54);
+	SetActorState(20, "Activate", FALSE);
+	ACS_NamedExecute("Radiation", 0, 0, 15, 0);
+
+	//TP part
+	LocalAmbientSound("Sx_TP1", 127);
+	FadeRange(255, 255, 255, 1.0, 255, 255, 255, 0.0, 0.4);
+	Thing_Activate(78);
+	ChangeCamera(78, 0, 0);
+	Delay(35);
+	LocalAmbientSound("Sx_Sword", 127);
+	SetActorPitch(0, 0.0);
+	ChangeCamera(0, 0, 0);
+	Teleport_NoFog(73, 1, 0);
+	FadeRange(255, 255, 255, 1.0, 255, 255, 255, 0.0, 1.0);
+
+	//Statue Stuff
+	SetActorState(20, "Spin", FALSE);
+	QuakeEx(20, 0, 0, 1, 180, 0, 1500, "dsempty");
+	Delay(176);
+	FadeTo(255, 255, 255, 1.0, 3.0);
+	LocalAmbientSound("Sx_End2", 127);
+	GiveInventory("Six_Key_Sword2", 1);
+	boss_death++;
+	west = TRUE;
+	Delay(44);
+	if(boss_death < 3)
+	{
+		SetMusic("S_Loop3");
+	}
+	Delay(3);
+	QuakeEx(20, 0, 0, 9, 35, 0, 4000, "dsempty");
+	Delay(6);
+	SetActorState(7, "Death", FALSE);
+	CancelFade();
+	FadeTo(light_val, light_val, light_val, 1.0, 0.0);
+	TakeInventory("Six_Key_Sword2", 1);
+	ScriptCall("DFPlayer", "SetRadiation", -999);
+	if(boss_death >= 3)
+	{
+		ACS_NamedExecute("Collapse", 0, 53);
+	}
+	else if(boss_death == 2)
+	{
+		ACS_NamedExecute("Crumble", 0, 70);
+	}
+	Delay(1);
+	FadeTo(light_val, light_val, light_val, 0.0, 0.0);
+	Delay(random(1,3));
+	light_val = random(128, 160);
+	Thing_Remove(7);
+	FadeTo(light_val, light_val, light_val, 1.0, 0.0);
+	Delay(1);
+	FadeTo(light_val, light_val, light_val, 0.0, 0.0);
+	Delay(random(1,3));
+	light_val = random(128, 160);
+	FadeTo(light_val, light_val, light_val, 1.0, 0.0);
+	Delay(1);
+	FadeTo(light_val, light_val, light_val, 0.0, 0.0);
+	Delay(random(1,3));
+	light_val = random(128, 160);
+	FadeTo(light_val, light_val, light_val, 1.0, 0.0);
+	Delay(1);
+	FadeTo(light_val, light_val, light_val, 0.0, 0.0);
+	Delay(random(1,3));
+	light_val = random(128, 160);
+	FadeTo(light_val, light_val, light_val, 1.0, 0.0);
+	Delay(1);
+	FadeTo(light_val, light_val, light_val, 0.0, 0.0);
+	CancelFade();
+	Sector_SetFade(1, 23, 0, 0);
+	Line_SetBlocking(13, 0, BLOCKF_CREATURES);
+	Thing_Remove(20);
+	SetActorState(1000, "Activate", FALSE); //Enable boss' HP Bar
+	Delay(10);
+	Thing_Damage2(1000, 250, "Void");
+	Delay(35*2);
+	SetActorState(1000, "Chill", FALSE); //Remove boss' HP Bar
+}
+
+Script 08 (void) //Illusion Hall Ending pt. 1
+{
+	CancelFade();
+	SetLineSpecial(43, 80, 10);
+	LocalAmbientSound("DoorTP1",127);
+	SetPlayerProperty(1,1,0);
+	fadeto(0, 0, 0, 1.0, 0.5);
+	Delay(32);
+	Teleport_NoFog(118, 1, 0);
+	Delay(24);
+	LocalAmbientSound("DoorTP2",127);
+	fadeto(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+}
+
+Script 09 (void) //Illusion Hall Ending pt. 2
+{
+	Thing_Remove(57);
+	Thing_Remove(72);
+	SetLineSpecial(58, 0, 0, 0, 0, 0, 0);
+	LocalAmbientSound("Sx_TP2", 127);
+	FadeRange(255, 255, 255, 1.0, 255, 255, 255, 0.0, 0.2);
+	Thing_Activate(172);
+	ChangeCamera(172, 0, 0);
+	Delay(30);
+	FadeRange(255, 255, 255, 1.0, 255, 255, 255, 0.0, 1.0);
+	SetActorPitch(0, 0.0);
+	ChangeCamera(0, 0, 0);
+	Teleport_NoFog(55, 1, 0);
+	Delay(35);
+
+	//Statue Stuff
+	SetActorState(22, "Spin", FALSE);
+	QuakeEx(22, 0, 0, 1, 180, 0, 1500, "dsempty");
+	Delay(210);
+	LocalAmbientSound("Sx_Flute", 127);
+	GiveInventory("Six_Key_Sword", 1);
+	Delay(169);
+	FadeTo(255, 255, 255, 1.0, 2.0);
+	Delay(70);
+	boss_death++;
+	west = TRUE;
+	if(boss_death >= 3)
+	{
+		SetMusic("D_NULL");
+		ACS_NamedExecute("Collapse", 0, 105);
+	}
+	else if(boss_death == 2)
+	{
+		ACS_NamedExecute("Crumble", 0, 160);
+		SetMusic("S_Loop2");
+		ScriptCall("DFPlayer", "MusicFade", 0.3, 0);
+	}
+	else
+	{
+		SetMusic("S_Loop2");
+		ScriptCall("DFPlayer", "MusicFade", 0.3, 0);
+	}
+	FadeTo(255, 255, 255, 0.0, 0.0);
+	QuakeEx(0, 0, 0, 8, 35, 0, 128, "dsempty");
+	GiveInventory("PulseShaderHit", 1);
+	TakeInventory("Six_Key_Sword", 1);
+	Thing_Remove(22);
+	SetActorState(3, "Death", FALSE);
+	SetActorVelocity(3, -2.0, 0.0, -5.0, 0, 0);
+	Line_SetBlocking(13, 0, BLOCKF_CREATURES);
+	Thing_Remove(23);
+	Thing_Remove(28);
+	Delay(1);
+	Thing_Remove(24);
+	Thing_Remove(47);
+	Delay(1);
+	Thing_Remove(27);
+	Thing_Remove(48);
+	Delay(1);
+	SetActorState(1000, "Activate", FALSE); //Enable boss' HP Bar
+	Delay(10);
+	Thing_Damage2(1000, 250, "Void");
+	Delay(35*2);
+	SetActorState(1000, "Chill", FALSE); //Remove boss' HP Bar
+	if(boss_death < 3)
+	{
+		ScriptCall("DFPlayer", "MusicFade", 1.0, 50);
+	}
+}
+
+Script 10 (void) //Locked door
+{
+	LocalAmbientSound("Locked01",127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"The door is locked.";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+}
+
+Script 11 (void) //Quake-Stuff
+{
+	LocalAmbientSound("Sx_End0", 127);
+	QuakeEx(0, 5, 5, 6, 154, 0, 128, "dsempty", QF_SCALEDOWN);
+	ScriptCall("GenericScreenStuff", "Clean");
+	ACS_NamedExecute("Autosave", 0);
+}
+
+int c_prog = 0;
+Script 12 (int id) //Progress
+{
+	switch (id)
+	{
+		case 0:
+		ACS_NamedExecute("Comp_Progress", 0);
+		SetLineTexture(100, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPC0");
+		SetLineSpecial(100, 0, 0, 0, 0, 0, 0);
+		Thing_Deactivate(104);
+		Thing_Deactivate(113);
+		break;
+		case 1:
+		ACS_NamedExecute("Comp_Progress", 0);
+		SetLineTexture(101, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPG0");
+		SetLineSpecial(101, 0, 0, 0, 0, 0, 0);
+		Thing_Deactivate(105);
+		Thing_Deactivate(114);
+		break;
+		case 2:
+		ACS_NamedExecute("Comp_Progress", 0);
+		SetLineTexture(102, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPB0");
+		SetLineSpecial(102, 0, 0, 0, 0, 0, 0);
+		Thing_Deactivate(106);
+		Thing_Deactivate(115);
+		break;
+		case 3:
+		ACS_NamedExecute("Comp_Progress", 0);
+		SetLineTexture(103, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPD0");
+		SetLineSpecial(103, 0, 0, 0, 0, 0, 0);
+		Thing_Deactivate(107);
+		Thing_Deactivate(116);
+		break;
+	}
+}
+
+script 13 (void) //Reset
+{
+	c_prog = 0;
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Failure. All Final Sequence Restarted."; 0, 1, CR_WHITE, 1.5, 0.85, 4.0);
+	SetLineTexture(100, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPC1");
+	SetLineSpecial(100, 18, 45, 0, 0, 0, 0);
+	SetLineTexture(101, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPG1");
+	SetLineSpecial(101, 18, 91, 0, 0, 0, 0);
+	SetLineTexture(102, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPB1");
+	SetLineSpecial(102, 18, 98, 0, 0, 0, 0);
+	SetLineTexture(103, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPD1");
+	SetLineSpecial(103, 18, 99, 0, 0, 0, 0);
+	Thing_Remove(104);
+	Thing_Remove(105);
+	Thing_Remove(106);
+	Thing_Remove(107);
+	Thing_Activate(113);
+	Thing_Activate(114);
+	Thing_Activate(115);
+	Thing_Activate(116);
+	Delay(1);
+	SpawnSpot("EyeMarkDistance", 108, 104, 0);
+	SpawnSpot("EyeMarkDistance", 109, 105, 0);
+	SpawnSpot("EyeMarkDistance", 110, 106, 0);
+	SpawnSpot("EyeMarkDistance", 111, 107, 0);
+}
+
+Script 14 (void) //Lower Gate
+{
+	SetLineTexture(100, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPC0");
+	SetLineSpecial(100, 0, 0, 0, 0, 0, 0);
+	Thing_Deactivate(104);
+	SetLineTexture(101, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPG0");
+	SetLineSpecial(101, 0, 0, 0, 0, 0, 0);
+	Thing_Deactivate(105);
+	SetLineTexture(102, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPB0");
+	SetLineSpecial(102, 0, 0, 0, 0, 0, 0);
+	Thing_Deactivate(106);
+	SetLineTexture(103, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPD0");
+	SetLineSpecial(103, 0, 0, 0, 0, 0, 0);
+	Thing_Deactivate(107);
+	Thing_Deactivate(113);
+	Thing_Deactivate(114);
+	Thing_Deactivate(115);
+	Thing_Deactivate(116);
+}
+
+Script "Comp_Progress" (void)
+{
+	c_prog++;
+	SetFont (const:"ACS_FONT");
+    HudMessage(d:c_prog, s:" of 3 Final Sequence Synchronized."; 0, 1, CR_WHITE, 1.5, 0.85, 4.0);
+	if(c_prog == 3) //Open the door
+	{
+		ACS_Execute(14, 0);
+		Delay(35*2);
+		Floor_LowerByValue(112, 8, 251);
+		Delay(35);
+		HudMessage(s:"Lowering Security Gate..."; 0, 1, CR_WHITE, 1.5, 0.85, 4.0);
+	}
+}
+
+Script "Radiation" (int tid_on, int tid_off, int interval) //Radiation Levels
+{
+	Thing_Activate(tid_on);
+	Thing_Deactivate(tid_off);
+	ScriptCall("DFPlayer", "BuildRadiation", interval);
+}
+
+Script 15 (int secTag) //Door Init
+{
+	CancelFade();
+	LocalAmbientSound("DoorTP13",127);
+	SetPlayerProperty(1,1,0);
+	FadeTo(0, 0, 0, 1.0, 0.5);
+	Delay(32);
+	Teleport_NoFog(secTag, 1, secTag);
+	Delay(24);
+	LocalAmbientSound("DoorTP14",127);
+	if(secTag == 40)
+	{
+		Thing_Activate(117);
+	}
+	else
+	{
+		Thing_Deactivate(117);
+	}
+	FadeTo(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+}
+
+Script 16 (int secTag) //Door Illusion-Hall
+{
+	CancelFade();
+	LocalAmbientSound("DoorTP13",127);
+	SetPlayerProperty(1,1,0);
+	FadeTo(0, 0, 0, 1.0, 0.5);
+	Delay(32);
+	Teleport_NoFog(secTag, 1, 0);
+	Delay(24);
+	LocalAmbientSound("DoorTP14",127);
+	FadeTo(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+}
+
+Script 17 (void)
+{
+	CancelFade();
+	LocalAmbientSound("DoorTP13",127);
+	SetPlayerProperty(1,1,0);
+	FadeTo(0, 0, 0, 1.0, 0.5);
+	Delay(32);
+	Teleport_NoFog(119, 1, 0);
+	Delay(24);
+	LocalAmbientSound("DoorTP14",127);
+	Thing_Deactivate(117);
+	FadeTo(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+}
+
+Script 18 (void) //Raah Pt.1
+{
+	SpawnSpot("Six_GermWave", 130, 130, 192);
+	Delay(35*3);
+	while(TRUE)
+	{
+		if(ThingCountName("GKCell", 130) <= 0)
+		{
+			SetActorState(80, "Damaged", 0);
+			Delay(35*4);
+			ACS_Execute(19, 0);
+			break;
+		}
+		Delay(2);
+	}
+}
+
+Script 19 (void) //Raah Pt.2 Final
+{
+	//Intro
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"The Failure of Minds is preparing a desperate, final Ultimate Attack."; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	GiveActorInventory(119, "Six_GalaxyFadeIn", 1);
+	GiveActorInventory(123, "Six_GalaxyFadeIn", 1);
+	Delay(35);
+	SetActorState(777, "ShootSlow", FALSE);
+	Delay(315); //Complete cycle
+	Delay(40);
+	SetActorState(124, "Fire", 0);
+	Delay(24);
+	SetActorState(125, "Fire", 0);
+	Delay(70);
+	//Set 1
+	SetActorState(777, "ShootFast", FALSE);
+	Delay(90);
+	SpawnSpot("LightShaftSpawner", 80, 80, 192);
+	SetActorState(124, "Fire", 0);
+	Delay(20);
+	SetActorState(125, "Fire", 0);
+	Delay(20);
+	SetActorState(124, "Fire", 0);
+	Delay(20);
+	SetActorState(125, "Fire", 0);
+	Delay(20);
+	SetActorState(124, "Fire", 0);
+	Delay(20);
+	SetActorState(125, "Fire", 0);
+	//Set 1I
+	SetActorState(777, "ShootFaster", FALSE);
+	SpawnSpot("Six_MindFader", 124, 0, 0);
+	GiveActorInventory(119, "Six_GalaxyFader", 1);
+	GiveActorInventory(123, "Six_GalaxyFader", 1);
+	Delay(50); //Complete Cycle
+	SetActorState(124, "Fire", 0);
+	Delay(20);
+	SetActorState(125, "Fire", 0);
+	Delay(20);
+	SetActorState(124, "Fire", 0);
+	Delay(20);
+	SetActorState(125, "Fire", 0);
+	Delay(20);
+	SetActorState(124, "Fire", 0);
+	Delay(20);
+	SetActorState(125, "Fire", 0);
+	//Set Final
+	SetActorState(777, "NoMercy", FALSE);
+	SetActorState(124, "Fire", 0);
+	Delay(10);
+	SetActorState(125, "Fire", 0);
+	Delay(10);
+	SetActorState(124, "Fire", 0);
+	Delay(10);
+	SetActorState(125, "Fire", 0);
+	Delay(10);
+	SetActorState(124, "Fire", 0);
+	Delay(10);
+	SetActorState(125, "Fire", 0);
+	Delay(10);
+	SetActorState(124, "Fire", 0);
+	Delay(10);
+	SetActorState(125, "Fire", 0);
+	Delay(10);
+	SetActorState(124, "Fire", 0);
+	Delay(10);
+	SetActorState(125, "Fire", 0);
+	//DONE---///
+	Line_SetBlocking(157, BLOCKF_CREATURES, 0);
+	Delay(35*4);
+	SetActorState(1000, "Activate", FALSE); //Enable boss' HP Bar
+	Delay(10);
+	Thing_Damage2(1000, 250, "Void");
+	GiveInventory("LowZone", 1);
+	Delay(35*2);
+	SetActorState(1000, "Chill", FALSE); //Remove boss' HP Bar
+	Delay(35*4);
+	ACS_NamedExecute("End", 0);
+}
+
+Script 20 (void) //Adam Pt.1
+{
+	Floor_RaiseByValue(38, 16, 208); //roughly 104t to hit peak
+	SpawnSpot("Six_AvatarSpawner", 2, 0, 64);
+	//116 tic before mus stuff
+	Delay(65);
+	LocalAmbientSound("S_Tran2", 127);
+	Delay(47);
+	if(boss_death < 3)
+	{
+		SetMusic("S_CB3");
+	}
+	Delay(35);
+	while(TRUE)
+	{
+		if(ThingCountName("Six_Avatar", 888) <= 0)
+		{
+			FadeRange(30, 144, 255, 0.1, 30, 144, 255, 0.0, 3.0);
+			Light_ChangeToValue(1, 32);
+			Delay(1);
+			Light_Fade(1, 168, 105);
+			Delay(19);
+			SetActorState(29, "Activate", 0);
+			Delay(95);
+			Thing_Activate(84);
+			SetActorState(85, "M2_Charged", FALSE);
+			PlaySound(84, "Sx_Bat1", CHAN_AUTO, 0.6, 0, 0.5);
+			Delay(7);
+			PlaySound(85, "Sx_Bat2", CHAN_BODY, 0.4, TRUE, 0.5);
+			ACS_Execute(21, 0);
+			break;
+		}
+		Delay(4);
+	}
+}
+
+Script 21 (void) //Adam Pt.2
+{
+	Delay(70);
+	Floor_RaiseByValue(82, 16, 208);
+	SpawnSpot("Six_AvatarSpawner2", 2, 0, 64);
+	Delay(35);
+	while(TRUE)
+	{
+		if(ThingCountName("Six_Avatar2", 888) <= 0)
+		{
+			FadeRange(30, 144, 255, 0.1, 30, 144, 255, 0.0, 3.0);
+			Light_Glow(1, 152, 112, 35);
+			Delay(20);
+			SetActorState(29, "Activate", 0);
+			Delay(95);
+			Thing_Activate(87);
+			PlaySound(87, "Sx_Bat1", CHAN_AUTO, 0.6, 0, 0.5);
+			Delay(7);
+			SetActorState(85, "M2_MaxCharged", FALSE);
+			SetActorState(86, "M2_MaxCharged", FALSE);
+			SetActorFlag(85, "BRIGHT", TRUE);
+			SetActorFlag(86, "BRIGHT", TRUE);
+			PlaySound(86, "Sx_Bat2", CHAN_BODY, 0.4, TRUE, 0.5);
+			ACS_Execute(22, 0);
+			break;
+		}
+		Delay(4);
+	}
+}
+
+Script 22 (void) //Adam Pt.3
+{
+	Delay(70);
+	Floor_RaiseByValue(83, 16, 208);
+	SpawnSpot("Six_AvatarSpawner3", 158, 0, 64);
+	SpawnSpot("Six_AvatarSpawner4", 177, 0, 64);
+	Delay(35);
+	while(TRUE)
+	{
+		if(ThingCountName("Six_Avatar3", 888) <= 0 && ThingCountName("Six_Avatar4", 888) <= 0)
+		{
+			Delay(35);
+			PlaySound(89, "Sx_Bat1", CHAN_AUTO, 0.6, 0, 0.5);
+			Delay(7);
+			Thing_Activate(89);
+			SetActorState(88, "M2_MaxCharged", FALSE);
+			SetActorFlag(88, "BRIGHT", TRUE);
+			PlaySound(88, "Sx_Bat2", CHAN_BODY, 0.4, TRUE, 0.5);
+			ACS_Execute(23, 0);
+			break;
+		}
+		Delay(4);
+	}
+}
+
+Script 23 (void) //Adam Pt. 4
+{
+	Delay(35);
+	LocalAmbientSound("Sx_Bat4", 127);
+	QuakeEx(0, 1, 1, 2, 100, 0, 128, "dsempty");
+	Delay(83);
+	StopSound(85, CHAN_BODY);
+	StopSound(86, CHAN_BODY);
+	StopSound(88, CHAN_BODY);
+
+	//FIRE!!!!!!
+	LocalAmbientSound("Sx_Bat3", 127);
+	Delay(10);
+
+	//BOOM
+	Line_SetBlocking(154, 0, BLOCKF_PLAYERS);
+	boss_death++;
+	south = TRUE;
+	SpawnSpot("Six_SkullLasrArc", 92, 92, 0);
+	SetActorVelocity(92, 0.0, -20.0, 0.0, 0, 0);
+	SetActorState(94, "Activate", FALSE);
+	Delay(1);
+	SpawnSpot("Six_SkullLasrArc", 93, 93, 0);
+	SetActorVelocity(93, -18.0, 0.0, 0.0, 0, 0);
+	SetActorState(95, "Activate", FALSE);
+	Delay(4);
+	SetActorState(97, "Activate", FALSE);
+	QuakeEx(0, 0, 0, 9, 39, 0, 128, "dsempty", QF_SCALEDOWN);
+	SpawnSpot("Six_SkullExplode", 90, 0, 0);
+	Delay(4);
+	LocalAmbientSound("Sx_Bat5", 127);
+	Faderange(153, 204, 255, 0.8, 153, 204, 255, 0.0, 3.0);
+	Floor_LowerByValue(117, 328, 328);
+	Light_Stop(1);
+	HealThing(200);
+	if(boss_death >= 3)
+	{
+		ACS_NamedExecute("Collapse", 0, 53);
+	}
+	else if(boss_death == 2)
+	{
+		ACS_NamedExecute("Crumble", 0, 140);
+	}
+	Delay(1);
+	Light_ChangeToValue(1, 168);
+	Thing_Remove(126);
+	Delay(8);
+	SpawnSpot("Six_SkullShell", 127, 0, 64);
+	Delay(8);
+	SetActorState(85, "Spawn", FALSE);
+	SetActorFlag(85, "BRIGHT", FALSE);
+	Thing_Deactivate(84);
+	Delay(8);
+	SetActorState(86, "Spawn", FALSE);
+	SetActorFlag(86, "BRIGHT", FALSE);
+	Thing_Deactivate(87);
+	Delay(8);
+	SetActorState(88, "Spawn", FALSE);
+	SetActorFlag(88, "BRIGHT", FALSE);
+	Thing_Deactivate(89);
+	SetActorState(1000, "Activate", FALSE); //Enable boss' HP Bar
+	Delay(10);
+	Thing_Damage2(1000, 250, "Void");
+	Delay(35*2);
+	SetActorState(1000, "Chill", FALSE); //Remove boss' HP Bar
+}
+
+Script 24 (void) //Illusion I
+{
+	SpawnSpot("FakeShaman", 31, 0, 224);
+	SpawnSpot("FakeShaman", 32, 0, 160);
+	SpawnSpot("FakeShaman", 33, 0, 32);
+	SpawnSpot("FakeShaman", 34, 0, 96);
+}
+
+Script 25 (void) //Illusion II
+{
+	Floor_LowerByValue(36, 256, 310);
+	Thing_Remove(136);
+	Delay(17);
+	SpawnSpot("Six_FakeLightning", 35, 0, 0);
+}
+
+Script 27 (void) //Illusion III
+{
+	Thing_Remove(118);
+	SpawnSpot("Six_FakeExplosion", 58, 0, 0);
+}
+
+Script 28 (void) //Illusion IV
+{
+	Line_SetBlocking(30, BLOCKF_EVERYTHING, 0);
+	SetActorVelocity(163, 0.0, 20.0, 0, 0, 0);
+	Delay(32);
+	SetActorState(163, "Death");
+	Light_Glow(26, 240, 176, 35);
+	Light_Glow(134, 152, 32, 105);
+	Delay(3);
+	Line_SetBlocking(30, 0, BLOCKF_EVERYTHING);
+	SetLineTexture(30, SIDE_BACK, TEXTURE_MIDDLE, "-");
+	SetLineTexture(30, SIDE_FRONT, TEXTURE_MIDDLE, "-");
+	SetLineTexture(162, SIDE_FRONT, TEXTURE_MIDDLE, "-");
+	ChangeFloor(165, "F_BONE05");
+	ChangeCeiling(165, "ART05");
+	Thing_Activate(164);
+}
+
+Script 29 (void) //Illusion V - Wut
+{
+	SpawnSpot("Six_FakeBehead", 135, 0, 0);
+	Floor_LowerByValue(132, 310, 310);
+}
+
+Script 30 (void) //Illusion VI
+{
+	SetActorState(136, "Activate", 0);
+}
+
+Script 31 (void) //Illusion VII
+{
+	SpawnSpot("Six_FakeLightning", 178, 0, 0);
+}
+
+Script 100 (void) //Illusion CLimax I
+{
+	SetActorState(22, "Activate", FALSE);
+	SpawnSpot("Fire4", 23, 23, 0);
+	SpawnSpot("Fire2", 24, 24, 0);
+	SpawnSpot("Fire5", 27, 27, 0);
+	SpawnSpot("Fire4", 28, 28, 0);
+	SpawnSpot("Fire2", 47, 47, 0);
+	SpawnSpot("Fire5", 48, 48, 0);
+	SetActorProperty(28, APROP_ScaleX, -1.0);
+	SetActorProperty(47, APROP_ScaleX, -1.0);
+	SetActorProperty(48, APROP_ScaleX, -1.0);
+	SetLineSpecial(137, 0, 0);
+	PlaySound(138, "BigDoor1", CHAN_AUTO);
+	Polyobj_RotateLeft(1, 2, 64);
+	QuakeEx(0, 1, 1, 3, 123, 0, 128, "dsempty", QF_SCALEUP);
+	FadeTo(192, 192, 192, 1.0, 3.0);
+	LocalAmbientSound("S_Tran3", 127);
+	Delay(123);
+	if(boss_death < 3)
+	{
+		SetMusic("S_End1");
+	}
+	Teleport_NoFog(37, 1, 0);
+	Delay(1);
+	FadeTo(192, 192, 192, 0.0, 2.0);
+	Delay(35*3);
+	SetActorState(39, "Activate", FALSE);
+	Delay(35);
+	PlaySound(120, "Sx_Light", CHAN_AUTO, 0.5, 0, 0.4);
+	Delay(1);
+	SpawnSpot("LightShaft", 120, 0, 0);
+	QuakeEx(0, 2, 2, 2, 90, 0, 100, "dsempty");
+	Delay(28);
+	SpawnSpot("BerzerkSpawner", 120, 120, 192);
+	Delay(35*3);
+	while(TRUE)
+	{
+		if(ThingCountName("PsychoBerzerkElite", 120) <= 0)
+		{
+			Delay(70);
+			ACS_Execute(101, 0);
+			break;
+		}
+		Delay(4);
+	}
+}
+
+Script 101 (void) //Illusion CLimax II
+{
+	Delay(35*2);
+	PlaySound(121, "Sx_Light", CHAN_AUTO, 0.5, 0, 0.4);
+	PlaySound(122, "Sx_Light", CHAN_AUTO, 0.5, 0, 0.4);
+	Delay(1);
+	QuakeEx(0, 2, 2, 2, 90, 0, 100, "dsempty");
+	SpawnSpot("LightShaft2", 121, 0, 0);
+	SpawnSpot("LightShaft3", 122, 0, 0);
+	Delay(28);
+	SpawnSpot("BerzerkSpawner2", 121, 121, 192);
+	SpawnSpot("BerzerkSpawner2", 122, 121, 192);
+	Delay(35*3);
+	while(TRUE)
+	{
+		if(ThingCountName("BerzerkGlitch", 121) <= 0)
+		{
+			Delay(35*3);
+			SetActorState(39, "Death", 0);
+			//Prepare Ending Setup
+			SetLineSpecial(40, 18, 59, 0);
+			SpawnSpot("EyeMarkDistance", 72, 72, 0);
+			SpawnSpot("Six_Flute", 57, 57, 128);
+			break;
+		}
+		Delay(4);
+	}
+}
+
+Script 102 (void) //Sleep then wake up
+{
+	Thing_Deactivate(343);
+	Thing_SetConversation(133, 0);
+	SetPlayerProperty(1, 1, PROP_TOTALLYFROZEN);
+	fadeto(0, 0, 0, 1.0, 2.0);
+	Delay(35*2);
+	LocalAmbientSound("Bed", 88);
+	Delay(35*3);
+	Teleport_NoFog(56, 1, 0);
+	Delay(35*3);
+	fadeto(0, 0, 0, 0.0, 2.0);
+	SetPlayerProperty(1, 0, PROP_TOTALLYFROZEN);
+	Thing_SetConversation(133, 15);
+	Delay(17);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"You dreamt of a sight most wondrous."; HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 4.0, 1.0, 1.0);
+}
+
+Script 26 (void)
+{
+	boss_death++;
+	north = TRUE;
+}
+
+/*
+Script 02 (void)
+{
+	Thing_Deactivate(6);
+	Delay(17);
+	SetActorState(21, "Fire", FALSE);
+	Delay(5);
+	SetActorState(20, "Fire", FALSE);
+	Delay(5);
+	SetActorState(22, "Fire", FALSE);
+
+	Delay(35*2);
+	ACS_Execute(3, 0);
+}

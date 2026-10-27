@@ -1,0 +1,773 @@
+[enu default]
+Act_II = "Exhaustion";
+Act_II_01 =
+"\cDYou suddenly find yourself adrift between dreaming and being awake. It is difficult to make sense of this liminal state, as both wakefulness and unconsciousness struggle to stake a claim "
+"over your personal reality.";
+Act_II_02 =
+"\cDAlas, it seems that exhaustion has won this time. It isn't just your eyelids that grow heavy, so does the muscles, the reflexes, even thoughts are becoming heavier...\n\n"
+"And before you know it, weightlessness. Accompanied by a deep relaxation, free from any and all burden, physical and mental.";
+Act_II_03 =
+"\cDSoon, you will arrive. Invited to the crossroads. A world the naked eyes could not see -- only pure, naked minds.";
+Bed_01a = "\cDIt looks inviting... maybe the 'dreams' will be better this time.";
+Bed_01a_1 = "\cD[Sleep]";
+Console = "Console";
+Console_Fail = 
+"\cDThe patterns and block structures of the encryption algorithm confuse you. You're at a complete loss on how to override this.\n\cR(WIT 2 Required)";
+Console_01a = "\cDStatus: Operational";
+Console_01a_3 = "\cD[Raise gate]";
+Console_01a_4 = "\cD[Turn on Auxiliary Light]";
+Console_01b = "\cD**Request: ACCEPTED ///////////////////////////////////////////\n:-RAISING GATE...\n:-Column ID: 62\n:-Obstruction: No\n:-Raise by: 280u\n:-Power Exertion: 16*";
+Console_01c = "\cD**Request: ACCEPTED ///////////////////////////////////////////\n:-ACTIVATING AUXILIARY LIGHT...\n:-Array Index: 187\n:-Optimal Flow: \cINo\n\cD:-Requesting backup power... Accepted.\n:-Transferring power... Done.";
+Console_02a = "\cQ[Wits] \cDHack console.";
+Console_02b = "\cD[Insert Auto-Hack Software into the console]";
+Console_02a_1 =
+"\cDYou begin your work by formulating the massive data block before you into organized geometric matrices. After a while, you start to notice "
+"certain linear loops in the encryption structure. It isn't long before you deduce the exact command to override the security.";
+Console_02b_1 =
+"\cDThe machine is hijacked! The following prompt reads on the screen...\n\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 1 IP address (1 host up) scanned in 0.01 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-\cF1 of (10) command extracted.\n"
+"\cD:-PROCESSING COMMAND...\n"
+":-SENDING COMMAND: \cFoverride_ld_adm;\n"
+"\cD:-Request Granted.";
+Soldier = "Corpse";
+Soldier_1 = "\cDThe corpse before you appears to be holding onto something.";
+Soldier_1a = "\cD[Inspect the corpse]";
+Soldier_2 = "\cDYou found a map of the area.";
+Soldier_3 = "\cDThe corpse before you appears to have some supplies.";
+Soldier_4 = "\cDYou found some unspent ammunition.";
+Tablet_ = "Electronic Device";
+Tablet_1 =
+"\cDThe screen is completely mangled, but you're able to spot a few characters through the trainwreck of pixels and colors. It reads: \cU'Tr n_sf-r'.";
+Tablet_1a = "\cD[Press the 'Tr n_sf-r' button]";
+Tablet_1b = "\cQ[Wits] \cDExecute experimental command.";
+Tablet_1a_1 = 
+"\cD7W@ÖX &R ∆~B≠|9 <≠_^b∩ ZT*}>7@≡X} πsBf µ ^q}+Bg ∆£5 7qbG _μV →$+a1 _fc @@V-⊡ &[ M{} @ôv{9+Y δ Q]";
+Tablet_1b_1 = 
+"\cD{{&&::_+ R_m&88 -//// :: >>MIND_(CONTR::|LL _+^^:://>> RELEA$ED__ ;{{ >>++/-*<<.%%%_ !;";
+Terminal = "Terminal";
+Terminal_Fail = 
+"\cDYou tried breaking through the virtual defense, but your skills are abysmal. The program's security easily repels your attempts.\n\cR(WIT 1 Required)";
+Terminal_01 =
+"\cDEnanthios Version 12.4.3.9b\n"
+"Copyright WGS All Rights Reserved\n"
+"Update Available\n"
+"Please contact your administrator for further details.\n\n"
+"        Safe mode interface ON\n"
+"        Power saving mode ON\n"
+"        Waiting user input...";
+Terminal_01x =
+"\cDE@##n-h-0s 11rsion 1#.#.3.((\n"
+"C0*y&&x.t WG@ !!l R>gh?? R!s,,v##\n"
+"Up-AT. Av;;!abL{\n"
+"Pelsea !0n>>Ft Y44. a!!|\\st.#t## !@R.FMMt%%R ~/R^^!,.\n\n"
+"        SaFE:w0dE I!Te<<ac@ 0N\n"
+"        P&w^^ @a#inG m##E O>\n"
+"        cUWaiT!nG<user[{np]}...";
+Terminal_01a = "\cQ[Wits] \cDHack terminal.";
+Terminal_01b = "\cD[Insert Auto-Hack Software into the terminal]";
+Terminal_01c = "\cD[Type in a random command]";
+Terminal_01a_1 =
+"\cDNavigating the syntax and the network domains feels like second nature. You grow more familiar to the structure as you dig deeper into the codes...\n\n"
+"# thirdeye user usernet\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 1 IP address (1 host up) scanned in 0.04 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-ROOT ACCESS GRANTED. RETRIEVING PACKAGE... (0.0%)\n"
+":-\cRFAILED. \cD(4) FILES EXTRACTED FROM ARCHIVE (99451)";
+Terminal_01b_1 =
+"\cDThe machine is hijacked! The following prompt reads on the screen...\n\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 1 IP address (1 host up) scanned in 0.04 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-ROOT ACCESS GRANTED. RETRIEVING PACKAGE... (0.0%)\n"
+":-\cRFAILED. \cD(4) FILES EXTRACTED FROM ARCHIVE (99451)";
+Terminal_01c_1 =
+"\cDCMD:> 'POOP' is not a recognizable internal or external command, nor is it a recognized operable program or batch file. Please try again.";
+Terminal_02a_1 =
+"\cDNavigating the syntax and the network domains feels like second nature. You grow more familiar to the structure as you dig deeper into the codes...\n\n"
+"# thirdeye user usernet\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 8 IP address (1 host up) scanned in 0.08 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-ROOT ACCESS GRANTED. RETRIEVING PACKAGE... (0.0%)\n"
+":-\cRFAILED. \cD(4) FILES EXTRACTED FROM ARCHIVE_BOD_MUTA (12451)";
+Terminal_02b_1 =
+"\cDThe machine is hijacked! The following prompt reads on the screen...\n\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 8 IP address (1 host up) scanned in 0.08 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-ROOT ACCESS GRANTED. RETRIEVING PACKAGE... (0.0%)\n"
+":-\cRFAILED. \cD(4) FILES EXTRACTED FROM ARCHIVE_BOD_MUTA (12451)";
+Terminal_02c_1 =
+"\cDCMD:> 'PROJ_CHARON' is not a recognizable internal or external command, nor is it a recognized operable program or batch file. Please try again.";
+Terminal_02c_2 =
+"\cDCMD:> 'COMMAND' is not a recognizable internal or external command, nor is it a recognized operable program or batch file. Please try again.";
+Terminal_03a_1 =
+"\c[Green]EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n"
+"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+;
+Terminal_03b_1 =
+"\c[Green]0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n"
+"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+Terminal_03c_1 =
+"\cDCMD:> '?<#-)G@' !s <Tt a.Reco#<izA((e in%e^^al 0r E3t<.{{l ';;maNd, !*r is it ((rRco;11zed 0pE^>>lE [rograM &r &&!c> File. P{\\]] try;again'";
+Terminal_04 =
+"\cDYou see a dim light amidst the viscera. A cracked, but apparently very sturdy tablet has this message, no date:\n\n"
+"\cU''The thing has their faces. Even my wife's. I've locked myself in this giant room. It makes no sense. Their vitals... Are they alive in there? The next "
+"expedition needs to know. I've prepared a data burst with all I've seen.";
+Terminal_04a = "\cD[Press the 'Send' button]";
+Terminal_04b = "\cD[Press the 'Delete' button]";
+Terminal_04x =
+"\cDYou press the button. A progress bar fills, and the screen turns off as soon as it's finished.";
+Terminal_05d = "\cD[Check logs]";
+Terminal_05d_1 =
+"\cDFrom: \cFReconnaissance Team Alpha 4\n\n"
+"\cJOur initial incursion into the zone uncovered what appeared to be a complex filtration system, constantly detoxing and pumping blood. Brother Samson attempted "
+"to open the maintenance panel, but after the identity verification ripped his arm off we decided to cut our losses and retreat for the time being.\n\n"
+"Recommend that the next infiltration team recover the remains of Brother Samson.\n"
+"	-Senior Brother Wyatt\n\n"
+"PS: Send Brother Samson's last payment to his widow.";
+Terminal_06a_1 =
+"\cDNavigating the syntax and the network domains feels like second nature. You grow more familiar to the structure as you dig deeper into the codes...\n\n"
+"# thirdeye user usernet\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 1 IP address (3 host up) scanned in 1.32 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-\cF1 of (5) command extracted.\n"
+"\cD:-PROCESSING COMMAND...\n"
+":-TRANSFERRING BLUETOOTH COMMAND: \cFaccess_Armory;\n"
+"\cD:-Request Granted. Unlocking...";
+Terminal_06b_1 =
+"\cDThe machine is hijacked! The following prompt reads on the screen...\n\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 1 IP address (3 host up) scanned in 1.32 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-\cF1 of (5) command extracted.\n"
+"\cD:-PROCESSING COMMAND...\n"
+":-TRANSFERRING BLUETOOTH COMMAND: \cFaccess_Armory;\n"
+"\cD:-Request Granted. Unlocking...";
+Terminal_06c_1 =
+"\cDCMD:> 'COVFEFEE' is not a recognizable internal or external command, nor is it a recognized operable program or batch file. Please try again.";
+Terminal_07a_1 =
+"\cDFrom: \cFReconnaissance Team Alpha 6\n\n"
+"\cDThe specimen\cJ is extremely vulnerable to a sudden and overwhelming barrage of proxemic stimulus. This is supported by "
+"direct on-field observation with a live subject, thanks to Sister Julia engaging with it using her service \cDshotgun\cJ.\n\n"
+"However, I'm afraid that Brother Sigmund has suffered deep and irreversible psychological trauma. His ramblings "
+"about blood sacrifices, archetypal possessions and a ''descent into infinity inside the eternal maze'' "
+"are disturbing enough to unnerve the team. After administering psychoactive drugs as an emergency measure, "
+"he is now reduced to muttering variations on ''they are us''. He has been deemed combat ineffective.\n\n"
+"Contact Master Raah as soon as possible.";
+Terminal_08a_1 =
+"\cD://\cU-eskhatos init_bulk -output jqs.xzlt\n"
+"\cD://Bulk Data Harvest initialized successfully. 0 error(s) detected.\n"
+"://Enter chosen subject:> \cUuniverse\n"
+"\cD://Prompt accepted. Begin downloading state data of: universe.\n"
+"://Progress: 2.07%\n"
+"://1 error(s) found: anomalies detected in ontological structure.\n";
+Terminal_09 =
+"\cDEnanthios Version 12.4.3.9b\n"
+"Copyright WGS All Rights Reserved\n"
+"Update Available\n"
+"Please contact your administrator for further details.\n\n"
+"        Safe mode interface ON\n"
+"        Power saving mode ON\n"
+"        _44@#%%x>?__________^59@FF%**))x+";
+Terminal_09a = "\cD%%!!{[15))";
+Terminal_09b = "\cD^^$mL>>92";
+Terminal_09c = "\cD!02^&&L;;<<";
+Terminal_09d = "\cD<<!^[[^$}_85";
+Terminal_09_2 =
+"\cDEnanthios Version 12.4.3.9b\n"
+"Copyright WGS All Rights Reserved\n"
+"Update Available\n"
+"Please contact your administrator for further details.\n\n"
+"        Safe mode interface ON\n"
+"        Power saving mode ON\n"
+"        84&!))[[x[[[1&^^>>{15}\____________";
+Terminal_09_2a = "\cD{-M|38!kmVD)";
+Terminal_09_2b = "\cD[[!8:95(`([%}}8[";
+Terminal_09_2c = "\cD\.!^|{_99$/|";
+Terminal_09_2d = "\cD!@055<-~=";
+Terminal_09_3 = 
+"\cDEnanthios Version 12.4.3.9b\n"
+"Copyright WGS All Rights Reserved\n"
+"Update Available\n"
+"Please contact your administrator for further details.\n\n"
+"        Safe mode interface ON\n"
+"        Power saving mode ON\n"
+"        _____________:><x''}]]14((!##$+)@:''>65X*<Z";
+Terminal_09_3a = "\cDMk21!!{{}:x<";
+Terminal_09_3b = "\cD++!!=;29??/>";
+Terminal_09_3c = "\cDM!99@#{}}";
+Terminal_09_3d = "\cD+51;{][||!#$?";
+Terminal_10a = "\cD[Raise gate]";
+Terminal_10b = "\cD[Check email]";
+Terminal_10b_1 =
+"\cJFrom: Ivan Ivanovich Ivanov\n"
+"Subject: re:Forgot Password\n\n"
+"\cUBrzeczyszczykiewicz, I've taken the liberty to reset and \write down your \cDnew password \cUonto a paper note. DO NOT LOSE THIS AGAIN. It should be in the big shop on this level, "
+"check in the corner of the room if it's not on the front table. Also, if you see Kelly, could you ask her what she's drinking to cause her to laugh so loud?\n\n"
+"Regards,\n"
+"Ivan Ivanovich Ivanov.";
+Terminal_10c_1 =
+"\cDCMD:> 'ISTIK' is not a recognizable internal or external command, nor is it a recognized operable program or batch file. Please try again.";
+Terminal_11a = "\cD[Check logs]";
+Terminal_11a_1 =
+"\cU[Log 1/4] Nov. 1, 8:45 PM\n\n"
+"Today, our radio equipment picked up an odd low frequency transmission (7-12hz) emanating near the courtyard. Now, these readings aren't unusual, "
+"as nearby activities from wildlife, humans and vehicles are known to cause a stir every now and then.\n\n"
+"What was weird though was the consistency of the signal. It just continues to transmit without fluctuation.";
+Terminal_11a_2 =
+"\cU[Log 2/4] Nov. 4, 3:33 PM\n\n"
+"Upon further investigation, all evidence points to the signal coming from somewhere below. But no foundational blueprints or geological records "
+"indicate any structure being built that far down. Once The Noble Ones received our full report, they ordered an immediate excavation into the depths, "
+"believing that the sacred resonance was inviting them to its presence.";
+Terminal_11a_3 =
+"\cU[Log 3/4] Jan. 10, 11:02 AM\n\n"
+"It's been weeks of digging into solid earth. Most of the workers are exhausted -- and their faith appears to be "
+"faltering before my eyes.\n\n"
+"However, that notion cleared up quickly when the drilling equipment struck through solid concrete. On the other side lies a perfectly squared - "
+"four-sided room, draped in all white tiles. The place looked like it hadn't been touched in centuries, yet somehow also appearing unnaturally clean. "
+"Not even a spec of dust.";
+Terminal_11a_4 =
+"\cU[Log 4/4] Jan. 18, 3:21 AM\n\n"
+"A proper elevator lift was quickly constructed and teams were sent in to search for the signal. It's been confirmed beyond any reasonable doubt "
+"that the strange frequency emission was coming from the room.\n\n"
+"The first team never came back up.\n\n"
+"A second team was sent in after with live communication and camera feeds. When they reached the bottom of the lift, all connections ceased. "
+"Determined to seek an answer, one of The Nobles requested to investigate the matter by themselves, we are preparing for their descent tonight.";
+Terminal_12a = "\cD[Enable: Excavation Lift]";
+Terminal_12_a1 =
+"\cU[Orders To Shoot On Sight]\n\n"
+"\cJ6:55 AM 8:40 PM 12:30 AM 3:15 PM 4:30 PM 8:18 AM 1:11 PM 12:39 AM 14:40 PM 26:08 AM 33:55 PM\n"
+"9:00 AM 89:70 PM 6:30 AM 4:43 PM 6:83 PM 5:34 AM 7:38 PM 99:12 AM 12:85 PM 17:38 AM 6:63 PM\n"
+"7:12 AM 21:47 PM 2:45 PM 45:12 AM 11:05 AM 6:91 PM 9:37 PM 78:34 AM 12:14 AM 13:65 PM 5:50 PM\n"
+"6:77 AM 3:28 AM 92:03 PM 10:03 PM 15:88 AM 1:47 PM 4:99 PM 8:59 AM 6:22 AM 12:58 PM 33:16 AM";
+Terminal_12_b1 =
+"\cDBreathing ice cubes sailing down the clock will park on the sky. The boxes are organizing themselves. "
+"Rejoice! A snake spiraled from high pitched lights. Very satisfactory mail answer to interconnected vibrations "
+"inside our circle worlds. Eyes and ears will be on the menu now during the evening, good morning!\n\n"
+"Doors into paradise has been revealed.";
+Terminal_13a_1 =
+"\cDNavigating the syntax and the network domains feels like second nature. You grow more familiar to the structure as you dig deeper into the codes...\n\n"
+"# thirdeye user usernet\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 8 IP address (1 host up) scanned in 0.08 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-ROOT ACCESS GRANTED. RETRIEVING PACKAGE... (0.0%)\n"
+":-\cRFAILED. \cD(3) FILES EXTRACTED FROM ARCHIVE_MIND_MUTA (6651)";
+Terminal_13b_1 =
+"\cDThe machine is hijacked! The following prompt reads on the screen...\n\n"
+":-THIRD-EYE INIT. SEEKING ADDRESS...\n"
+":-ADDRESS RETRIEVED. RUNNING NWMAP2...\n"
+":-Nwmap2 finished -- 8 IP address (1 host up) scanned in 0.08 seconds\n"
+"# dbscrapper\n"
+":-LOGIN:~null:\n"
+":-PROBING FOR VULNERABILITIES... Success\n"
+":-CULLING SALT ENTRIES... Success\n"
+":-INDEXING HASHES... Success\n"
+":-BREACHING ROOT... Success\n"
+":-ROOT ACCESS GRANTED. RETRIEVING PACKAGE... (0.0%)\n"
+":-\cRFAILED. \cD(3) FILES EXTRACTED FROM ARCHIVE_MIND_MUTA (6651)";
+Terminal_14 =
+"\cDArmory Access granted.";
+Terminal_14a = "\cD[Enable: Armory Access]";
+Terminal_15 =
+"\cD11:06:02:44:> Radio check.\n"
+"11:06:05:02:> Read you loud and clear.\n"
+"11:06:08:34:> Camera check.\n"
+"11:06:10:12:> Feeds up.\n"
+"11:06:12:01:> Roger that. Inbound, two minutes.\n"
+"11:06:14:15:> Copy that.\n"
+"11:08:16:52:> There's-|||||||||||||||||||||||\n"
+"11:08:22:28:> Say again all, heavy static.\n"
+"11:08:34:36:> Say again, you're cutting out. Over.\n"
+"11:10:55:56:> [Waiting for connection...]\n"
+"11:15:55:57:> [Waiting for connection...]\n"
+"11:20:55:56:> [Waiting for connection...]\n"
+"11:25:55:54:> [Waiting for connection...]\n"
+"11:30:55:55:> [Waiting for connection...]\n";
+Lift_01a = "\cDCurrent Depth: -4230.00 Metres | -13,877.95 Feet\n\nGoing down is one way ride.";
+Lift_01a_1 = "\cI[Descend]";
+Lift_01b = "\cDCurrent Depth: Unknown";
+Lift_01b_1 = "\cI[Ascend]";
+Lift_01c =
+"\cDCurrent Depth:\n\n"
+"1415926535 8979323846 2643383279 5028841971 6939937510\n"
+"5820974944 5923078164 0628620899 8628034825 3421170679\n"
+"8214808651 3282306647 0938446095 5058223172 5359408128\n"
+"4811174502 8410270193 8521105559 6446229489 5493038196\n"
+"4428810975 6659334461 2847564823 3786783165 2712019091\n"
+"4564856692 3460348610 4543266482 1339360726 0249141273\n"
+"7245870066 0631558817 4881520920 9628292540 9171536436\n"
+"7892590360 0113305305 4882046652 1384146951 9415116094\n"
+"3305727036 5759591953 0921861173 8193261179 3105118548";
+Lift_01c_1 = "\cD[Go lower]";
+TrainBench = "\cI[End Level] Sit and wait for the train.";
+WeakDoor_01a = "\cDIt won't budge.";
+WeakDoor_01a_1 = "\cQ[Strength] \cDSlam your body against it.";
+WeakDoor_01b = "\cDThe door does not move.\n\cR(STR 1 Required)";
+WeakDoor_02 = "\cDThe door is locked.";
+WeakDoor_02a = "\cQ[Strength] \cDForce the door open.";
+WeakDoor_02b = "\cD[Use Master Key]";
+WeakDoor_02a_1 =
+"\cDYou are too weak. The door remains shut.\n\cR(STR 2 Required)";
+WeakDoor_03a = "\cU[Use Storage Key]";
+WeakDoor_03b = "\cD[Use Storage Key]";
+WeakDoor_03a_1 =
+"\cDYou are too weak. The door remains shut.\n\cR(STR 999 Required)";
+DoorFile01 = "FILE ROOM A";
+DoorFile02 = "FILE ROOM B";
+DoorKey_01a = "\cD[Use File Room A Key]";
+DoorKey_01b = "\cD[Use File Room B Key]";
+Train_Control_00 =
+"\cDDestination: ||||||||||\n"
+"Depart: 5:18 PM\n"
+"Arrive: 7:99 PM\n"
+"Status: On Time";
+Train_Control_00_a = "\cD[Change destination]";
+Train_Control_01 =
+"\cDChanging destination is only permissible during emergency events! Please contact a nearby supervisor for further assessment.";
+Train_Control_02 =
+"\cDPlease enter your destination:";
+Train_Control_02_a = "\cD[Navigate to 37.5°0'0''N 36.5°0'0''W]";
+Train_Control_03 = "\cDAwaiting user input:";
+Train_Control_03_a = "\cD[Enable: Lockdown]";
+Train_Control_04 = "\cDTrigger emergency lockdown? All doors will be locked until further notice.";
+Train_Control_04_a = "\cD[Confirm]";
+Train_Control_05 = "\cDEmergency lockdown engaged.";
+Train_Control_06 =
+"\cDNavigation set to: 37.5°0'0''N 36.5°0'0''W\n"
+"ETA: 4H:30M";
+Train_Control_06a = "\cI[Wait]";
+Train_Tablet =
+"$%%)_(_)@?'''''::''>'':<>%_)^)(^(((!#@$|}}}{{|||_^)_)_$)%>'':>>'':6,'';,;'<^:#>$:#>''%$%|||||'\'\';';;;'.''>"
+"%}%|{$)^((^())&$^*!%^#^!%@!%^#\^|{|&{%($*@!)#@:%^:<535;.5;3>'''':%.;5..'%:.:''#>5:3.'6;_)@$-019-!!310309("
+"((*%%:>@#:@''>#;'2>:$'':>''$>@''$:''@''@'2}{{}}}Objective: Br3AcH_T:he-*Pe_R1-meteR_:::::'':''''''Pp555:&>:&:>$"
+"@)#()::::66^{{{{\n"
+";{{{{{{ .Ana-yze mater-ia[L- -0))\cD:[A:1]:[B:2].:[D:4]:{:[F:6].:[H:8]:[I:9]\cJ\n"
+"Spe-cimen_St0r_gE-::\cF[[CODE]]: 134 - ([A.C.D.])\n"
+"\cJ->{{‘<?%$#%#*_$(*@$|}}}{{|||_^)_)_$)%>'':>>'':6,'';,;'<^:#>$:#>''%$>)^*)($*)*@&#)(((*!*#*%*)(%*#$}{{{}}''$#>:$>''@#";
+
+Train_Lock_00 = "\cDExcessive deadly contaminant detected. Emergency lockdown remains in effect.";
+Train_Lock_00_a = "\cD[Input random numbers]";
+Train_Lock_01 = "\cDOverride successful: Emergency lockdown has been lifted.";
+Train_Toilet = "Toilet";
+Train_Toilet_00 = "\cDWater isn't the only thing that could be flushed...";
+Train_Toilet_00_a = "\cD[Flush toilet]";
+Train_Trip_00 = "\cI[Eat it]";
+Train_Trip_01 = "\cDIt's your funeral...";
+Train_Ticket = "\cDAn old train ticket... seems like it hasn't been punched yet. The 'Departure Time' segment indicates that the train will arrive shortly.";
+
+//Act II ************************************************
+Alien_01 =
+"\cDYou are floating millions of miles above, in an enormous white hall that seems to go on forever. There are no landmarks to indicate the beginning or "
+"end of it all---only a continuous, uninterrupted flow of space.\n\n"
+"The air is silent, and stillness is woven into the fabric of your surroundings. The only thing that appears to be in motion is you.";
+Alien_01a = "\cDLook around.";
+Alien_02 =
+"\cDBefore you even realize it, a massive glass dome appears before you, suspended in the air. Inside the dome, \na single, enormous eye focuses on you. "
+"Its iris swirls with an otherworldly pattern and color, shifting like a whirlpool in motion. The eye blinks once, then begins to inspect you...\n\n"
+"\cFIn an instant, you are miraculously cured of all your ailments. It feels as though they never existed. You feel \na surge of vitality spread through every "
+"fiber of your being, revitalizing you in ways you cannot fully comprehend. The eye, still locked onto you, blinks once more, and the world around you begins "
+"to brighten. \nA strange warmth washes over you as you are gently sent back home, with a gift now appearing in your inventory, as if it had always been meant "
+"for you.";
+Alien_02a = "\cDOpen your eyes.";
+Bed_02a = "\cDThat is not possible at the moment.";
+Buried_Entrance01 =
+"\cDThe doors in front of you will automatically lock as you pass into the next area."
+"\n\n\cIYou cannot return until you fully explored the depths below.";
+Buried_Entrance01a = "\cI[Proceed] Enter The Buried Level.";
+Buried_Entrance01b = "\cQ[Turn back]";
+Cabinet = "Cabinet";
+Cabinet_1 =
+"\cDYou found a strange and cryptic drawing.";
+Cabinet_1a = "\cD[Read]";
+Cabinet_Doc = "Cryptic Document";
+Cabinet_2 =
+"\cUPlease honor us with your presence on this night, exalt our mind towards the new plane. We humbly present to you, our high lords, the flesh of the blessed one. "
+"Its material cleansed, its essence purified, and its sacred resonance intact.";
+Cabinet_2a = "\cD[Examine Drawing]";
+Cabinet_3 = 
+"\cDYou found a burnt book. Its only surviving fragment reads:\n\n"
+"\cUEnantiodromia: the process by which extreme polarities invert into their shadow opposites -";
+CubePanel = "Platform";
+Cube = "Cubic Device";
+Cube01a = "\cD[Take Cubic Device]";
+Cube02a = "\cD[Place Cubic Device]";
+EastWing_Door = "Door";
+EastWing_Door01 = "\cDIt won't open.";
+EastWing_Door01a = "\cD[Knock]";
+EastWing_Door02 = "\cDNo response...";
+EastWing_Door02a = "\cD[Knock harder]";
+EastWing_Elevator_1 =
+"\cDThe elevator appears to be stuck.";
+EastWing_Elevator_1a =
+"\cD[Try pressing random buttons]";
+M2_Elevator = "Elevator Control";
+M2_Elevator01 = "\cDPlease input your destination.";
+M2_Elevator01a = "\cUThe Tower of Apotheosis.";
+M2_Elevator01b = "\cDUpper Level.";
+M2_Elevator01g = "\cUUpper Level. \cF(You are here)";
+M2_Elevator02a = "\cDLower Level.";
+M2_Elevator02b = "\cUMetro.";
+M2_Elevator02c = "\cUBuried Level. \cF(You are here)";
+M2_Elevator03a = "\cULower Level. \cF(You are here)";
+M2_Elevator03b = "\cDBuried Level.";
+ELock = "Electronic Lock";
+ELock_1 =
+"\cDAccess granted.";
+ELock_a = "\cQ[Wits] \cDBypass the keypad.";
+ELock_a_1 = 
+"\cDYou tried, but your logic and reasoning are not up to the task. The keypad's security remains.\n\cR(WIT 2 Required)";
+ELock_a_2 = 
+"\cDThe resistance of each button and its auditory feedback allows you to quickly deduce which buttons were frequently pressed. "
+"After trying a few combinations, you manage to gain access.";
+ELock_puzzle_01 = "Electronic Lock: \cDA.C.D.";
+ELock_puzzle_02 = "Electronic Lock: \cDE.F.C.";
+FileCab01 = "\cDEmpty...";
+FileCab03 =
+"File Reference: \cFOTRP-1145\cJ\n"
+"Clearance Level: \cFClassified\cJ\n"
+"Date: \cD[REDACTED]\cJ\n"
+"Submitted by: \cD[REDACTED]\cJ\n"
+"Location: \cD[REDACTED]\cJ\n\n"
+"TRANSCRIPT:\n\n"
+"Yeah, apprehension of the fanatics went well. They are scheduled for transfer and processing at \cD[REDACTED]\cJ at dawn. Despite prior intel warning "
+"us that they were pretty much animals, this group was unnervingly calm and rational. Upon detainment, several of them were reported to smile, not those "
+"crazy smiles you can see in the bitches from the surface, actual smiles, and even willingly offered themselves to be cuffed. They were chanting softly "
+"as the round-up was completed.\n\n"
+"No, no. Not screaming, chanting.\n\n"
+"How the fuck would I know? Something like 'Sarmi' whatever... Yeah. No, I don't...\n\n"
+"\cD-The rest of the files are blank.-";
+FileCab05 =
+"\cF<Start of recovered segment>\cJ\n"
+"\cDMcKenna:\cJ And this Raah. What did it look like?\n"
+"\cDAnderson:\cJ It is... made up of pure consciousness. It isn't malicious nor benevolent. More like a jester of sort.\n"
+"\cDMcKenna:\cJ Did you have any interactions with the described entity?\n"
+"\cDAnderson:\cJ It... sang to me. The vibrations, the... pulse, the rhythms! They were as much of it as it is an expression of them.\n"
+"\cDMcKenna:\cJ Could you elaborate on what you meant?\n"
+"\cDAnderson:\cJ I-I'm sorry... It is difficult to put into words. All I know is that it felt right. Felt true, truer than anything I've ever experienced in my life. I dunno- like REALER than real.\n" 
+"\cDMcKenna:\cJ And did it show you... anything? A vision -- or some sort of imagery -- projection?\n"
+"\cDAnderson:\cJ Yes. It did. It showed me a vision of an endless maze beneath a black sun. Under the maze lies this great inverted white pyramid. Ther-\n"
+"\cDMcKenna:\cJ Thank you, Phillip. We'll get back to you in a second.\n"
+"\cDHofmann:\cJ I'm telling you, Edna. It knows, it's clearly been observing us.\n"
+"\cDMcKenna:\cJ Relax, we've got plenty of safeties in place. The neural inhibitors, DASDs, isolation tanks.\n"
+"\cF<End of recovered segment>";
+FileCab09 =
+"\cF[RECOVERED FRAGMENT - PHANTOM REALM EXPEDITION 3]\n"
+"\cJI saw the \cDcerulean night\cJ dancing around its axis, welcoming its observers to gaze upon the captivating ambient "
+"of the \cDstars\cJ. And at once, the \cDcrimson sky\cJ is called forth, transforming into a brilliant expression of noumenal "
+"certainty in its descension.\n\n"
+"It is there that I saw it. The luminous golden rays that may at one point or another belonged to-";
+PilgPhrase = "Picture";
+PilgPhrase1 =
+"\cDSeveral words come to mind as you gaze into the picture:\n\n"
+"\cFGolden rays from the crimson sky...";
+PilgPhrase2 =
+"\cDSeveral words come to mind as you gaze into the picture:\n\n"
+"\cFAbove reveals my blue starry night...";
+PilgPhrase3 =
+"\cDSeveral words come to mind as you gaze into the picture:\n\n"
+"\cFFleeting life and breath will take me all the way.";
+PilgDoor = "Doors to dissolution";
+PilgDoor_01 = "\cDSpeak the first phrase.";
+PilgDoor_01a = "Golden rays from the crimson sky.";
+PilgDoor_01b = "\cQ[Memory Reflex] \cJGolden rays from the crimson sky.";
+PilgDoor_02 = "\cDSpeak the second phrase.";
+PilgDoor_02a = "Above reveals my blue starry night.";
+PilgDoor_02b = "\cQ[Memory Reflex] \cJAbove reveals my blue starry night.";
+PilgDoor_03 = "\cDSpeak the final phrase.";
+PilgDoor_03a = "Fleeting life and breath will take me all the way.";
+PilgDoor_03b = "\cQ[Memory Reflex] \cJFleeting life and breath will take me all the way.";
+PilgDoor_05 = "Welcome, kind traveler. May you wander towards the setting sun.";
+PilgDoor_05a = "\cD[Open the doors]";
+PilgDoor_06 = "\cDThe door remains silent.";
+PilgDoor_06a = "\cD[Mutter a random phrase]";
+Keypad = "Card Reader";
+Keypad_01 = "\cDWelcome, please insert your clearance card:";
+Keypad_01a = "\cD[Insert Clearance Card]";
+Keypad_02 = "\cDAccess granted. Please retrieve your clearance card.";
+Keypad_02a = "\cQ[Leave] \cDRetrieve Clearance Card.";
+Keypad_03 = "\cRInvalid Clearance Level! Contact a nearby supervisor for further support.";
+M2_Journal_1 = "\cDThe journal is completely blank.";
+EastWing_Entrance01 =
+//"\cDThe East Wing is a harrowing descend into the lowest known depths. Below lies the dizzying nightmare that "
+//"threatens to tear apart the conventional fabrics of reality. \cIOnce you cross onto the other side, "
+"\cDOnce you cross onto the other side, there is no turning back. Be sure to stock up on supplies and wrap up any business you may have.";
+EastWing_Entrance01a = "\cI[Descend]";
+Spiral = "BELOW";
+Sprial_1 =
+"\cDBefore decending, it might be a good idea to unwind and prepare yourself. Take a break, have a drink, repair your weapons.\n\n"
+"There are little to no supplies in the further regions of the lower depths. This is the edge before the plunge. Unreality awaits.";
+Spiral_1a = "\cI[Descend]";
+Spiral_2 = "\cDAre you ready to descend?";
+Six_AltarA = "Ceremonial Flesh";
+Six_AltarA01 = "\cDHallucinogenic cured flesh of a chosen ascendant. Eating this will shield your body from fragmenting when exposed to the Mind Palace.";
+Six_AltarA01a = "\cD[Consume Ceremonial Flesh]";
+Six_AltarA02 = "\cDYou eat the Ceremonial Flesh. There is a small chance your body will painfully dissolve into a pile of putrid sludge. You will remain completely aware, but won't be able to act on anything.";
+Six_AltarB = "Ceremonial Blood";
+Six_AltarB01 = "\cDPsychedelic venom infused with the brain of a chosen ascendant. Drinking this will shield your mind from collapsing when exposed to the Mind Palace.";
+Six_AltarB01a = "\cD[Drink Ceremonial Blood]";
+Six_AltarB02 = "\cDYou drink the Ceremonial Blood. There is a small chance your mind will plummet down the whirlpool of infinity, where you remain in complete darkness without thoughts or autonomy.";
+Six_North = "NORTHERN REALM OF THE MIND PALACE";
+Six_West = "WESTERN REALM OF THE MIND PALACE";
+Six_South = "SOUTHERN REALM OF THE MIND PALACE";
+Six_East = "EASTERN REALM OF THE MIND PALACE";
+Six_Grave_a = "\cQ[Instinct] \cDConcentrate on recognition.";
+Six_Grave = "\cDDo not be afraid. Do not fear it. Do not yearn for it. But recognize it as a play of the mind.";
+Six_Sword = "THE SWORD OF DIVINE POWER";
+Six_Sword01 =
+"\cDWhen wandering through the ordinary world, you could not recognize the inherent finality that is your nature. Outwardly, you stake life into irrelevance. This image cannot persist.";
+Six_Flute = "THE TUNE OF DIVINE FANTASY";
+Six_Flute01 =
+"\cDWhen wandering through the ordinary world, you could not recognize the inherent reflection that is your nature. Outwardly, you create then destroy. This image cannot persist.";
+Six_Liberate = "\cD[Reclaim Liberation]";
+Six_Awake = "\cD[Reclaim Awakening]";
+Six_Comp1Name = "TERMINAL 2A";
+Six_Comp1 =
+"\cD{KXP4} {0VJH} {A9LU} {H7T5} {B3QN}\n"
+"//////////////////////////////////////////////////////////////////////////////////////////////////////////////\n"
+"OW9EHRLQQY4I0R7QEH3PPMQS1X2UPV9MD8C8F.subconscious_registration.GCZDBS2BKKCYYJY3EQDGTJI2QXVP"
+"2PBQ7XYQPVQLWHJLX2VOZRGKY7G3IJIJS4Y8C60GTEHHWOBDOIA5AQ92DT"
+"CQIZ1YSCSEXGI66ZWCC03Y9KKV70WXV8DIHDTW.humanity's_progress.OG71ACH37OA31WCG7U7ODPKFTXUE8WKDZ4K991E970"
+"P2YOVZ4J1UCFG6WVG6.manipulation.IMUZN54G8Q4FJC6Y0VZR477FXPI2X9KSFCQ9JE514YR0KHL4GHFEKPUWVAZ15";
+Six_Comp1a = "\cD{ZC28} {F1WM} {X4LE} {PY69} {GQVD}";
+Six_Comp1b = "\cD{G5T1} {Z9QX} {7M2L} {R84K} {1A9C}";
+Six_Comp1c = "\cD{XPW2} {D3F7} {VZ81} {L0KJ} {T6Y4}";
+Six_Comp1d = "\cD{9HLW} {TZ43} {D2KP} {LJ70} {WQX8}";
+Six_Comp1e = "\cQ[Wits] \cD{9HLW} {TZ43} {D2KP} {LJ70} {WQX8}";
+Six_Comp2Name = "TERMINAL 9A";
+Six_Comp2 =
+"\cD{3BZF} {M1NY} {E74C} {U8RK} {Y6GD}\n"
+"//////////////////////////////////////////////////////////////////////////////////////////////////////////////\n"
+".36_F.C._V0Y28U5P90WYRNHSDQJRLBAM109SVJVW5O1SIA932UJCRSNDDLU5CEUNF5VBTX1FPCT7CW5TZ1M3J7F1OGQZ6QCJ42"
+"DBM5.mainstream_media.FKEBTQ3QJ5X4F5I9ZFJ4ADATFWRWUWRPJLGJWDKM0H38LMSWCMBXPQ6TOBFICC"
+"GSY8URW4YZ8EKGUR7WDT6TA7Q4U3E8HWW9IIHQEVTB6JBBQ2LSXIYR6QULYPCKUBWLIJND82P9UJF1OI936HHEI1ZEN86K5.mass_hypnosis_initiated."
+"MOKIEM5L2K3M0T9E6OPMAZ69WZ23OMBJXZ";
+Six_Comp2a = "\cD{9CXT} {M28H} {QE5P} {K7N9} {W3BZ}";
+Six_Comp2b = "\cD{YJ6Q} {U1RV} {HFD8} {P2CZ} {N4X5}";
+Six_Comp2c = "\cD{A7K9} {X2MF} {C81L} {RZ0N} {V5YJ}";
+Six_Comp2d = "\cD{D69X} {OXRF} {2AHU} {2JEB} {0CZW}";
+Six_Comp3Name = "TERMINAL 1B";
+Six_Comp3 =
+"\cD{A7K9} {X2MF} {C81L} {RZ0N} {V5YJ}\n"
+"//////////////////////////////////////////////////////////////////////////////////////////////////////////////\n"
+"PJUS1.detained_subjects.SJTKGN9TA2XF0GH4JAE5STSVMOKJF1354MARZP3H6BSZ98A11CDO7JFCVSKVB1H\n"
+"UNHH0VLHOBVFVJGPBX58J004MXIUFP9DGPRSSW89VH63LE3LT1RIK4OARVKJM1Q153R4F5B20EE26S1O6JFK\n"
+"7V5SBO37E1DAVU78Z5TOBPOLW0Y.access_restricted.AZDXSE6IHJKRN4Q76R28PVYFJB29UL"
+"CCL78JXXCXBA6JCG8F15GAL00BH19R21TO2ZXH8.ENLIGHTENED.5L52X73BULQQ38Y3ZUKKZJRQY1IPHH5HIN9HXQJH1UTZD1";
+Six_Comp3a = "\cD{KXP4} {0VJH} {A9LU} {H7T5} {B3QN}";
+Six_Comp3b = "\cD{Z8O2} {P4QW} {4RZJ} {LRVK} {4NIM}";
+Six_Comp3c = "\cD{9812} {MCYT} {UUDS} {898B} {KVGL}";
+Six_Comp3d = "\cD{H71M} {QY4H} {623O} {ZZZ4} {EWTN}";
+Six_Comp4Name = "TERMINAL 9B";
+Six_Comp4 =
+"\cD{9HLW} {TZ43} {D2KP} {LJ70} {WQX8}\n"
+"//////////////////////////////////////////////////////////////////////////////////////////////////////////////\n"
+"FPT0QLWGCC995BKQG.proto-messiahs.JAYPWV0IV1NOTNHEA4WAO318G7BWI8MFAENMI6Y1D9WG49RI1X59IV5Q3N4FVJ2W54C"
+"K9S7KTR4OL0M8FUVKOUHU6YLL2K1NKP9CBWNY4UFX9QCIA7V63O1DD26A2DY48CJDX\n"
+"XU13FIBK8ZMLOQAQ9ESLJ43K4EF99WGBM2S2BQ4KAQC1WHXX6L4BOWPA04NA2GVA9BH34TCM21POYGLX48SCXCA4L04K8HA2G244V1MXL"
+"K07NIVJ6.promising.0952.mutations.OGRVH85KUIRF1KY0RUGKZJPVU61453";
+Six_Comp4a = "\cD{KLEL} {T1CG} {WTC5} {P1DQ} {ZKCG}";
+Six_Comp4b = "\cD{3BZF} {M1NY} {E74C} {U8RK} {Y6GD}";
+Six_Comp4c = "\cD{74UA} {ITLT} {OV0B} {G5P1} {CZ3Y}";
+Six_Comp4d = "\cD{D8C1} {F05S} {GYVW} {KE9N} {BMCN}";
+Six_Comp4e = "\cQ[Wits] \cD{3BZF} {M1NY} {E74C} {U8RK} {Y6GD}";
+Six_CompFinal = "\cD[Lower gate]";
+Six_Log1 = "\cU[Log 1/8]\n\nDay 1:\n"
+"Construction of the massive anechoic chamber has begun. All budget, permits, inspections, documents and other preparations are satisfied. "
+"I have not been told what the purpose of such a room entails, only that the higher-ups needed it done urgently.";
+Six_Log2 = "\cU[Log 2/8]\n\nDay 7:\n"
+"Today, a senior researcher was detained on the work site. He was shouting cryptic remarks about the Titan Outpost while they dragged him away, "
+"something about organic blueprints and demanding to know why they ate the messiah. Poor guy, he just needs some sleep.";
+Six_Log3 = "\cU[Log 3/8]\n\nDay 23:\n"
+"Feeling more tired than usual. Seems like I'm not the only one, a lot of the other guys are feeling it as well. Everyone just seems less talkative "
+"lately. Progress is still going well though.";
+Six_Log4 = "\cU[Log 4/8]\n\nDay 30:\n"
+"Apparently the shareholders visited today. I couldn't care less, my head's been aching for the last two days and I just want to sleep.";
+Six_Log5 = "\cU[Log 5/8]\n\nDay 44:\n"
+"I've been having very bad dreams. Each time before waking I find myself standing inside the pitch black chamber. Constructions are nearly over. "
+"I need a change in department.";
+Six_Log6 = "\cU[Log 6/8]\n\nDay 75:\n"
+"Tired. Just want to go home. please. Don't let them .i";
+Six_Log7 = "\cU[Log 7/8]\n\nDay 99:\n"
+"They're here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here. They are here. "
+"They are here. They are here. They are here. They are here. They are here. They are here. They are here.";
+Six_Log8 = "\cU[Log 8/8]\n\nAaDDAayy ,102-[ct. h\n"
+"=p[_L3Srr  . HlE#p mml%JMME PL,eAsE HJ23[]#/ .L}{P;,l**/*-::’1$$M<,M%<>2…!22,,,+!@Ee$&^((e+...........;;;;;;;;.....;.;;;;;;;;;.;;;.."
+";.......''''''''''''''''''''';.;;........,;;;;;;;;;;;;;;;;;;,,,,,,,,,,,,,,,.";
+Tome02_1 = "\cDIt seems that many things were placed here at one point.";
+Tome02_1a = "\cD[Place Vase]";
+Tome02_1b = "\cD[Place Red Candle]";
+Tome02_1c = "\cD[Place Golden Rose]";
+Tome02_1d = "\cD[Place Tome]";
+Tome02_2a = "\cU[Place Vase]";
+Tome02_2b = "\cU[Place Red Candle]";
+Tome02_2c = "\cU[Place Golden Rose]";
+Tome02_2d = "\cU[Place Tome]";
+TrashCan = "Trash Can";
+TrashCan_01a = "\cD[Search trash]";
+TrashCan_02 = "\cDYou found a vase in the trash.";
+TrashChute = "Trash Chute";
+TrashChute_01a = "\cD[Drop a Special Soda down the chute]";
+TrashChute_02 = "\cDThe soda tumbles into the darkness...";
+Vend_01a = "\cD[Insert coin]";
+Vend_01b = "\cU[Insert coin]";
+Water = "Imminent Departure";
+Water_1 = "\cDThe water is serene and nonturbulent... for now.";
+Water_1a = "\cD[Gaze into the water's ripples]";
+
+ChickenTestName = "Suspicious Terminal";
+ChickenTest =
+"\cDEnanthios Version 12.4.3.9b\n"
+"Copyright WGS All Rights Reserved\n"
+"Update Available\n"
+"Please contact your administrator for further details.\n\n"
+"        Password INCORRECT\n"
+"        Login FAILED\n"
+"        Waiting user input...";
+ChickenTest_a = "\cD[Enter password]";
+ChickenTest_b = "\cD[Enter random password]";
+ChickenTest00 =
+"\cDEnanthios Version 12.4.3.9b\n"
+"Copyright WGS All Rights Reserved\n"
+"Update Available\n"
+"Please contact your administrator for further details.\n\n"
+"        Login SUCCESSFUL\n"
+"        Test Status READY\n"
+"        Waiting user input...";
+ChickenTest00a = "\cD[Begin test]";
+ChickenTest000 =
+"\cDRetrieving Queries... [36005 of 36534]\n"
+"Analyzing User's Intelligence... Difficulty lowered to EASY.\n"
+"Synchronizing to Admin Server... Request ACCEPTED.\n"
+"Waiting for Network...\n"
+".\n"
+"Processing... STATUS: \cFREADY";
+ChickenTest000a = "\cDContinue.";
+ChickenTest01 = 
+"\cDQuestion 1:\n\nSuppose you fell into a four dimensional hole, what is the most proper mathematical application for an escape?";
+ChickenTest01a = "\cQA. \cD(42 * pi - e^M + a^7) / sqrt(log(ISCO) + sinh(M) - gamma^2)";
+ChickenTest01b = "\cQB. \cD(1 - 2M / ISCO + a^999) / (cos(ISCO) + tanh(a) - M^M)";
+ChickenTest01c = "\cQC. \cD(M * a / 2) + (ISCO / 0) - inf";
+ChickenTest01d = "\cQD. \cD(1 - 2M / ISCO + a^2 / ISCO^2) / sqrt(1 - 3M / ISCO + a^2 / ISCO^2) + (bm / bs)";
+ChickenTest02 =
+"\cDQuestion 2:\n\nIf the following sentence is true. But the previous sentence is false. Does this mean the sentence is true?";
+ChickenTest02a = "\cQA. \cDYes.";
+ChickenTest02b = "\cQB. \cDNo.";
+ChickenTest03 =
+"\cDQuestion 3:\n\nCompound Buckminsterfullerene, when subjected to quantum refraction, produces what -- under an inversed Bose-Einstein condensation?";
+ChickenTest03a = "\cQA. \cD6-Methyl-9,10-Didehydroergoline-8-Carboxylic Acid";
+ChickenTest03b = "\cQB. \cD4-Hydroxy-N-Ethyl-N-Propyl Tryptamine";
+ChickenTest03c = "\cQC. \cDBubblegum";
+ChickenTest03d = "\cQD. \cD2,5-Dimethoxy-4-Methylamphetamine";
+ChickenTest04 =
+"\cDQuestion 4:\n\nDaniel Cornmeal and Jawn Jones, two of the most prominent fighters in the light-heavyweight division had an infamous beef back in the days. What was the reason for this?";
+ChickenTest04a = "\cQA. \cDCornmeal, confident in his grappling ability, did not appreciate Jones overlooking his talent.";
+ChickenTest04b = "\cQB. \cDJones had a pictogram of cocaine to his advantage during their bout.";
+ChickenTest04c = "\cQC. \cDThey were both elite eye-pokers.";
+ChickenTest04d = "\cQD. \cDRefuse to answer.";
+ChickenTest05 =
+"\cDCONGRATULATIONS!!!\nYOU DID NOT PASS THE TEST!\n\n"
+"\cFFinal Test Score: \cJ0%";
+ChickenTest06 =
+"\cFVery Fatal Error Code: C0000005 (Access Violation - tried to read address FFFFFFFFFFFFFFFF)\n"
+"//--Task Failed Successfully.\n\n"
+"\cDOpening Secret Vault...\n"
+":>Error.\n"
+":>Command overrided.\n"
+":>Go forth and claim your prize!\n"
+":>For your safety, please step away from the machinery to a safe distance.";
+ChickenTestFail = "\cRINCORRECT!\n\n\cDCurrent Test Score: \cJ0%";
+Chicken = "Chicken";
+Chicken01 = "\cDIt is fresh.";
+Chicken01a = "\cD[Take the chicken]";
+Chicken01b = "\cD[Eat the chicken]";
+Chicken02 = "\cDYou took the chicken.";
+Chicken03 = "\cDFinally. Some good fucking food.\n\n\cF(You regenerate HP over time if your health is above 0)";

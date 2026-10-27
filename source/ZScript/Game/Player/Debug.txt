@@ -1,0 +1,40 @@
+Class Counter : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+    console.printf("Tic: %d", GetAge());
+  }
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class DodgeTracker : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+    MovementHandler mv = MovementHandler(EventHandler.Find("MovementHandler"));
+	if(mv)
+	  console.printf("CD: %d", mv.dodgeCD);
+  }
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class VelTracker : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+    console.printf("x: %2f || y: %2f", owner.vel.x, owner.vel.y);
+  }
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}

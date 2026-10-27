@@ -1,0 +1,253 @@
+Class bInfo : Inventory
+{
+  String entryImage, entryLore, entryEcho, entryText, entryRes;
+  property Image: entryImage;
+  property Lore: entryLore;
+  property Text: entryText;
+  property Res: entryRes;
+  property Echo: entryEcho;
+  
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+	+INVENTORY.UNDROPPABLE
+	+INVENTORY.UNTOSSABLE
+  }
+}
+
+Class BestiaryPack : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    other.A_GiveInventory("b_Enlighten1", 1);
+	other.A_GiveInventory("b_Enlighten2", 1);
+	other.A_GiveInventory("b_Enlighten3", 1);
+	other.A_GiveInventory("b_AnThit", 1);
+	other.A_GiveInventory("b_Colony", 1);
+	other.A_GiveInventory("b_Enlighten4", 1);
+	other.A_GiveInventory("b_Moulter", 1);
+	other.A_GiveInventory("b_Corvid", 1);
+	other.A_GiveInventory("b_Ghost", 1);
+	other.A_GiveInventory("b_Proxy", 1);
+	other.A_GiveInventory("b_Enlighten5", 1);
+	other.A_GiveInventory("b_GKC", 1);
+	other.A_GiveInventory("b_Kin", 1);
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class BestiaryPack01 : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    other.A_GiveInventory("b_Enlighten1", 1);
+	other.A_GiveInventory("b_Enlighten2", 1);
+	other.A_GiveInventory("b_Enlighten3", 1);
+	other.A_GiveInventory("b_Enlighten5", 1);
+	
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class BestiaryPack02 : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    other.A_GiveInventory("b_AnThit", 1);
+	other.A_GiveInventory("b_Colony", 1);
+	other.A_GiveInventory("b_Enlighten4", 1);
+	other.A_GiveInventory("b_Moulter", 1);
+	
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class BestiaryPack03 : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+	other.A_GiveInventory("b_Corvid", 1);
+	other.A_GiveInventory("b_Ghost", 1);
+	other.A_GiveInventory("b_Proxy", 1);
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class BestiaryPack04 : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+	other.A_GiveInventory("b_Kin", 1);
+	other.A_GiveInventory("b_GKC", 1);
+	Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+class b_AnThit : bInfo
+{
+  Default
+  {
+    Tag "\cI*N06-8442018-!";
+    bInfo.Image "Graphics/Codex/Bestiary/AnThit.png";
+	bInfo.Res "$AnThit_1";
+	bInfo.Lore "$AnThit_2";
+  }
+}
+
+class b_Colony : bInfo
+{
+  Default
+  {
+    Tag "Colony";
+    bInfo.Image "Graphics/Codex/Bestiary/Colony.png";
+    bInfo.Res "$Colony_1";
+	bInfo.Lore "$Colony_2";
+  }
+}
+
+class b_Corvid : bInfo
+{
+  Default
+  {
+    Tag "Corvid";
+    bInfo.Image "Graphics/Codex/Bestiary/Bird.png";
+    bInfo.Res "$Corvid_1";
+	bInfo.Lore "$Corvid_2";
+  }
+}
+
+class b_Enlighten1 : bInfo
+{
+  Default
+  {
+    Tag "Enlightened Axe";
+    bInfo.Image "Graphics/Codex/Bestiary/Psycho1.png";
+    bInfo.Res "$Psycho1_1";
+	bInfo.Lore "$Psycho1_2";
+  }
+}
+
+class b_Enlighten2 : bInfo
+{
+  Default
+  {
+    Tag "Enlightened Fiend";
+    bInfo.Image "Graphics/Codex/Bestiary/Psycho2.png";
+	bInfo.Res "$Psycho2_1";
+	bInfo.Lore "$Psycho2_2";
+  }
+}
+
+class b_Enlighten3 : bInfo
+{
+  Default
+  {
+    Tag "Enlightened Berzerker";
+    bInfo.Image "Graphics/Codex/Bestiary/Psycho3.png";
+	bInfo.Res "$Psycho3_1";
+	bInfo.Lore "$Psycho3_2";
+  }
+}
+
+class b_Enlighten4 : bInfo
+{
+  Default
+  {
+    Tag "Enlightened Reaper";
+    bInfo.Image "Graphics/Codex/Bestiary/Psycho4.png";
+	bInfo.Res "$Psycho4_1";
+	bInfo.Lore "$Psycho4_2";
+  }
+}
+
+Class b_Enlighten5 : bInfo
+{
+  Default
+  {
+    Tag "Enlightened Rot";
+    bInfo.Image "Graphics/Codex/Bestiary/Rot.png";
+	bInfo.Res "$Psycho6_1";
+	bInfo.Lore "$Psycho6_2";
+  }
+}
+
+Class b_GKC : bInfo
+{
+  Default
+  {
+    Tag "Giant Killer Cell";
+    bInfo.Image "Graphics/Codex/Bestiary/GKC.png";
+	bInfo.Res "$GKC_1";
+	bInfo.Lore "$GKC_2";
+  }
+}
+
+Class b_Ghost : bInfo
+{
+  Default
+  {
+    Tag "Ghost";
+    bInfo.Image "Graphics/Codex/Bestiary/Ghost.png";
+    bInfo.Res "$Ghost_1";
+	bInfo.Lore "$Ghost_2";
+  }
+}
+
+Class b_Kin : bInfo
+{
+  Default
+  {
+    Tag "Kin";
+    bInfo.Image "Graphics/Codex/Bestiary/Kin.png";
+    bInfo.Res "$Kin_1";
+	bInfo.Lore "$Kin_2";
+  }
+}
+
+class b_Moulter : bInfo
+{
+  Default
+  {
+    Tag "Moulter";
+    bInfo.Image "Graphics/Codex/Bestiary/Moulter.png";
+    bInfo.Res "$Moulter_1";
+	bInfo.Lore "$Moulter_2";
+  }
+}
+
+class b_Proxy : bInfo
+{
+  Default
+  {
+    Tag "Proxy";
+    bInfo.Image "Graphics/Codex/Bestiary/Proxy.png";
+    bInfo.Res "$Proxy_1";
+	bInfo.Lore "$Proxy_2";
+  }
+}

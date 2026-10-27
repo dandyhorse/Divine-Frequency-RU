@@ -1,0 +1,54 @@
+server bool hm_ = false;
+
+user int introMap = 2;
+user int DF_StatVal = 1;
+user int GibDrawDistance = 1500;
+user bool calibrate = false;
+
+//Graphics
+nosave bool mariFX_enable = true;
+nosave bool retro_enable = true;
+nosave bool vhs_enable = false;
+nosave int vhs_strength = 2;
+nosave bool vhs_scroll = true;
+
+//Control
+nosave bool inv_clickSwap = false;
+
+//Gameplay
+user float modf_damage = 1.0;
+user float modf_heal = 1.0;
+user int modf_ammo = 1;
+user int modf_parry = 0;
+user bool modf_stamina = true;
+user int modf_weapon = 1;
+
+
+//Accessibility
+nosave bool damageNum_enable = true;
+nosave bool itemToolTip_enable = true;
+nosave float itemFlash_amount = 0.14;
+nosave bool tutorial_enable = true;
+nosave bool sgxh_enable = false;
+nosave bool hzv_enable = true;
+nosave bool hud_enable = true;
+nosave bool icon_enable = true;
+nosave bool mcam_enable = true;
+
+server noarchive int g_activecolor = 0xDDAA00;
+server noarchive int g_inactivecolor = 0x444444;
+server noarchive int g_altcolor = 0x00AA00;
+
+user float weather_amount = 3;
+user float weather_precip_vol = 1;
+user float weather_wind_vol = 1;
+user float weather_thunder_vol = 1;
+user bool weather_no_fog = false;
+user bool weather_no_lightning = false;
+
+user float val_a = 0.01;
+user float val_b = 0.01;
+user float val_c = 0.01;
+user float val_d = 0.01;
+user int val_e = 0;
+user bool dev_debug = false;

@@ -1,0 +1,162 @@
+Class SaveMenuHandler : UIHandler
+{
+	//This is for referancing the menu that is using this handler
+	DFSaveMenu menu;
+	SaveGameManager Manager;
+	
+	void DeleteSave(int i)
+	{
+		DFSaveMenu(menu).del_wait = false;
+		
+		Manager = Manager.GetManager();
+		Manager.ReadSaveStrings();
+		manager.ExtractSaveData(i);
+		//Crashes if unpacked so we have to hide instead
+		//hide the buttons associated with the save slot we are deleting
+		//Delete the button from the array then shrink the array
+		DFSaveMenu(menu).SaveSlotButton[i].sethidden(1);
+		DFSaveMenu(menu).SaveSlotButton.Delete(i);
+		DFSaveMenu(menu).SaveSlotButton.ShrinkToFit();
+
+		DFSaveMenu(menu).DeleteSaveSlot[i].sethidden(1);
+		DFSaveMenu(menu).DeleteSaveSlot.Delete(i);
+		DFSaveMenu(menu).DeleteSaveSlot.ShrinkToFit();
+
+		DFSaveMenu(menu).SaveSlotTitle[i].sethidden(1);
+		DFSaveMenu(menu).SaveSlotTitle.Delete(i);
+		DFSaveMenu(menu).SaveSlotTitle.ShrinkToFit();
+
+		DFSaveMenu(menu).SaveSlotMapName[i].sethidden(1);
+		DFSaveMenu(menu).SaveSlotMapName.Delete(i);
+		DFSaveMenu(menu).SaveSlotMapName.ShrinkToFit();
+
+		DFSaveMenu(menu).SaveSlotSaveAge[i].sethidden(1);
+		DFSaveMenu(menu).SaveSlotSaveAge.Delete(i);
+		DFSaveMenu(menu).SaveSlotSaveAge.ShrinkToFit();
+
+		DFSaveMenu(menu).SaveSlotTimeSaved[i].sethidden(1);
+		DFSaveMenu(menu).SaveSlotTimeSaved.Delete(i);
+		DFSaveMenu(menu).SaveSlotTimeSaved.ShrinkToFit();
+	
+		//Takes all the buttons below the deleted save and moves them up
+		for(int k = 0; k < DFSaveMenu(menu).SaveSlotButton.Size(); k++)
+		{
+			if(k >= i)
+			{
+				DFSaveMenu(menu).SaveSlotButton[k].SetPosY(DFSaveMenu(menu).SaveSlotButton[k].GetPosY()-162);
+				DFSaveMenu(menu).SaveSlotButton[k].SetCommand('Saveslot:'..k);
+				DFSaveMenu(menu).SaveSlotTitle[k].SetPosY(DFSaveMenu(menu).SaveSlotTitle[k].GetPosY()-162);
+
+				DFSaveMenu(menu).DeleteSaveSlot[k].SetPosY(DFSaveMenu(menu).DeleteSaveSlot[k].GetPosY()-162);
+				DFSaveMenu(menu).DeleteSaveSlot[k].SetCommand('ConfirmMenu'..k);
+
+				DFSaveMenu(menu).SaveSlotMapName[k].SetPosY(DFSaveMenu(menu).SaveSlotMapName[k].GetPosY()-162);
+				DFSaveMenu(menu).SaveSlotSaveAge[k].SetPosY(DFSaveMenu(menu).SaveSlotSaveAge[k].GetPosY()-162);
+				DFSaveMenu(menu).SaveSlotTimeSaved[k].SetPosY(DFSaveMenu(menu).SaveSlotTimeSaved[k].GetPosY()-162);
+			}
+		}
+
+		//This actually deletes the save
+		Manager.UnloadSaveData();
+		Manager.RemoveSaveSlot(i);
+		
+		//Unloads the Delete Menu and Enables the Scroll Area
+		LoadSaveBase(menu).Delete_Frame.unpack();
+		DFSaveMenu(menu).SaveFrameScrollArea.Enable();
+	}
+	
+	override void elementHoverChanged(UIElement caller, Name command, bool unhovered)
+    {
+		if(!unhovered)
+		{
+			Array<String> cmd;
+			String commandList = command;
+			commandList.Split(cmd, ":");
+			Menu.MenuSound("menu/clear");
+			if(cmd[0] == "SaveSlot")
+			{
+				Menu.save_pic_index = cmd[1].ToInt(10);
+			}
+		}
+	}
+
+	override void buttonClickCommand(UIButton caller, Name command)
+	{
+		Array<String> cmd;
+		String commandList = command;
+		commandList.Split(cmd, ":");
+		
+		//strings for the multiple buttons we created in the save Menu
+		string SaveSlotNum;
+		string ConfirmMenuNum;
+		string DeleteSaveNum;
+        string OverwriteSaveNum;
+
+		//Setup the Save Game Manager
+		Manager = Manager.GetManager();
+		Manager.ReadSaveStrings();
+
+		//Cancels out of the Delete Pop up without doing anything
+		if(command == "CancelDelete")
+		{
+			LoadSaveBase(menu).del_wait = false;
+			LoadSaveBase(menu).Delete_Frame.unpack();
+			DFSaveMenu(menu).SaveFrameScrollArea.Enable();
+		}else if(command == "CancelOverwrite") //Cancels out of the Overwrite Pop up without doing anything
+        {
+			LoadSaveBase(menu).del_wait = false;
+			LoadSaveBase(menu).overwrite_wait = false;
+			LoadSaveBase(menu).OverwriteSave_Frame.unpack();
+			DFSaveMenu(menu).SaveFrameScrollArea.Enable();
+		}else if(command == "CreateNewSave")  //Opens the New Save Popup
+        {
+            DFSaveMenu(menu).SaveFrameScrollArea.Disable();
+			LoadSaveBase(menu).CreateNewSave(DFSaveMenu(menu).BaseRes);
+        }else if(command == "CancelNewSave") //Cancels out of the New Save Pop up without doing anything
+        {            
+			LoadSaveBase(menu).NewSave_Frame.unpack();
+			DFSaveMenu(menu).SaveFrameScrollArea.Enable();
+        }else if(command == "ConfirmNewSave") //Creates a new save
+        {   
+			EventHandler.SendNetworkEvent("ManualSave");
+        }
+
+		for(int i = 0; i < manager.SavegameCount(); i++)
+		{
+			SaveSlotNum = "SaveSlot:" ..i;
+			ConfirmMenuNum = 'ConfirmMenu'..i;
+			DeleteSaveNum = 'DeleteSave'..i;
+			OverwriteSaveNum = 'OverwriteSave'..i;
+			
+            //Opens the overwrite save menu and disables the scroll Area
+			if(command == SaveSlotNum)
+			{
+				DFSaveMenu(menu).del_wait = false;
+				DFSaveMenu(menu).overwrite_wait = true;
+				DFSaveMenu(menu).SaveFrameScrollArea.Disable();
+				LoadSaveBase(menu).ConfirmOverwrite(DFSaveMenu(menu).BaseRes, i);
+				break;
+			}else if(command == ConfirmMenuNum) //Confirms delete
+			{
+				DFSaveMenu(menu).del_wait = true;
+				DFSaveMenu(menu).overwrite_wait = false;
+				DFSaveMenu(menu).SaveFrameScrollArea.Disable();
+				LoadSaveBase(menu).ConfirmDelete(DFSaveMenu(menu).BaseRes, i);
+				break;
+			}else if(command == OverwriteSaveNum) //Confirms overwriting save
+            {
+                //This string is for changing the name of the Save 
+				Manager = Manager.GetManager();
+				Manager.ReadSaveStrings();
+				Manager.RemoveSaveSlot(i);
+				EventHandler.SendNetworkEvent("ManualSave");
+				break;
+            }else if(command == DeleteSaveNum)
+			{
+				Menu.MenuSound("menu/prompt");
+				DeleteSave(i);
+				break;
+			}
+		}
+	}
+}

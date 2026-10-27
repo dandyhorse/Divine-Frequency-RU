@@ -1,0 +1,42 @@
+SPTR
+SNAM
+Init
+Return
+STRL
+dev_debug
+GenericScreenStuff
+Clean
+HBeat02
+ACS_FONT
+A new path has been opened for you.
+HighZone
+DFPlayer
+SetLocation
+Buried Level
+Elev_TP
+D_NULL
+SetMap
+Data Not Found
+Elev_03
+MusicFade
+DoorTP9
+DoorTP14
+PowerOn1
+Backup Power online.
+LowZone
+Saver
+Autosave
+SetHUD
+Funny01
+Funny02
+GateStop
+DSEMPTY
+Freezer1
+AirHiss
+Condensation
+EyemarkDistance
+Buzz1
+Funny03
+Elev_02
+PA_01
+ACSe

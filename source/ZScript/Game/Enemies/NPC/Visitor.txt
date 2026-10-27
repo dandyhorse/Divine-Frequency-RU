@@ -1,0 +1,60 @@
+Class Visitor : SwitchableDecoration
+{
+  double user_movespeed;
+  Default
+  {
+    //$Category "Enemies/Scripted"
+    //$Color 4
+	Tag "Visitor";
+	Radius 82;
+	Height 272;
+	Speed 2;
+	Scale 2.0;
+	Projectile;
+	FloatBobStrength 0.4;
+	+FORCEXYBILLBOARD
+	+FLOATBOB
+	+NOGRAVITY
+	-SHOOTABLE
+  }
+  States
+  {
+	Spawn:
+	Inactive:
+	  PSR2 A -1;
+	  Stop;
+	Active:
+	  TNT1 A 0 Thrust(user_movespeed, angle);
+	  PSR2 AAAA random(1,2);
+	  PSR2 BBCC 1;
+	  PSR2 DDDDEEEE random(1,2);
+	  PSR2 FFGG 1;
+	  PSR2 HHHH random(1,2);
+	  PSR2 IIJJ 1;
+	  Goto Active+1;
+  }
+}
+
+Class IdleAntibody : Actor
+{
+  Default
+  {
+    Radius 20;
+    Height 40;
+	Scale 0.5;
+    Speed 2;
+	FloatBobStrength 0.3;
+    Monster;
+	-SHOOTABLE
+	+FLOAT
+	+FLOATBOB
+	+FORCEXYBILLBOARD
+	+NOGRAVITY
+  }
+  States
+  {
+    Spawn:
+      JERM AAAAAABBBBBBCCCCCCDDDDDD 1 A_Wander();
+      Loop;
+  }
+}

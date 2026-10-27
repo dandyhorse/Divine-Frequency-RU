@@ -1,0 +1,527 @@
+Class OilVial : InventoryItem
+{
+  Default
+  {
+    //$Category "Item/Ammo"
+	//$Color 6
+    Radius 7;
+	Height 26;
+	XScale 0.3;
+	YScale 0.25;
+	Tag "Lantern Oil";
+	Inventory.PickupMessage "";
+	Inventory.PickupSound "";
+	Inventory.Amount 1;
+	//+FLOORCLIP
+	//+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  OILJ C 55;
+	  OILJ C 0
+	  {
+	    let actr = Spawn("LootFlash", invoker.pos);
+		if(actr)
+		{
+		  actr.scale = invoker.scale;
+		  actr.frame = invoker.frame;
+		  actr.sprite = invoker.sprite;
+		  if(bFORCEXYBILLBOARD)
+		    actr.bFORCEXYBILLBOARD = true;
+		}
+	  }
+      Loop;
+	PickUp:
+	  TNT1 A 0
+	  {
+	    A_PickupMessage("\cFLantern Refueled.");
+	    A_GiveInventory("Oil", 100);
+		A_StartSound("Oil", CHAN_AUTO);
+	  }
+	  Stop;
+  }
+}
+
+Class Fat : InventoryItem
+{
+  Default
+  {
+    //$Category "Item/Ammo"
+	//$Color 6
+    Radius 5;
+	Height 10;
+	XScale 0.3;
+	YScale 0.25;
+	Tag "Jar of Animal Fat";
+	Inventory.PickupMessage "";
+	Inventory.PickupSound "";
+	Inventory.Amount 1;
+	+FLOORCLIP
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  OILL B 55;
+	  OILL B 0
+	  {
+	    let actr = Spawn("LootFlash", invoker.pos);
+		if(actr)
+		{
+		  actr.scale = invoker.scale;
+		  actr.frame = invoker.frame;
+		  actr.sprite = invoker.sprite;
+		  if(bFORCEXYBILLBOARD)
+		    actr.bFORCEXYBILLBOARD = true;
+		}
+	  }
+      Loop;
+	PickUp:
+	  TNT1 A 0
+	  {
+	    A_PickupMessage(String.Format("%s \cJacquired 5 fl.oz. of Oil.", self.GetTag()));
+	    A_GiveInventory("Oil", 5);
+		A_StartSound("Orgn_Up2", CHAN_AUTO);
+	  }
+	  Stop;
+  }
+}
+
+Class OilUsed : Actor
+{
+  Default
+  {
+	-SOLID
+	+FLOORCLIP
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  "####" "#" 1 A_FadeOut(0.07);
+	  Wait;
+  }
+}
+
+
+Class Oil : Ammo
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 100;
+  }
+}
+
+Class Lantern : Tool
+{
+  Actor light;
+  bool on, useff, firstPickup, dead;
+  
+  override void BeginPlay()
+  {
+	on = false;
+	dead = false;
+	invName = "Lantern | Ordinary";
+	invIcon = "Lant";
+	invText = "$Lantern";
+	invLore = "$LanternLore";
+
+	oneLimit = true;
+	firstPickup = true;
+	Super.BeginPlay();
+  }
+  
+  override void PostBeginPlay()
+  {
+    canUse = false;
+	useff = false;
+  }
+  
+  override bool TryPickup(in out Actor toucher)
+  {
+	if(firstPickup)
+	  firstPickup = false;
+	
+	on = false;
+	invIcon = "Lant";
+
+	return Super.TryPickup(toucher);
+  }
+  
+  override void OnDrop(Actor dropper)
+  {
+	invIcon = "Lant";
+	dropper.A_TakeInventory("LanternToken", 1);
+	
+	if(on)
+	{
+	  if(light)
+	    light.Destroy();
+		
+	  SetState(ResolveState("Spawn"));
+	}
+	else
+	  SetState(ResolveState("Idle"));
+	
+    Super.OnDrop(dropper);
+  }
+  
+  Default
+  {
+	Radius 6;
+	Height 24;
+	XScale 0.4;
+	YScale 0.33;
+	Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Lan_Up";
+	//+Inventory.UNDROPPABLE
+	-Inventory.KEEPDEPLETED
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  LNTR B 0
+	  {
+	    if(invoker.firstPickup)
+		{
+	      let actr = Spawn("LootFlash", invoker.pos);
+		  if(actr)
+		  {
+		    actr.scale = invoker.scale;
+		    actr.frame = invoker.frame;
+		    actr.sprite = invoker.sprite;
+		    if(bFORCEXYBILLBOARD)
+		      actr.bFORCEXYBILLBOARD = true;
+		  }
+		}
+	  }
+      LNTR B 55 Light("Lantern_Idle");
+      Loop;
+	Idle:
+	  LNTR A -1;
+	  Stop;
+	ChangeLight:
+	  TNT1 A 0
+	  {
+	    if(invoker.useff)
+		{
+		  invoker.useff = false;
+		  invoker.A_StartSound("Lan_On", CHAN_AUTO);
+		  return ResolveState("Spawn");
+		}
+		else
+		{
+		  invoker.useff = true;
+		  return ResolveState("Idle");
+		}
+		
+		return ResolveState(null);
+	  }
+	  Goto Spawn;
+    Use:
+	  TNT1 A 1
+	  {
+		if(!invoker.on && !invoker.dead)
+		{
+		  EmergencyLight itm = EmergencyLight(FindInventory("EmergencyLight"));
+		  if(itm && itm.on)
+		  {
+			A_TakeInventory("GlowStickToken", 1);
+			A_RemoveChildren(True, RMVF_EVERYTHING, "GlowStickLight");
+		    itm.on = false;
+			itm.invIcon = "Graphics/Inventory Icon/Light.png";
+			if(itm.light)
+		      itm.light.Destroy();
+		  }
+		  
+		  invoker.light = Spawn("LanternLight", pos);
+		  if(invoker.light)
+		  {
+			invoker.light.master = self;
+		  }
+			
+		  A_StartSound("Lan_On", CHAN_AUTO);
+		  A_GiveInventory("LanternToken", 1);
+		  invoker.on = true; //Turn the lantern on
+		  invoker.invIcon = "Lant_On";
+		}
+		else if(invoker.on && !invoker.dead)
+		{
+		  A_TakeInventory("LanternToken", 1);
+		  A_RemoveChildren(True, RMVF_EVERYTHING, "LanternLight");
+		  if(invoker.light)
+		    invoker.light.Destroy();
+
+		  invoker.on = false; //Turn the lantern off
+		  invoker.invIcon = "Lant";
+		}
+	  }
+	  Fail;
+  }
+}
+
+Class LanternToken : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+  }
+}
+
+Class LanternLive : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+	if(other && !DFPlayer(other).lite)
+	{
+	  other.A_GiveInventory("LanternToken", 1);
+	  DFPlayer(other).lite = Spawn("LanternLight", other.pos);
+	  DFPlayer(other).lite.master = other;
+	}
+    Super.AttachToOwner(other);
+  }
+  
+  override void PostBeginPlay()
+  {
+    Destroy();
+	Super.PostBeginPlay();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+  }
+}
+
+Class LanternKill : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+	if(other && DFPlayer(other).lite)
+	{
+	  other.A_TakeInventory("LanternToken", 1);
+	  DFPlayer(other).lite.Destroy();
+	}
+    Super.AttachToOwner(other);
+  }
+  
+  override void PostBeginPlay()
+  {
+    Destroy();
+	Super.PostBeginPlay();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+  }
+}
+
+Class LanternLight : Actor
+{
+  double pVel;
+  double tHeight;
+  
+  override void Tick()
+  {
+    if(master)
+	{
+      pVel = sqrt((master.vel.x * master.vel.x) + (master.vel.y * master.vel.y) + (master.vel.z * master.vel.z));
+	  tHeight = (master.height * players[consoleplayer].CrouchFactor) - 12;
+	  
+	  if(master.waterlevel == 1 || master.waterlevel == 2)
+	    tHeight = 97;
+	}
+	  
+    Super.Tick();
+  }
+  
+  Default
+  {
+	+MISSILE
+    +NOINTERACTION
+    +NOBLOCKMAP
+    +NOCLIP
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 1 Light("Lantern_Pulse")
+	  {
+	    A_Warp(AAPTR_MASTER, 0, 0, tHeight, WARPF_ABSOLUTEANGLE|WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE);
+		
+		if(master && pVel > 5.0)
+		  return ResolveState("Flicker");
+			
+		return ResolveState(null);
+	  }
+	  Wait;
+	Flicker:
+      TNT1 A 1 Light("Lantern_Flick")
+	  {
+	    A_Warp(AAPTR_MASTER, 0, 0, tHeight, WARPF_ABSOLUTEANGLE|WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE);
+		
+		if(master && pVel <= 5.0)
+		  return ResolveState("Spawn");
+			
+		return ResolveState(null);
+	  }
+	  Wait;
+  }
+}
+
+Class EmergencyLight : Tool
+{
+  Actor light;
+  bool on, useff;
+  
+  override void BeginPlay()
+  {
+	on = false;
+	invName = "Bionic Eye | \cFEsoteric";
+	invIcon = "Graphics/Inventory Icon/Light.png";
+	invText = "$EmergencyLight";
+	invLore = "$EmergencyLightLore";
+	
+	Super.BeginPlay();
+  }
+  
+  override void OnDrop(Actor dropper)
+  {
+    Super.OnDrop(dropper);
+	
+    if(light)
+	  light.Destroy();
+			
+	invIcon = "Graphics/Inventory Icon/Light.png";
+	dropper.A_TakeInventory("GlowStickToken", 1);
+	useff = false;
+	on = false;
+  }
+
+  Default
+  {
+    Tag "Bionic Eye";
+	Radius 7;
+	Height 14;
+	Scale 0.15;
+    Inventory.Maxamount 60;
+	Inventory.InterHubAmount 60;
+	Inventory.PickupSound "Rep_Up";
+	-Inventory.KEEPDEPLETED
+	+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+      LBRE A -1;
+	  Stop;
+	Lit:
+	  LBRE A -1 Light("GlowStickLight");
+	  Stop;
+	ChangeLight:
+	  TNT1 A 0
+	  {
+	    if(!invoker.useff)
+		{
+		  invoker.useff = true;
+		  invoker.A_StartSound("Bionic", CHAN_AUTO);
+		  return ResolveState("Lit");
+		}
+		else
+		{
+		  invoker.useff = false;
+		  return ResolveState("Spawn");
+		}
+		
+		return ResolveState(null);
+	  }
+	  Goto Spawn;
+    Use:
+	  TNT1 A 1
+	  {
+	    if(!invoker.on)
+		{
+		  Lantern itm = Lantern(FindInventory("Lantern"));
+		  if(itm && itm.on)
+		  {
+		    itm.invIcon = "Lant";
+		    itm.on = false;
+		  }
+			
+		  A_RemoveChildren(True, RMVF_EVERYTHING, "LanternLight");
+		  A_TakeInventory("LanternToken", 1);
+		  invoker.light = Spawn("GlowStickLight", self.pos);
+		  if(invoker.light)
+		    invoker.light.master = self; //self = player
+		  
+		  invoker.on = true;
+		  invoker.invIcon = "Graphics/Inventory Icon/Light_On.png";
+		  A_GiveInventory("GlowStickToken", 1);
+		}
+		else
+		{
+		  A_RemoveChildren(True, RMVF_EVERYTHING, "GlowStickLight");
+		  
+		  if(invoker.light)
+		    invoker.light.Destroy();
+			
+		  invoker.on = false;
+		  invoker.invIcon = "Graphics/Inventory Icon/Light.png";
+		  A_TakeInventory("GlowStickToken", 1);
+		}
+	  }
+	  Fail;
+  }
+}
+
+Class GlowStickLight : Actor
+{
+  int tHeight;
+  override void Tick()
+  {
+    if(master)
+	{
+	  if(master.height <= 56)
+	    tHeight = master.height - 12;
+	  else if(master.waterlevel == 1 || master.waterlevel == 2)
+	    tHeight = 97;
+	  else  
+	    tHeight = 48;
+	}
+	  
+    Super.Tick();
+  }
+  Default
+  {
+    +MISSILE
+    +NOINTERACTION
+    +NOBLOCKMAP
+    +NOCLIP
+  }
+  States
+  {
+    Spawn:
+      TNT1 A 1 NoDelay Light("GlowStickLight") A_Warp(AAPTR_MASTER, 0, 0, tHeight, WARPF_ABSOLUTEANGLE|WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE);
+	  Wait;
+    Death:
+	  TNT1 A 1;
+	  Stop;
+  }
+}
+
+Class GlowStickToken : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+  }
+}

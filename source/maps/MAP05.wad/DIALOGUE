@@ -1,0 +1,735 @@
+namespace = "GZDoom";
+
+Conversation
+{
+    ID = 1;
+    page // Page 1
+    {
+		Name = "BENCH";
+        Dialog = "...";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$TrainBench";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 16;
+			Arg2 = 115;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 10;
+    page // Page 1
+    {
+		Name = "BENCH";
+        Dialog = "...";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$TrainBench";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 16;
+			Arg2 = 116;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 11;
+    page // Page 1
+    {
+		Name = "TRAIN TICKET";
+        Dialog = "$Train_Ticket";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$TrainBench";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 16;
+			Arg2 = 45;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 2;
+    page // Page 1
+    {
+		Name = "$Duel";
+        Dialog = "$DUEL_01_DLG_01";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Duel_01a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 4;
+			CloseDialog = true;
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = 2;
+			Exclude
+			{
+				Item = "PhyOrigin";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = 4;
+			Require
+			{
+				Item = "PhyOrigin";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Duel_03";
+			NextPage = 3;
+		}
+	}
+	Page // Page 2 //What is a duel
+    {
+		Name = "$Duel";
+        Dialog = "$DUEL_01_DLG_03";
+		Choice
+		{
+			text = "$Duel_01a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 4;
+			CloseDialog = true;
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "$Duel_03";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	Page // Page 3 //What is this domain
+    {
+		Name = "$Duel";
+        Dialog = "$DUEL_01_DLG_02";
+		Choice
+		{
+			text = "$Duel_01a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 4;
+			CloseDialog = true;
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = 2;
+			Exclude
+			{
+				Item = "PhyOrigin";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = 4;
+			Require
+			{
+				Item = "PhyOrigin";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Duel_03";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	Page // Page 4 //What is a duel PHY -
+    {
+		Name = "$Duel";
+        Dialog = "$DUEL_01_DLG_03B";
+		Choice
+		{
+			text = "$Duel_01a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 4;
+			CloseDialog = true;
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = 4;
+		}
+		Choice
+		{
+			text = "$Duel_03";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 3;
+    page // Page 1
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB09";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = 12;
+			GiveItem = "ADB_M01_Prompt0";
+			Amount = 1;
+		}
+		Choice
+		{
+			text = "$M01_ADB09a";
+			NextPage = 2;
+			GiveItem = "ADB_M01_Prompt1";
+			Amount = 1;
+		}
+		Choice
+		{
+			text = "$M01_ADB09b";
+			NextPage = 4;
+			GiveItem = "ADB_M01_Prompt2";
+			Amount = 1;
+		}
+		Choice
+		{
+			text = "$M01_ADB09c";
+			NextPage = 5;
+			GiveItem = "ADB_M01_Prompt3";
+			Amount = 1;
+		}
+	}
+	page // Page 2 - Listen rain
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB09a_01";
+		Choice
+		{
+			text = "$M01_ADB09a_01a";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = 12;
+			GiveItem = "ADB_M01_Prompt0";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt0";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09b";
+			NextPage = 4;
+			GiveItem = "ADB_M01_Prompt2";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt2";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09c";
+			NextPage = 5;
+			GiveItem = "ADB_M01_Prompt3";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt3";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB10a";
+			NextPage = 7;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 8;
+		}
+	}
+	page // Page 3 - Listen rain cont.
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB09a_02";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = 12;
+			GiveItem = "ADB_M01_Prompt0";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt0";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09b";
+			NextPage = 4;
+			GiveItem = "ADB_M01_Prompt2";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt2";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09c";
+			NextPage = 5;
+			GiveItem = "ADB_M01_Prompt3";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt3";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB10a";
+			NextPage = 7;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 8;
+		}
+	}
+	page // Page 4 - Silence
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB08";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = 12;
+			GiveItem = "ADB_M01_Prompt0";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt0";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09a";
+			NextPage = 2;
+			GiveItem = "ADB_M01_Prompt1";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt1";
+				amount = 1;
+			}
+
+		}
+		Choice
+		{
+			text = "$M01_ADB09c";
+			NextPage = 5;
+			GiveItem = "ADB_M01_Prompt3";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt3";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB10a";
+			NextPage = 7;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 8;
+		}
+	}
+	page // Page 5 - ADB says its Not following
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB09c_01";
+		Choice
+		{
+			text = "$M01_ADB09c_01a";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$M01_ADB09c_01b";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$M01_ADB09c_01c";
+			NextPage = 10;
+			GiveItem = "Astro_Gift1";
+			Amount = 1;
+		}
+		Choice
+		{
+			text = "$M01_ADB09c_01d";
+			NextPage = 8;
+		}
+	}
+	page // Page 6 - Stare
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB09c_01a_01";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = 12;
+			GiveItem = "ADB_M01_Prompt0";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt0";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09a";
+			NextPage = 2;
+			GiveItem = "ADB_M01_Prompt1";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt1";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09b";
+			NextPage = 4;
+			GiveItem = "ADB_M01_Prompt2";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt2";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB10a";
+			NextPage = 7;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 8;
+		}
+	}
+	page // Page 7 - This place is ...
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB10a_01";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = 12;
+			GiveItem = "ADB_M01_Prompt0";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt0";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09a";
+			NextPage = 2;
+			GiveItem = "ADB_M01_Prompt1";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt1";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09b";
+			NextPage = 4;
+			GiveItem = "ADB_M01_Prompt2";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt2";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09c";
+			NextPage = 5;
+			GiveItem = "ADB_M01_Prompt3";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt3";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 8;
+		}
+	}
+	page // Page 8 - Give Bong
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB11";
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 9;
+			CloseDialog = true;
+			Special = 80;
+			Arg0 = 38;
+		}
+	}
+	page // Page 9 - End
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB08";
+		Goodbye = "$Leave";
+	}
+	page // Page 10 - Reward player for having no chill
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB09c_01c_1";
+		Voice = "Astro_01";
+		Choice
+		{
+			text = "$M01_ADB09c_01c_1a";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$M01_ADB09c_01c_1b";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$M01_ADB09c_01c_1c";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$M01_ADB09c_01c_1d";
+			NextPage = 11;
+			GiveItem = "Astro_GiftBack";
+			Amount = 1;
+		}
+		Choice
+		{
+			text = "$Silent";
+			NextPage = 6;
+		}
+	}
+	page // Page 11 - Punish the player for continuing to have no chill
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB09c_01c_1e_1";
+		Choice
+		{
+			text = "$M01_ADB09a";
+			NextPage = 2;
+			GiveItem = "ADB_M01_Prompt1";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt1";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09b";
+			NextPage = 4;
+			GiveItem = "ADB_M01_Prompt2";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt2";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB10a";
+			NextPage = 7;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 8;
+		}
+	}
+	page // Page 12 - No edumacation right now ...
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M01_ADB10";
+		Choice
+		{
+			text = "$M01_ADB09a";
+			NextPage = 2;
+			GiveItem = "ADB_M01_Prompt1";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt1";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09b";
+			NextPage = 4;
+			GiveItem = "ADB_M01_Prompt2";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt2";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$M01_ADB09c";
+			NextPage = 5;
+			GiveItem = "ADB_M01_Prompt3";
+			Amount = 1;
+			Exclude
+			{
+				item = "ADB_M01_Prompt3";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 8;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 5;
+	page // Page 1
+    {
+		Name = "$M01_Mail";
+        Dialog = "$M01_MailBox03";
+		GoodBye = "$Leave";
+	}
+}
+
+Conversation
+{
+    ID = 6;
+    page // Page 1
+    {
+		Name = "CABINET";
+        Dialog = "$M1_Cabinet01";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "\cQ[Strength] \cDTry brute forcing the doors open.";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 27;
+			CloseDialog = true;
+			Require
+			{
+				item = "StrToken";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "\cQ[Strength] \cDTry brute forcing the doors open.";
+			NextPage = 2;
+			Exclude
+			{
+				item = "StrToken";
+				amount = 1;
+			}
+		}
+	}
+	page // Page 2
+    {
+		Name = "CABINET";
+        Dialog = "$M1_Cabinet01Fail";
+		Voice = "WoodBar1";
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}

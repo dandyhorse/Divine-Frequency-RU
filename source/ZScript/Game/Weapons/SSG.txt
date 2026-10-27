@@ -1,0 +1,682 @@
+Class SSG : DF_Weapon replaces SuperShotgun
+{
+  Actor PsiVictim;
+  bool emptyRaise, PsiHit;
+  bool heal_raise;
+  
+  override void AttachToOwner(Actor other)
+  {
+    if(other)
+	{
+	  DFPlayer(other).wep3b = true;
+	  if(DFPlayer(other).bHigh_Wit)
+	    hasAlt = true;
+	}
+	
+	Super.AttachToOwner(other);
+  }
+
+  action void A_FireSSG()
+  {
+    int recoilControl = DFPlayer(self).Str;
+	A_FireBullets(64, 16, 18, 1800, "VoidPuff", FBF_NORANDOM);
+	A_FireBullets(0, 0, 0, 1800, "VoidPuff", FBF_NORANDOM); //Needed because it would be incredibly stupid if your aim is dead on and it misses lol
+	A_QuakeEx(4,8,4,35,0,128,0,QF_SCALEDOWN);
+	A_Recoil(30 - (recoilControl * 5));
+	A_SetPitch(pitch - (12 - (recoilControl * 2)));
+	A_StartSound("DblFir01", CHAN_BODY);
+	A_TakeInventory("VoidLoaded", 2);
+	A_ZoomFactor(1.5 - (recoilControl * 0.08), ZOOM_INSTANT);
+	invoker.Log(String.Format("· %s \cRSacrifices \cJ20 Health.", self.GetTag()));
+	
+	let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+	if(ev)
+	{
+	  ev.SetParry(0.0, 0.0, 0.02, 30); 
+	  ev.ig_time = 22;
+	}
+	if(Health > 20)
+	  A_SetHealth(Health - 20);
+	else if(Health == 1)
+	  A_DamageSelf(20, "Drowning", DMSS_NOPROTECT|DMSS_NOFACTOR);
+	else
+	  A_SetHealth(1);
+	  
+	if(DFPlayer(self).bHigh_Wit && invoker.Ammo2.Amount > 0)
+	{
+	  A_GiveInventory("VoidLoaded", 2);
+	  if(!DFPlayer(self).bDuel_Buff)
+	    A_TakeInventory("VoidAmmo", 2);
+	}
+  }
+  
+  action void A_PSIShock(Actor victim)
+  {
+	if(victim)
+	{
+      victim.A_GiveInventory("DamageTrackerSGSP", damage);
+	  victim.A_StartSound("ElecHit1", CHAN_AUTO, volume: 1.0, attenuation: 0.4);
+	  victim.A_SpawnItemEx("ElectroBolt", flags: SXF_SETMASTER);
+	  victim.A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFC0"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELATIVE|SPF_LOCAL_ANIM, 19, 300, zoff: victim.height * 0.5, startalphaf: 0.8, fadestepf: .1, startroll: random(0,359));
+	  victim.A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK2"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELATIVE|SPF_LOCAL_ANIM, 19, 512, zoff: victim.height * 0.5, startroll: random(0,359));
+	  victim.A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK3"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELATIVE|SPF_LOCAL_ANIM, 19, 512, zoff: victim.height * 0.5, startroll: random(0,359));
+	  victim.A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK4"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELATIVE|SPF_LOCAL_ANIM, 19, 512, zoff: victim.height * 0.5, startroll: random(0,359));
+	  DF_Monster(victim).bStunned = true;
+	  DF_Monster(victim).bStunSoft = true;
+	  DF_Monster(victim).StunTime = 35*2;
+	  victim.A_DamageSelf(random(1, 10), "Stun");
+	  BlockThingsIterator it = BlockThingsIterator.Create(self, 1280); //Credit: Boondorl, for the whole thing
+		
+	  while(it.Next())
+	  {
+		if(it.thing && it.thing is "DF_Monster" && it.thing.bIsMonster && it.thing.health > 0 && Distance3DSquared(it.thing) <= 1638400) //Is this monster alive and in range?
+		  if(!it.thing.bDormant && it.thing.bShootable && !it.thing.bFriendly) //Can we damage this entity? should we?
+		    if(CheckSight(it.thing, SF_IGNOREVISIBILITY|SF_SEEPASTSHOOTABLELINES|SF_IGNOREWATERBOUNDARY)) //Can we even see it?
+			  if(!DF_Monster(it.thing).bStunned) //is it already stunned?
+		      {
+			    Actor msl = tracer.Spawn("StunBall", victim.pos + (0, 0, DF_Monster(victim).sHeight * 0.6));
+			    if(msl)
+				{
+				  StunBall(msl).empower = true;
+				  StunBall(msl).charge = 3;
+				  msl.tracer = it.thing;
+				}	
+				break;
+			  }
+	  }
+	}
+  }
+	  
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+	
+	wep_order = 3;
+	wep_name = "DLT-BTN";
+	wep_info = "$DB_Info";
+	wep_ability = "$DB_Ability";
+	wep_quirk = "$DB_Quirk";
+	wep_dmgType = "???";
+	wep_condMax = 0;
+	wep_alticon = "W_Alt3";
+	wep_psiCost = 5;
+  }
+  
+  Default
+  {
+	Weapon.SlotNumber 3;
+	Weapon.SlotPriority 0.0;
+	Weapon.AmmoType1 "VoidLoaded";
+	Weapon.AmmoType2 "VoidAmmo";
+	Weapon.AmmoGive1 2;
+	Weapon.KickBack 80;
+	Inventory.Icon "WI_4";
+	+WEAPON.AMMO_OPTIONAL
+	+WEAPON.NOALERT
+	+WEAPON.NOAUTOFIRE
+	+WEAPON.NOAUTOAIM
+	Weapon.BobRangeX 0.3;
+	Weapon.BobRangeY 0.3;
+	Weapon.BobSpeed 1.3;
+	Weapon.BobStyle "Inverse";
+	Tag "Double Barrel";
+  }
+  States
+  {
+    Select:
+	  TNT1 A 0
+	  {
+		if(!DFPlayer(self).wpnSelScroll && DFPlayer(self).fastSlot == 3)
+		  A_SelectWeapon("TrenchGun");
+	  }
+	  TNT1 A 0
+	  {
+	    PlayerInfo p = players[consoleplayer];
+	    if(p && Cvar.GetCVar("sgxh_enable", p).GetBool())
+	      A_SetCrosshair(7);
+	    else
+	      A_SetCrosshair(83);
+		  
+	    invoker.bIsRaising = true;
+	    invoker.raiseTime = invoker.A_GetRaiseTime(15, 2);
+	  }
+	  TNT1 A 0 A_Raise;
+	  Wait;
+	Ready:
+	  TNT1 A 1
+	  {
+	    A_WeaponReady(WRF_NOFIRE);
+	    if(DFPlayer(self).bWitOrigin_Buff)
+	      return invoker.ResolveState("FastRaise");
+	    else if(invoker.raiseTime <= 0)
+	      return invoker.ResolveState("WeaponRaise");
+	    else
+	      invoker.raiseTime--;
+	    return invoker.ResolveState(null);
+	  }
+	  Wait;
+    FastRaise:
+      TNT1 A 0;
+	  Goto WeaponRaise+6;
+    WeaponRaise:
+	  SSGS ABCDEFGHIJK 1;
+	  TNT1 A 0
+	  {
+	    invoker.bIsRaising = false;
+		if(invoker.Ammo1.Amount <= 0)
+		  invoker.emptyRaise = true;
+	  }
+	Idle:
+      TNT1 A 0
+	  {
+		if(invoker.heal_raise || invoker.emptyRaise)
+		{
+		  invoker.heal_raise = false;
+		  A_Overlay(2, "IdleOverlay");
+		}
+		else if(invoker.Ammo1.Amount > 0)
+		  A_Overlay(2, "IdleOverlay");
+		else
+		  A_Overlay(2, "IdleEmptyOverlay");
+	  }
+	  TNT1 A 1 A_WeaponReady(WRF_ALLOWRELOAD);
+	  Wait;
+    IdleOverlay:
+	  SSGI A 7;
+	  SSGI B 5;
+	  SSGI CDEFGHIJK 4;
+	  Loop;
+	IdleEmptyOverlay:
+	  SSGE A 7;
+	  SSGE B 5;
+	  SSGE CDEFGHIJK 4;
+	  Loop;
+	Deselect:
+	  TNT1 A 0
+	  {
+	    A_Overlay(2);
+		A_StopSound(CHAN_WEAPON);
+		
+		if(invoker.bIsRaising || DFPlayer(self).bWitOrigin_Buff)
+		  return ResolveState("FastDeselect");
+		
+		if(invoker.emptyRaise)
+		  return ResolveState(null);
+		else if(invoker.Ammo1.Amount <= 0)
+		  return ResolveState("DeselectEmpty");
+		
+	    return ResolveState(null);
+	  }
+	  SSGD ABCDEFGHIJK 1;
+	  TNT1 A 0 A_Lower();
+	  Wait;
+	DeselectEmpty:
+	  SGED ABCDEFGHIJK 1;
+	  TNT1 A 0 A_Lower();
+	  Wait;
+	Fire:
+	  TNT1 A 0
+	  {
+	    if(invoker.Ammo1.Amount <= 0)
+	      return ResolveState("Dry");
+
+	    return ResolveState(null);
+	  }
+	  TNT1 A 0
+	  {
+	    A_Overlay(2);
+		invoker.emptyRaise = false;
+	  }
+	  SSGF A 1 A_StartSound("SG_Fire", CHAN_AUTO);
+	  SSFX A 1 Bright A_GiveInventory("SSG_Visual1", 1);
+	  SSFX B 2 Bright A_FireSSG();
+	  SSFX B 1 Bright
+	  {
+	    A_ZoomFactor(1.00,ZOOM_NOSCALETURNING);
+	  }
+	  SSFX C 1
+	  {
+	    A_GiveInventory("SSG_Visual2", 1);
+		let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+		if(ev)
+		  ev.shader_invert = true;
+	  }
+	  TNT1 A 0
+	  {
+	    A_OverlayScale(1, 1.2, 0, WOF_RELATIVE); 
+	    A_OverlayOffset(1, 0, -10, WOF_ADD);
+		//Left hand recoil vfx
+		A_Overlay(-2, "FireHand");
+		A_OverlayFlags(-2, PSPF_ADDWEAPON, 0);
+		A_OverlayOffset(-2, 0, 32);
+	  }
+	  SSFX DEF 1;
+	  TNT1 A 0
+	  {
+	    let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+		if(ev)
+		  ev.shader_invert = false;
+	  }
+	  SSFX GHIIIIIJKLMNOPQR 1
+	  {
+	    if(DFPlayer(self).bWitOrigin_Buff)
+		  A_WeaponReady(WRF_NOFIRE);
+	  }
+	  TNT1 A 0
+	  {
+		A_OverlayScale(1, 1.0, 0, WOF_RELATIVE); 
+	    A_OverlayOffset(1, 0, 32);
+	  }
+	  SSGX P 1
+	  {
+	    if(DFPlayer(self).bWitOrigin_Buff)
+		  A_WeaponReady(WRF_NOFIRE);
+	  }
+	  SSGX Q 1
+	  {
+	    if(DFPlayer(self).bHigh_Wit)
+		  A_SetTics(0);
+	  }
+	  Goto Idle;
+	Altfire:
+	  TNT1 A 0
+	  {
+	    if(!invoker.hasAlt)
+	      return ResolveState("Empty");
+	    else
+	      if(CountInv("PSI") < invoker.wep_psiCost)
+		  {
+		    ACS_NamedExecute("NoPsi", 0);
+		    return ResolveState("Empty");
+		  }
+	  
+	    return ResolveState(null);
+	  }
+	PsiCast:
+      TNT1 A 0
+	  {
+	    A_Overlay(2);
+		A_Overlay(-4, "PsiHand");
+		A_OverlayOffset(-4, -26, -10, WOF_ADD);
+		A_OverlayScale(-4, 1.2, 1.2);
+		
+		//Shamelessly stolen from zdoom.wiki
+	    FLineTraceData RemoteRay;
+		double pz = height * 0.5 - floorclip + player.mo.AttackZOffset*player.crouchFactor;
+		bool hit = LineTrace(angle, 2048, pitch, offsetz: pz, data: RemoteRay);
+		if(hit && RemoteRay.HitType == TRACE_HitActor)
+		{
+		  if(RemoteRay.HitActor && RemoteRay.HitActor.bIsMonster && !(RemoteRay.HitActor is "DF_Boss"))
+		  {
+		    invoker.PsiHit = true;
+		    invoker.PsiVictim = RemoteRay.HitActor;
+		  }
+		  else
+		    invoker.PsiHit = false;
+		}
+		else
+		  invoker.PsiHit = false;
+	  }
+	  SSGP AABB 1;
+	  SSGP C 1
+	  {
+	    //Do again in case we get a new target in front of our view
+	    FLineTraceData RemoteRay;
+		double pz = height * 0.5 - floorclip + player.mo.AttackZOffset*player.crouchFactor;
+		bool hit = LineTrace(angle, 2048, pitch, offsetz: pz, data: RemoteRay);
+		if(hit && RemoteRay.HitType == TRACE_HitActor)
+		{
+		  if(RemoteRay.HitActor && RemoteRay.HitActor.bIsMonster && !(RemoteRay.HitActor is "DF_Boss"))
+		  {
+		    invoker.PsiHit = true;
+		    invoker.PsiVictim = RemoteRay.HitActor;
+			A_PSIShock(invoker.PsiVictim);
+		  }
+		  else if(invoker.PsiVictim)
+	      {
+	        A_PSIShock(invoker.PsiVictim);
+		    invoker.PsiVictim = null;
+	      }
+		  else
+	        invoker.PsiHit = false;
+		}
+	  }
+	  SSGP D 1
+	  {
+	    A_OverlayRotate(1, -1.0, WOF_ADD);
+	    if(invoker.PsiHit)
+		{
+	      A_Overlay(-5, "PsiFlashFX");
+		  A_OverlayOffset(-5, 126, 108);
+		  A_TakeInventory("PSI", invoker.wep_psiCost);
+		}
+	  }
+	  SSGP EF 1
+	  {
+	    A_OverlayRotate(1, -1.0, WOF_ADD);
+	    if(DFPlayer(self).bWitOrigin_Buff)
+		  A_WeaponReady(WRF_NOFIRE);
+	  }
+	  SSGP FFFFFFED 2
+	  {
+	    if(DFPlayer(self).bWitOrigin_Buff)
+		  A_WeaponReady(WRF_NOFIRE);
+	  }
+	  SSGP CBA 1
+	  {
+	    A_OverlayRotate(1, 1.0, WOF_ADD);
+	    if(DFPlayer(self).bWitOrigin_Buff)
+		  A_WeaponReady(WRF_NOFIRE);
+	  }
+	  SSGP A 1 A_OverlayRotate(1, 0);
+	  SSGP AAA 1
+	  {
+	    if(DFPlayer(self).bWitOrigin_Buff)
+		  A_WeaponReady(WRF_NOFIRE);
+	  }
+	  Goto Idle;
+    PsiHand:
+	  SGMG ABCDEFGHHIIIIJJJKKLMNOPQRSTU 1;
+	  TNT1 A 0
+	  {
+	    A_OverlayOffset(-4, 0, 0);
+		A_OverlayScale(-4, 1.0, 1.0);
+	  }
+	  SSPE ABC 1;
+	  Stop;
+	PsiFlashFX:
+      SGXX A 1;
+	  SGXX B 1 A_OverlayOffset(-5, -12, 0, WOF_ADD|WOF_INTERPOLATE);
+	  SGXX CDEFGHIJKLMNOPQRSTUVWX 1 Bright;
+	  Stop;
+	Reload:
+	  TNT1 A 0 A_CheckMax("VoidLoaded");
+	  TNT1 A 0
+	  {
+	    if(!DFPlayer(self).bDuel_Buff)
+	      return A_JumpIfInventory("VoidAmmo", 1, "ReloadStart");
+	    else
+	      Return ResolveState("ReloadStart");
+	  }
+	  TNT1 A 0;
+	  Goto Idle+1;
+	ReloadStart:
+	  TNT1 A 0 A_Overlay(2);
+	  TNT1 A 0 A_StartSound("SSG/Button", CHAN_AUTO);
+	  SSR1 AB 1;
+	  TNT1 A 0 A_StartSound("SSG_Open", CHAN_AUTO);
+	  SSR1 CD 1;
+	  TNT1 A 0 A_Overlay(-2, "ReloadHand");
+	  SSR1 EEFGHIJKLM 1;
+	  SSR1 N 1
+	  {
+	    A_SpawnCasing("VoidShellCasing", (40, 2, -17), (frandom(1.0,2.0), frandom(5.0,6.0), frandom(8.0, 10.0)));
+		A_SpawnCasing("VoidShellCasing", (40, 7, -17), (frandom(1.0,2.0), frandom(6.0,9.0), frandom(8.0, 10.0)));
+	  }
+	  SSR1 O 1;
+	  SSR3 A 17
+	  {
+	    if(DFPlayer(self).bBase_Wit)
+		  A_SetTics(5);
+	  }
+	  SSR3 A 10 A_Overlay(2, "Insert1");
+	  SSR3 B 15;
+	  SSR3 B 15
+	  {
+	    if(DFPlayer(self).bAdvanced_Wit)
+		  A_SetTics(4);
+	  }
+	  SSR3 B 10
+	  {
+	    A_Overlay(2, "Insert1");
+		A_OverlayOffset(2, 18, 0, WOF_ADD);
+	  }
+	  SSR3 C 18;
+	  TNT1 A 0 A_StartSound("SSG_Done", CHAN_AUTO, volume: 0.7);
+	  SSR3 C 1;
+	  SSR4 ABCDEFGHIJJKKKLMNOPQR 1;
+	  Goto Idle;
+	FireHand:
+	  SSGH ABCDEFGH 1;
+	  SSGH I 3;
+	  SSGH JKLMNOPQ 1;
+	  Stop;
+	ReloadHand:
+	  SSRH ABCDEFG 1;
+	  Stop;
+	Insert1:
+	  SSR2 ABCDEF 1;
+	  TNT1 A 0
+	  {
+	    A_GiveInventory("VoidLoaded", 1);
+		if(!DFPlayer(self).bDuel_Buff)
+		  A_TakeInventory("VoidAmmo", 1);
+		  
+	    A_StartSound("SSG/Insert", CHAN_AUTO);
+	  }
+	  SSR2 FFGHIIIJJKLMNOPQRST 1;
+	  Stop;
+	Empty:
+	  TNT1 A 0;
+	  Goto Idle+1;
+    Dry: //From the ready state
+	  TNT1 A 0
+	  {
+		if(DFPlayer(self).bAutoReload)
+		  return ResolveState("Reload");
+		  
+		return ResolveState(null);
+	  }
+	  TNT1 A 0
+	  {
+	    let psp =  player.FindPSprite(2);
+		if(!psp)
+	      A_Overlay(2, "IdleOverlay");
+		  
+	    A_StartSound("Dry_Shtg", CHAN_AUTO);
+	  }
+	  TNT1 A 3
+	  {
+	    if(invoker.emptyRaise)
+		{
+		  invoker.emptyRaise = false;
+		  return ResolveState("DryEmptyFire");
+		}
+		
+		return ResolveState(null);
+	  }
+	  Goto Idle+1;
+	DryEmptyFire:
+	  TNT1 A 0 A_Overlay(2);
+	  SSGF A 2;
+	  SSGE A 1;
+	  Goto Idle;
+	DryFire: //From the firing state
+	  TNT1 A 0
+	  {
+		if(DFPlayer(self).bAutoReload)
+		  return ResolveState("Reload");
+		  
+		return ResolveState(null);
+	  }
+	  TNT1 A 0
+	  {
+	    let psp =  player.FindPSprite(2);
+		if(!psp)
+	      A_Overlay(2, "IdleOverlay");
+		  
+	    A_StartSound("Dry_Shtg", CHAN_AUTO);
+	  }
+	  Goto Idle;
+	FastHeal:
+	  TNT1 A 0
+	  {
+	    invoker.heal_raise = true;
+		
+	    if(DFPlayer(self).bBase_Wit)
+		  return ResolveState("VeryFastHeal");
+		  
+		A_Overlay(2);
+		A_Overlay(3);
+		A_Overlay(4);
+		return ResolveState(null);
+	  }
+	  TNT1 A 0
+	  {
+	    if(invoker.Ammo1.Amount <= 0)
+		  return ResolveState("EmptyFastHeal");
+		  
+		return ResolveState(null);
+	  }
+	  SSGD ABCDEFGHIJK 1;
+	  TNT1 A 2;
+	  Goto FastHealContinue;
+	EmptyFastHeal:
+	  SGED ABCDEFGHIJK 1;
+	  TNT1 A 2;
+	  Goto FastHealContinue;
+	DeathHeal:
+	  TNT1 A 0
+	  {
+	    A_Overlay(2);
+		A_Overlay(3);
+		A_Overlay(4);
+		
+	    let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+		if(ev)
+		  ev.shader_invert = false;
+	  }
+	  Goto FastHealContinue;
+  }
+}
+
+Class SSG_Visual1 : Infrared
+{
+  Default
+  {
+    Powerup.Duration 3;
+	Powerup.Color "InverseMap";
+  }
+}
+
+Class SSG_Visual2 : Infrared
+{
+  Default
+  {
+    Powerup.Duration 4;
+	Powerup.Color "None";
+  }
+}
+
+Class VoidPuff : BulletPuff
+{
+  Default
+  {
+    DamageType "Void";
+  }
+  States
+  {
+    Spawn:
+	XDeath:
+	  TNT1 A 1;
+	  Stop;
+	Crash:
+	  PUFF A 4;
+	  Stop;
+  }
+}
+
+Class VoidLoaded : Ammo
+{
+  Default
+  {
+	Inventory.Amount 1;
+	Inventory.MaxAmount 2;
+  }
+}
+
+Class ElectroBolt : Actor
+{
+  int sType;
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(master)
+	  SetOrigin(master.pos, false);
+  }
+  
+  Default
+  {
+    Scale 1.4;
+    RenderStyle "Add";
+	+FLATSPRITE
+	+FLOORCLIP
+	+NOBLOCKMAP
+	+NOFRICTION
+	+NOGRAVITY
+	+PIERCEARMOR
+  }
+  
+  States
+  {
+    Spawn:
+	  TNT1 A random(0,8);
+	  BLTN AAAAAAAAAAAAA 1 Bright
+	  {
+	    if(sType == 0)
+		{
+	      sprite = GetSpriteIndex("TNT1");
+		  sType++;
+		}
+		
+		else if(sType == 1)
+		  sType--;
+	  }
+	  TNT1 A random(6,8)
+	  {
+	    bFlatSprite = false;
+		bSpriteFlip = random(0,1);
+		A_StartSound("PsychoHammer/Charge", CHAN_AUTO, volume: 0.8, attenuation: 0.3);
+	  }
+	  LBLT ABGH 1 Bright;
+	  TNT1 A 0
+	  {
+	    A_Explode(random(800,900), 64, damagetype: "Void");
+		A_QuakeEx(2, 2, 8, 35, 0, 1024, "DSEMPTY", QF_SCALEDOWN);
+		A_SetScale(frandom(2.2, 2.5));
+		A_SpawnItemEx("ElectroBoltLayer", flags: SXF_NOCHECKPOSITION|SXF_SETMASTER);
+	  }
+	  LBLT IJKLMNOPQR 1 Bright;
+	  LBLT STUVWXY 1 Bright A_FadeOut(0.08);
+	  Stop;
+  }
+}
+
+Class ElectroBoltLayer : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(master)
+	  SetOrigin(master.pos, false);
+  }
+  Default
+  {
+    RenderStyle "Add";
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay
+	  {
+	    A_SetScale(frandom(0.3, 0.4));
+		A_SetTranslucent(frandom(0.75, 1.0));
+	  }
+	  LTNN ABCDEFGHIJK 2 Bright A_FadeOut(0.15);
+	  Stop;
+  }
+}

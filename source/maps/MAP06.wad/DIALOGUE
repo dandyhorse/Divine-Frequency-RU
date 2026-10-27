@@ -1,0 +1,3270 @@
+namespace = "GZDoom";
+conversation
+{
+    ID = 1;
+	page //Page 1
+    {
+         Name = "$Astro";
+         Dialog = "$AstroM1_1";
+		 Voice = "Astro_14";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$AstroM1_1a";
+			 NextPage = 2;
+		 }
+		 Choice
+		 {
+			 text = "$AstroM1_1b";
+			 NextPage = 3;
+		 }
+		 Choice
+		 {
+			 text = "$AstroM1_1c";
+			 NextPage = 4;
+		 }
+	}
+	page //Page 2
+    {
+         Name = "$Astro";
+         Dialog = "$AstroM1_1a_1";
+		 Voice = "Astro_02";
+		 Choice
+		 {
+			 text = "$AstroM1_1a";
+			 NextPage = 2;
+		 }
+		 Choice
+		 {
+			 text = "$AstroM1_1b";
+			 NextPage = 3;
+		 }
+		 Choice
+		 {
+			 text = "$AstroM1_1c";
+			 NextPage = 4;
+		 }
+		 Choice
+		 {
+			 text = "$Leave";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 3
+    {
+         Name = "$Astro";
+         Dialog = "$AstroM1_1b_1";
+		 Voice = "Astro_02";
+		 Choice
+		 {
+			 text = "$AstroM1_1a";
+			 NextPage = 2;
+		 }
+		 Choice
+		 {
+			 text = "$AstroM1_1b";
+			 NextPage = 3;
+		 }
+		 Choice
+		 {
+			 text = "$AstroM1_1c";
+			 NextPage = 4;
+		 }
+		 Choice
+		 {
+			 text = "$Leave";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 4
+    {
+         Name = "$Astro";
+         Dialog = "$AstroM1_1c_1";
+		 Voice = "Astro_02";
+		 Choice
+		 {
+			 text = "$AstroM1_1a";
+			 NextPage = 2;
+		 }
+		 Choice
+		 {
+			 text = "$AstroM1_1b";
+			 NextPage = 3;
+		 }
+		 Choice
+		 {
+			 text = "$AstroM1_1c";
+			 NextPage = 4;
+		 }
+		 Choice
+		 {
+			 text = "$Leave";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+}
+
+conversation
+{
+    ID = 2;
+    page //Page 1
+    {
+         Name = "$M2_Elevator";
+         Dialog = "$M2_Elevator01";
+		 Voice = "Stat_On";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$M2_Elevator01b";
+			 Special = 80;
+			 Arg0 = 41;
+			 Arg2 = 282;
+			 CloseDialog = True;
+		 }
+		 Choice
+		 {
+			 text = "$M2_Elevator03a";
+			 NextPage = 1;
+		 }
+		 Choice
+		 {
+			 text = "$M2_Elevator02b";
+			 NextPage = 1;
+		 }
+	}
+}
+
+Conversation
+{
+    ID = 3;
+    page // Page 1
+    {
+		Name = "$STUDENTGROUP";
+        Dialog = "$STUDENT_04";
+		Choice
+		 {
+			 text = "$Leave";
+			 Special = 79;
+			 Arg0 = 208;
+			 Arg1 = 0;
+			 CloseDialog = TRUE;
+		 }
+	}
+}
+
+Conversation
+{
+    ID = 6;
+    page //Page 1
+    {
+         Name = "$M2_Elevator";
+         Dialog = "$M2_Elevator01";
+		 Voice = "Stat_On";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$M2_Elevator03a";
+			 NextPage = 1;
+		 }
+		 Choice
+		 {
+			 text = "$M2_Elevator02b";
+			 NextPage = 1;
+		 }
+		 Choice
+		 {
+			 text = "$M2_Elevator03b";
+			 Special = 80;
+			 Arg0 = 32;
+			 CloseDialog = True;
+		 }
+	}
+}
+
+conversation
+{
+    ID = 7;
+    page //Page 1
+    {
+         Name = "$M2_Elevator";
+         Dialog = "$M2_Elevator01";
+		 Voice = "Stat_On";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$M2_Elevator01g";
+			 NextPage = 1;
+		 }
+		 Choice
+		 {
+			 text = "$M2_Elevator02a";
+			 Special = 80;
+			 Arg0 = 37;
+			 CloseDialog = True;
+		 }
+	}
+}
+
+conversation
+{
+    ID = 8;
+    page //Page 1
+    {
+         Name = "$M2_Elevator";
+         Dialog = "$M2_Elevator01";
+		 Voice = "Stat_On";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$M2_Elevator01b";
+			 Special = 80;
+			 Arg0 = 37;
+			 Arg1 = 0;
+			 Arg2 = 1;
+			 CloseDialog = True;
+		 }
+		 Choice
+		 {
+			 text = "$M2_Elevator03a";
+			 NextPage = 1;
+		 }
+	}
+}
+
+conversation //Elevator Upper-Level to Liminal Hall - Sjinn
+{
+    ID = 9;
+    page //Page 1
+    {
+         Name = "$M2_Elevator";
+         Dialog = "$M2_Elevator01";
+		 Voice = "Stat_On";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$M2_Elevator01g";
+			 NextPage = 1;
+		 }
+		 Choice
+		 {
+			 text = "$M2_Elevator02a";
+			 Special = 80;
+			 Arg0 = 41;
+			 Arg2 = 286;
+			 CloseDialog = True;
+		 }
+		 Choice
+		 {
+			 text = "$M2_Elevator02b";
+			 NextPage = 1;
+		 }
+	}
+}
+
+Conversation
+{
+    ID = 10;
+    page // Page 1
+    {
+		Name = "BURIED LEVELS ENTRANCE";
+        Dialog = "$Buried_Entrance01";
+		Goodbye = "$Buried_Entrance01b";
+		Choice
+		{
+			text = "$Buried_Entrance01a";
+			Special = 80;
+			Arg0 = 58;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 11;
+    page // Page 1
+    {
+		Name = "ELEVATOR CONTROL";
+        Dialog = "$EastWing_Entrance01";
+		Goodbye = "$Buried_Entrance01b";
+		Choice
+		{
+			text = "$EastWing_Entrance01a";
+			Special = 80;
+			Arg0 = 60;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 13;
+	page // Page 1
+    {
+		Name = "TERMINAL";
+        Dialog = "$Terminal_01";
+		Voice = "Term_02";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Terminal_12a";
+			Special = 80;
+			Arg0 = 63;
+			GiveItem = "M2_ConsoleCheck01";
+			NextPage = 3;
+			Exclude
+			{
+				Item = "M2_ConsoleCheck01";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Terminal_05d";
+			NextPage = 2;
+		}
+	}
+	page // Page 2
+    {
+		Name = "TERMINAL";
+        Dialog = "$Terminal_12_a1";
+		Choice
+		{
+			text = "$Terminal_12a";
+			Special = 80;
+			Arg0 = 63;
+			GiveItem = "M2_ConsoleCheck01";
+			NextPage = 3;
+			Exclude
+			{
+				Item = "M2_ConsoleCheck01";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Terminal_05d";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = TRUE;
+		}
+	}
+	page // Page 3
+    {
+		Name = "TERMINAL";
+        Dialog = "$Terminal_12_b1";
+		Choice
+		{
+			text = "$Terminal_05d";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation //Phrase 2
+{
+    ID = 14;
+    page // Page 1
+    {
+		Name = "$PilgPhrase";
+        Dialog = "$PilgPhrase2";
+		Voice = "Sheet/Note";
+		Choice
+		{
+			text = "$Leave";
+			Special = 80;
+			Arg0 = 18;
+			Arg2 = 1;
+			NextPage = 2;
+			CloseDialog = true;
+		}
+	}
+	page // Page 2
+    {
+		Name = "$PilgPhrase";
+        Dialog = "$PilgPhrase2";
+		Voice = "Sheet/Note";
+		Goodbye = "$Leave";
+	}
+}
+
+Conversation //Phrase 3
+{
+    ID = 15;
+    page // Page 1
+    {
+		Name = "$PilgPhrase";
+        Dialog = "$PilgPhrase3";
+		Voice = "Sheet/Note";
+		Choice
+		{
+			text = "$Leave";
+			Special = 80;
+			Arg0 = 18;
+			Arg2 = 2;
+			NextPage = 2;
+			CloseDialog = true;
+		}
+	}
+	page // Page 2
+    {
+		Name = "$PilgPhrase";
+        Dialog = "$PilgPhrase3";
+		Voice = "Sheet/Note";
+		Goodbye = "$Leave";
+	}
+}
+
+Conversation //File Cabinet
+{
+    ID = 16;
+    page // Page 1
+    {
+		Name = "File Cabinet";
+        Dialog = "$Cabinet_1";
+		Voice = "FileCab1";
+		Choice
+		{
+			text = "$Cabinet_2a";
+			Special = 80;
+			Arg0 = 1;
+			CloseDialog = true;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation //File Cabinet - Empty
+{
+    ID = 17;
+    page // Page 1
+    {
+		Name = "File Cabinet";
+        Dialog = "$FileCab01";
+		Voice = "FileCab1";
+		GoodBye = "$Leave";
+	}
+}
+
+conversation
+{
+    ID = 18;
+	page // Page 1 - Hello
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M02_ADB_00";
+		Choice
+		{
+			text = "$M02_ADB_00a";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "$M02_ADB_00b";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "$M02_ADB_00c";
+			NextPage = 4;
+		}
+	}
+	page // Page 2 - Default
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M02_ADB_01";
+		Goodbye = "$Leave";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = "Psi";
+		}
+	}
+	page // Page 3 - Lore
+    {
+		Name = "$M01_ADB";
+        Dialog = "$M02_ADB_00a_1";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = "Psi";
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 2;
+			CloseDialog = TRUE;
+		}
+	}
+	page // Page 4 - Silence
+    {
+		Name = "$M01_ADB";
+        Dialog = "...";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = "Psi";
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 2;
+			CloseDialog = TRUE;
+		}
+	}
+	page // Page Psi - let's learn
+    {
+		Name = "$M01_ADB";
+		PageName = "Psi";
+        Dialog = "$M01_ADB13";
+		Choice
+		{
+			text = "$Psi_HG_01";
+			NextPage = "Psi_HG";
+			Require
+			{
+				Item = "Attunement_Check";
+				Amount = 1;
+			}
+			Exclude
+			{
+				Item = "Psi_HG";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_SG_01";
+			NextPage = "Psi_SG";
+			Require
+			{
+				Item = "Attunement_Check";
+				Amount = 1;
+			}
+			Exclude
+			{
+				Item = "Psi_SG";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_SP_01";
+			NextPage = "Psi_SP";
+			Require
+			{
+				Item = "Attunement_Check";
+				Amount = 1;
+			}
+			Exclude
+			{
+				Item = "Psi_SP";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_HG_01";
+			NextPage = "NoTune";
+			Exclude
+			{
+				Item = "Attunement_Check";
+				Amount = 1;
+			}
+			Exclude
+			{
+				Item = "Psi_HG";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_SG_01";
+			NextPage = "NoTune";
+			Exclude
+			{
+				Item = "Attunement_Check";
+				Amount = 1;
+			}
+			Exclude
+			{
+				Item = "Psi_SG";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_SP_01";
+			NextPage = "NoTune";
+			Exclude
+			{
+				Item = "Attunement_Check";
+				Amount = 1;
+			}
+			Exclude
+			{
+				Item = "Psi_SP";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_01c";
+			NextPage = 2;
+		}
+	}
+	page // Page Psi - learn brainwash frenzy
+    {
+		Name = "$M01_ADB";
+		PageName = "Psi_HG";
+        Dialog = "$Psi_HG_02";
+		Choice
+		{
+			text = "$Psi_01a";
+			NextPage = "Psi_HG2";
+			GiveItem = "Psi_HG";
+			Require
+			{
+				Item = "ExaltXP";
+				Amount = 4000;
+			}
+			Cost
+			{
+				Item = "ExaltXP";
+				Amount = 4000;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_01c";
+			NextPage = "Psi";
+		}
+	}
+	page // Page Psi - confirm handgun
+    {
+		Name = "$M01_ADB";
+		PageName = "Psi_HG2";
+        Dialog = "$Psi_HG_03";
+		Voice = "ADB_Psi";
+		Choice
+		{
+			text = "$Next";
+			NextPage = "Psi";
+		}
+	}
+	page // Page Psi - learn electricity
+    {
+		Name = "$M01_ADB";
+		PageName = "Psi_SG";
+        Dialog = "$Psi_SG_02";
+		Choice
+		{
+			text = "$Psi_01a";
+			NextPage = "Psi_SG2";
+			GiveItem = "Psi_SG";
+			Require
+			{
+				Item = "ExaltXP";
+				Amount = 4000;
+			}
+			Cost
+			{
+				Item = "ExaltXP";
+				Amount = 4000;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_01c";
+			NextPage = "Psi";
+		}
+	}
+	page // Page Psi - confirm shotgun
+    {
+		Name = "$M01_ADB";
+		PageName = "Psi_SG2";
+        Dialog = "$Psi_SG_03";
+		Voice = "ADB_Psi";
+		Choice
+		{
+			text = "$Next";
+			NextPage = "Psi";
+		}
+	}
+	page // Page Psi - learn eat
+    {
+		Name = "$M01_ADB";
+		PageName = "Psi_SP";
+        Dialog = "$Psi_SP_02";
+		Choice
+		{
+			text = "$Psi_01b";
+			NextPage = "Psi_SP2";
+			GiveItem = "Psi_SP";
+			Require
+			{
+				Item = "ExaltXP";
+				Amount = 3000;
+			}
+			Cost
+			{
+				Item = "ExaltXP";
+				Amount = 3000;
+			}
+		}
+		Choice
+		{
+			text = "$Psi_01c";
+			NextPage = "Psi";
+		}
+	}
+	page // Page Psi - confirm can
+    {
+		Name = "$M01_ADB";
+		PageName = "Psi_SP2";
+        Dialog = "$Psi_SP_03";
+		Voice = "ADB_Psi";
+		Choice
+		{
+			text = "$Next";
+			NextPage = "Psi";
+		}
+	}
+	page // Page Psi - No Attune
+    {
+		Name = "$M01_ADB";
+		PageName = "NoTune";
+        Dialog = "$Psi_Fail";
+		Choice
+		{
+			text = "$Psi_01";
+			NextPage = "Psi";
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 2;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 19;
+    page // Page 1
+    {
+		Name = "TERMINAL";
+        Dialog = "$Terminal_01";
+		Voice = "Term_02";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Lore_Get";
+			NextPage = 2;
+		}
+	}
+	page // Page 2
+    {
+		Name = "TERMINAL";
+        Dialog = "$Lore_20";
+		Choice
+		{
+			text = "$Next";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 3
+    {
+		Name = "TERMINAL";
+        Dialog = "$Lore_21";
+		Choice
+		{
+			text = "$Next";
+			NextPage = 4;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 4
+    {
+		Name = "TERMINAL";
+        Dialog = "$Lore_22";
+		Choice
+		{
+			text = "$Next";
+			NextPage = 5;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 5
+    {
+		Name = "TERMINAL";
+        Dialog = "$Lore_23";
+		Choice
+		{
+			text = "$Next";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 6
+    {
+		Name = "TERMINAL";
+        Dialog = "$Lore_24";
+		Choice
+		{
+			text = "$Next";
+			NextPage = 7;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 7
+    {
+		Name = "TERMINAL";
+        Dialog = "$Lore_25";
+		Choice
+		{
+			text = "$Lore_Reset";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}
+
+conversation
+{
+    ID = 20;
+	page //Page 1
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$Goat_01a";
+			 NextPage = 2;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01b";
+			 NextPage = 9;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01c";
+			 NextPage = 20;
+		 }
+	}
+	page //Page 2 //Anything valuable
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01a_1";
+		 Choice
+		 {
+			 text = "$Goat_01a_1a";
+			 NextPage = 3;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01b";
+			 NextPage = 9;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01c";
+			 NextPage = 20;
+		 }
+		 Choice
+		 {
+			 text = "$Leave";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 3 Food is good here is why
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01a_2";
+		 Choice
+		 {
+			 text = "$Goat_01a_2a";
+			 NextPage = 4;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01a_2b";
+			 NextPage = 5;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01a_2c";
+			 NextPage = 7;
+		 }
+	}
+	page //Page 4 Understand - pls help me
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01a_2a_1";
+		 Choice
+		 {
+			 text = "$Next";
+			 NextPage = 14;
+		 }
+	}
+	page //Page 5 Music Color nonsense
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01a_2b_1";
+		 Choice
+		 {
+			 text = "$Goat_01a_2b_1a";
+			 NextPage = 6;
+		 }
+	}
+	page //Page 6 We used to eat dust
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01a_2b_2";
+		 Choice
+		 {
+			 text = "$Goat_01_0a";
+			 NextPage = 12;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01_0b";
+			 NextPage = "Req_Reject";
+		 }
+	}
+	page //Page 7 YOUR A LAIR!!!
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01a_2c_1";
+		 Choice
+		 {
+			 text = "$Goat_01a_2c_1a";
+			 NextPage = 8;
+		 }
+	}
+	page //Page 8 Trap card. help me n find out
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01a_2c_2";
+		 Choice
+		 {
+			 text = "$Goat_01_0a";
+			 NextPage = 12;
+			 GiveItem = "M2_FridgeLoreHint";
+			 Amount = 1;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01_0b";
+			 NextPage = "Req_Reject";
+		 }
+	}
+	page //Page 9 smile
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01b_2";
+		 Choice
+		 {
+			 text = "$Goat_01a_2c_1a";
+			 NextPage = 12;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01b_2a";
+			 NextPage = 10;
+		 }
+		 Choice
+		 {
+			 text = "$Leave";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 10 smile more
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01b_3";
+		 Choice
+		 {
+			 text = "$Goat_01b_3a";
+			 NextPage = 11;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01_0c";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 11 back on track - stop smiling
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01b_4";
+		 Choice
+		 {
+			 text = "$Next";
+			 NextPage = 12;
+		 }
+	}
+	page //Page 12 QUEST PRESENTED PT. 1
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_02";
+		 Choice
+		 {
+			 text = "$Goat_02_a";
+			 NextPage = 13;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01_0b";
+			 NextPage = "Req_Reject";
+		 }
+	}
+	page //Page 13 QUEST PRESENTED PT. 2
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_03";
+		 Choice
+		 {
+			 text = "$Goat_03a";
+			 NextPage = 15;
+			 GiveItem = "M2_FridgeQuest";
+			 Amount = 1;
+			 Special = 80;
+			 Arg0 = 29;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_03b";
+			 NextPage = "Quest_Reject";
+		 }
+	}
+	page //Page 14 QUEST PRESENTED UNIQUE
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_01a_2a_2";
+		 Choice
+		 {
+			 text = "$Goat_03a";
+			 NextPage = 15;
+			 GiveItem = "M2_FridgeQuest";
+			 Amount = 1;
+			 Special = 80;
+			 Arg0 = 29;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_03c";
+			 NextPage = "Quest_Reject";
+		 }
+	}
+	page //Page 15 QUEST ACCEPTED - GIVE INFO PT. 1
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_04a_01";
+		 Choice
+		 {
+			 text = "$Goat_04a_01a";
+			 NextPage = 16;
+			 Special = 80;
+			 Arg0 = 59;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_04a_01b";
+			 NextPage = 18;
+			 Special = 80;
+			 Arg0 = 59;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 16 QUEST ACCEPTED - GIVE INFO PT. 2
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_05";
+		 Choice
+		 {
+			 text = "$Goat_05a";
+			 NextPage = 17;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_05b";
+			 NextPage = 18;
+			 CloseDialog = true;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_05c";
+			 NextPage = 18;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 17 QUEST ACCEPTED - GIVE INFO PT. 3
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_06";
+		 Choice
+		 {
+			 text = "$Goat_06a";
+			 NextPage = 18;
+			 CloseDialog = true;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_06b";
+			 NextPage = 18;
+			 CloseDialog = true;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_06c";
+			 NextPage = 18;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 18 QUEST ACCEPTED - CHECK PROGRESS
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_07";
+		 Choice
+		 {
+			 text = "$Goat_07a";
+			 NextPage = 19;
+			 Special = 80;
+			 Arg0 = 68;
+			 Require
+			 {
+				item = "Key_Chicken";
+				amount = 1;
+			 }
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07b";
+			 CloseDialog = true;
+			 Exclude
+			 {
+				item = "Key_Chicken";
+				amount = 1;
+			 }
+		 }
+	}
+	page //Page 19 QUEST COMPLETE
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_07a_01";
+		 Choice
+		 {
+			 text = "$Goat_07a_01a";
+			 NextPage = 1;
+			 CloseDialog = true;
+			 Exclude
+			 {
+				 item = "M2_FridgeLoreHint";
+				 Amount = 1;
+			 }
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07a_01a";
+			 NextPage = 21;
+			 Require
+			 {
+				 item = "M2_FridgeLoreHint";
+				 Amount = 1;
+			 }
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07a_01b";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07a_01c";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07a_01d";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 20 Try door
+    {
+		Name = "$Fridge";
+         Dialog = "$Goat_01c_1";
+		 Choice
+		 {
+			 text = "$Goat_01a";
+			 NextPage = 2;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01b";
+			 NextPage = 9;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_01c";
+			 NextPage = 20;
+		 }
+		 Choice
+		 {
+			 text = "$Leave";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 21 minor lore drop
+    {
+		Name = "$Fridge";
+         Dialog = "$Goat_08";
+		 Choice
+		 {
+			 text = "$Goat_08a";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page - Request Decline
+    {
+         Name = "$Fridge";
+		 PageName = "Req_Reject";
+         Dialog = "$Goat_04a_02";
+		 Choice
+		 {
+			 text = "$Leave";
+			 NextPage = "Req_Check";
+			 CloseDialog = true;
+		 }
+	}
+	page //Page - Request Decline - Update?
+    {
+         Name = "$Fridge";
+		 PageName = "Req_Check";
+         Dialog = "$Goat_04x01";
+		 Goodbye = "$Goat_01_0b";
+		 Choice
+		 {
+			 text = "$Goat_01_0a";
+			 NextPage = 12;
+		 }
+	}
+	page //Page - Quest Decline
+    {
+         Name = "$Fridge";
+		 PageName = "Quest_Reject";
+         Dialog = "$Goat_04a_02";
+		 Choice
+		 {
+			 text = "$Leave";
+			 NextPage = "Quest_Check";
+			 CloseDialog = true;
+		 }
+	}
+	page //Page - Quest Decline - Update?
+    {
+         Name = "$Fridge";
+		 PageName = "Quest_Check";
+         Dialog = "$Goat_04x01";
+		 Goodbye = "$Goat_01_0b";
+		 Choice
+		 {
+			 text = "$Goat_03a";
+			 NextPage = "Quest_Convinced";
+			 GiveItem = "M2_FridgeQuest";
+			 Amount = 1;
+			 Special = 80;
+			 Arg0 = 29;
+		 }
+	}
+	page //Page - Quest Decline - Accepted
+    {
+         Name = "$Fridge";
+         Dialog = "$Goat_04x02";
+		 PageName = "Quest_Convinced";
+		 Choice
+		 {
+			 text = "$Goat_04a_01a";
+			 NextPage = 16;
+			 Special = 80;
+			 Arg0 = 59;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_04a_01b";
+			 NextPage = 18;
+			 CloseDialog = true;
+			 Special = 80;
+			 Arg0 = 59;
+		 }
+	}
+}
+
+Conversation
+{
+    ID = 21;
+	page //Page 1 QUEST ACCEPTED - CHECK PROGRESS
+    {
+         Name = "$Goat";
+         Dialog = "$Goat_07";
+		 Choice
+		 {
+			 text = "$Goat_07a";
+			 NextPage = 2;
+			 Special = 80;
+			 Arg0 = 68;
+			 Require
+			 {
+				item = "Key_Chicken";
+				amount = 1;
+			 }
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07b";
+			 CloseDialog = true;
+			 Exclude
+			 {
+				item = "Key_Chicken";
+				amount = 1;
+			 }
+		 }
+	}
+	page //Page 2 QUEST COMPLETE
+    {
+         Name = "$Goat";
+         Dialog = "$Goat_07a_01";
+		 Choice
+		 {
+			 text = "$Goat_07a_01a";
+			 NextPage = 1;
+			 CloseDialog = true;
+			 Exclude
+			 {
+				 item = "M2_FridgeLoreHint";
+				 Amount = 1;
+			 }
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07a_01a";
+			 NextPage = 3;
+			 Require
+			 {
+				 item = "M2_FridgeLoreHint";
+				 Amount = 1;
+			 }
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07a_01b";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07a_01c";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+		 Choice
+		 {
+			 text = "$Goat_07a_01d";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+	page //Page 3 minor lore drop
+    {
+		Name = "$Goat";
+         Dialog = "$Goat_08";
+		 Choice
+		 {
+			 text = "$Goat_08a";
+			 NextPage = 1;
+			 CloseDialog = true;
+		 }
+	}
+}
+
+conversation
+{
+    ID = 27;
+	page //Page 1
+    {
+         Name = "$Astro";
+         Dialog = "$AstroM2";
+		 Goodbye = "$Leave";
+		 Choice
+		 {
+			 text = "$AstroM2a";
+			 NextPage = 2;
+		 }
+	}
+	page //Page 2
+    {
+         Name = "$Astro";
+         Dialog = "$AstroM2_1";
+		 Voice = "Astro_14";
+		 Goodbye = "$Leave";
+		 Choice
+		 {
+			 text = "$AstroM2_1a";
+			 NextPage = "Lore1";
+			 Require
+			 {
+				Item = "M2_SixDoc";
+				Amount = 1;
+			 }
+		 }
+		 Choice
+		 {
+			 text = "$AstroM2_1b";
+			 NextPage = "Location";
+		 }
+		 Choice
+		 {
+			 text = "$AstroM2_1c";
+			 NextPage = "Depth";
+		 }
+	}
+	page //Page Depth
+	{
+		Name = "$Astro";
+		PageName = "Depth";
+        Dialog = "$AstroM2_2_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$Next";
+			NextPage = "Depth2";
+		}
+	}
+	page //Page Depth2
+	{
+		Name = "$Astro";
+		PageName = "Depth2";
+        Dialog = "$AstroM2_2_2";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$Next";
+			NextPage = "Depth3";
+		}
+	}
+	page //Page Depth3
+	{
+		Name = "$Astro";
+		PageName = "Depth3";
+        Dialog = "$Astro_X1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$Next";
+			NextPage = "End";
+		}
+	}
+	page //Page location
+	{
+		Name = "$Astro";
+		PageName = "Location";
+        Dialog = "$AstroM2_3_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_3_1a";
+			NextPage = "Location2";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1b";
+			NextPage = "Location3";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1c";
+			NextPage = "Location4";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1d";
+			NextPage = "Location5";
+		}
+		Choice
+		{
+			text = "$Ask";
+			NextPage = "End";
+		}
+	}
+	page //Page location2
+	{
+		Name = "$Astro";
+		PageName = "Location2";
+        Dialog = "$AstroM2_3_1a_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_3_1a";
+			NextPage = "Location2";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1b";
+			NextPage = "Location3";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1c";
+			NextPage = "Location4";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1d";
+			NextPage = "Location5";
+		}
+		Choice
+		{
+			text = "$Ask";
+			NextPage = "End";
+		}
+	}
+	page //Page location3
+	{
+		Name = "$Astro";
+		PageName = "Location3";
+        Dialog = "$AstroM2_3_1a_2";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_3_1a";
+			NextPage = "Location2";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1b";
+			NextPage = "Location3";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1c";
+			NextPage = "Location4";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1d";
+			NextPage = "Location5";
+		}
+		Choice
+		{
+			text = "$Ask";
+			NextPage = "End";
+		}
+	}
+	page //Page location4
+	{
+		Name = "$Astro";
+		PageName = "Location4";
+        Dialog = "$AstroM2_3_1a_3";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_3_1a";
+			NextPage = "Location2";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1b";
+			NextPage = "Location3";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1c";
+			NextPage = "Location4";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1d";
+			NextPage = "Location5";
+		}
+		Choice
+		{
+			text = "$Ask";
+			NextPage = "End";
+		}
+	}
+	page //Page location5
+	{
+		Name = "$Astro";
+		PageName = "Location5";
+        Dialog = "$AstroM2_3_1a_4";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_3_1a";
+			NextPage = "Location2";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1b";
+			NextPage = "Location3";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1c";
+			NextPage = "Location4";
+		}
+		Choice
+		{
+			text = "$AstroM2_3_1d";
+			NextPage = "Location5";
+		}
+		Choice
+		{
+			text = "$Ask";
+			NextPage = "End";
+		}
+	}
+	page //Page Lore
+	{
+		Name = "$Astro";
+		PageName = "Lore1";
+        Dialog = "$AstroM2_1c_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_1c_1a";
+			NextPage = "Lore2";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_1b";
+			NextPage = "Disciple1";
+		}
+		Choice
+		{
+			text = "$Ask";
+			NextPage = "End";
+		}
+	}
+	page //Page Lore2
+	{
+		Name = "$Astro";
+		PageName = "Lore2";
+		Voice = "Astro_02";
+        Dialog = "$AstroM2_1c_2";
+		Choice
+		{
+			text = "$AstroM2_1c_2a";
+			NextPage = "Lore3";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2b";
+			NextPage = "Lore4";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2c";
+			NextPage = "Lore5";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2d";
+			NextPage = "Lore6";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2e";
+			NextPage = "Lore7";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2f";
+			NextPage = "Lore8";
+		}
+		Choice
+		{
+			text = "$AstroM2_1b_1b";
+			NextPage = "Lore1";
+		}
+	}
+	page //Page Lore3
+	{
+		Name = "$Astro";
+		PageName = "Lore3";
+        Dialog = "$Astro_M2_1c_2a_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_1c_2a";
+			NextPage = "Lore3";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2b";
+			NextPage = "Lore4";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2c";
+			NextPage = "Lore5";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2d";
+			NextPage = "Lore6";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2e";
+			NextPage = "Lore7";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2f";
+			NextPage = "Lore8";
+		}
+		Choice
+		{
+			text = "$AstroM2_1b_1b";
+			NextPage = "Lore1";
+		}
+	}
+	page //Page Lore4
+	{
+		Name = "$Astro";
+		PageName = "Lore4";
+        Dialog = "$Astro_M2_1c_2b_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_1c_2a";
+			NextPage = "Lore3";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2b";
+			NextPage = "Lore4";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2c";
+			NextPage = "Lore5";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2d";
+			NextPage = "Lore6";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2e";
+			NextPage = "Lore7";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2f";
+			NextPage = "Lore8";
+		}
+		Choice
+		{
+			text = "$AstroM2_1b_1b";
+			NextPage = "Lore1";
+		}
+	}
+	page //Page Lore5
+	{
+		Name = "$Astro";
+		PageName = "Lore5";
+        Dialog = "$Astro_M2_1c_2c_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_1c_2a";
+			NextPage = "Lore3";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2b";
+			NextPage = "Lore4";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2c";
+			NextPage = "Lore5";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2d";
+			NextPage = "Lore6";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2e";
+			NextPage = "Lore7";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2f";
+			NextPage = "Lore8";
+		}
+		Choice
+		{
+			text = "$AstroM2_1b_1b";
+			NextPage = "Lore1";
+		}
+	}
+	page //Page Lore6
+	{
+		Name = "$Astro";
+		PageName = "Lore6";
+        Dialog = "$Astro_M2_1c_2d_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_1c_2a";
+			NextPage = "Lore3";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2b";
+			NextPage = "Lore4";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2c";
+			NextPage = "Lore5";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2d";
+			NextPage = "Lore6";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2e";
+			NextPage = "Lore7";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2f";
+			NextPage = "Lore8";
+		}
+		Choice
+		{
+			text = "$AstroM2_1b_1b";
+			NextPage = "Lore1";
+		}
+	}
+	page //Page Lore7
+	{
+		Name = "$Astro";
+		PageName = "Lore7";
+        Dialog = "$Astro_M2_1c_2e_1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$AstroM2_1c_2a";
+			NextPage = "Lore3";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2b";
+			NextPage = "Lore4";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2c";
+			NextPage = "Lore5";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2d";
+			NextPage = "Lore6";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2e";
+			NextPage = "Lore7";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2f";
+			NextPage = "Lore8";
+		}
+		Choice
+		{
+			text = "$AstroM2_1b_1b";
+			NextPage = "Lore1";
+		}
+	}
+	page //Page Lore8
+	{
+		Name = "$Astro";
+		PageName = "Lore8";
+        Dialog = "$Astro_M2_1c_2f_1";
+		Voice = "Astro_14";
+		Choice
+		{
+			text = "$AstroM2_1c_2a";
+			NextPage = "Lore3";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2b";
+			NextPage = "Lore4";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2c";
+			NextPage = "Lore5";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2d";
+			NextPage = "Lore6";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2e";
+			NextPage = "Lore7";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_2f";
+			NextPage = "Lore8";
+		}
+		Choice
+		{
+			text = "$AstroM2_1b_1b";
+			NextPage = "Lore1";
+		}
+	}
+	page //Page Disciple1
+	{
+		Name = "$Astro";
+		PageName = "Disciple1";
+        Dialog = "$AstroM2_1c_3";
+		Voice = "Astro_14";
+		Choice
+		{
+			text = "$AstroM2_1c_1c";
+			NextPage = "Lore1";
+		}
+		Choice
+		{
+			text = "$AstroM2_1c_1b";
+			NextPage = "Disciple1";
+		}
+		Choice
+		{
+			text = "$Ask";
+			NextPage = "End";
+		}
+	}
+	page //Page End
+	{
+		Name = "$Astro";
+		PageName = "End";
+        Dialog = "$Astro_X1";
+		Voice = "Astro_02";
+		Choice
+		{
+			text = "$Next";
+			NextPage = "End2";
+		}
+	}
+	page //Page End2
+	{
+		Name = "$Astro";
+		PageName = "End2";
+        Dialog = "$Astro_X2";
+		Goodbye = "$Leave";
+		Voice = "Astro_03";
+	}
+}
+
+Conversation
+{
+    ID = 29;
+    page // Page 1
+    {
+		Name = "$DoorFile02";
+        Dialog = "$WeakDoor_01a";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$DoorKey_01b";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 70;
+			Arg2 = 1;
+			CloseDialog = true;
+			Require
+			{
+				item = "Key_CabinetRoom";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$WeakDoor_01a_1";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 70;
+			CloseDialog = true;
+			Require
+			{
+				item = "StrToken";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$WeakDoor_01a_1";
+			NextPage = 2;
+			Exclude
+			{
+				item = "StrToken";
+				amount = 1;
+			}
+		}
+	}
+	page // Page 2
+    {
+		Name = "$DoorFile02";
+        Dialog = "$WeakDoor_01b";
+		Voice = "WoodBar2";
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 30;
+    page // Page 1
+    {
+		Name = "DOOR";
+        Dialog = "$WeakDoor_01a";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$WeakDoor_01a_1";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 31;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 31;
+    page // Page 1
+    {
+		Name = "$DoorFile01";
+        Dialog = "$WeakDoor_01a";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$DoorKey_01a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 71;
+			Arg2 = 1;
+			CloseDialog = true;
+			Require
+			{
+				item = "Key_LevelUpRoom";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$WeakDoor_01a_1";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 71;
+			CloseDialog = true;
+			Require
+			{
+				item = "StrToken";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$WeakDoor_01a_1";
+			NextPage = 2;
+			Exclude
+			{
+				item = "StrToken";
+				amount = 1;
+			}
+		}
+	}
+	page // Page 2
+    {
+		Name = "$DoorFile01";
+        Dialog = "$WeakDoor_01b";
+		Voice = "WoodBar2";
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}
+
+conversation
+{
+    ID = 32;
+    page // Page 1
+    {
+		Name = "$PilgDoor";
+        Dialog = "$PilgDoor_01";
+		Voice = "Tome12";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$PilgDoor_01a";
+			NextPage = 2;
+			Require
+			{
+				item = "M2_BellPhrase1";
+				amount = 1;
+			}
+			Exclude
+			{
+				item = "WitOrigin";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$PilgDoor_01b";
+			NextPage = 2;
+			Require
+			{
+				item = "WitOrigin";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$PilgDoor_06a";
+			NextPage = 5;
+		}
+	}
+	page // Page 2
+    {
+		Name = "$PilgDoor";
+        Dialog = "$PilgDoor_02";
+		Voice = "Tome12";
+		Choice
+		{
+			text = "$PilgDoor_02a";
+			NextPage = 3;
+			Require
+			{
+				item = "M2_BellPhrase2";
+				amount = 1;
+			}
+			Exclude
+			{
+				item = "WitOrigin";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$PilgDoor_02b";
+			NextPage = 3;
+			Require
+			{
+				item = "WitOrigin";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$PilgDoor_06a";
+			NextPage = 5;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 3
+    {
+		Name = "$PilgDoor";
+        Dialog = "$PilgDoor_03";
+		Voice = "Tome12";
+		Choice
+		{
+			text = "$PilgDoor_03a";
+			NextPage = 4;
+			Require
+			{
+				item = "M2_BellPhrase3";
+				amount = 1;
+			}
+			Exclude
+			{
+				item = "WitOrigin";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$PilgDoor_03b";
+			NextPage = 4;
+			Require
+			{
+				item = "WitOrigin";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$PilgDoor_06a";
+			NextPage = 5;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 4 Open
+    {
+		Name = "$PilgDoor";
+        Dialog = "$PilgDoor_05";
+		Voice = "Tome13";
+		Choice
+		{
+			text = "$PilgDoor_05a";
+			NextPage = 1;
+			CloseDialog = true;
+			Special = 80;
+			Arg0 = 72;
+		}
+	}
+	page // Page 5 Denial
+    {
+		Name = "$PilgDoor";
+        Dialog = "$PilgDoor_06";
+		Choice
+		{
+			text = "$PilgDoor_01a";
+			NextPage = 2;
+			Require
+			{
+				item = "M2_BellPhrase1";
+				amount = 1;
+			}
+			Exclude
+			{
+				item = "WitOrigin";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$PilgDoor_01b";
+			NextPage = 2;
+			Require
+			{
+				item = "WitOrigin";
+				amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$PilgDoor_06a";
+			NextPage = 5;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}
+
+conversation //Sjinn disciple
+{
+    ID = 33;
+    page // Page 1
+    {
+		Name = "VENDING MACHINE";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Vend_01a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 16;
+			CloseDialog = TRUE;
+			Require
+			{
+				item = "Key_Coin";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Vend_01b";
+			NextPage = 1;
+			Exclude
+			{
+				item = "Key_Coin";
+				Amount = 1;
+			}
+		}
+	}
+}
+
+Conversation
+{
+    ID = 34;
+    page // Page 1
+    {
+        Name = "AN EGG";
+        Dialog = "\cD...";
+        GoodBye = "$Leave";
+        Choice
+        {
+            text = "$UPG_01_DLG_01";
+            NextPage = "Str";
+            Require
+            {
+                Item = "StrOrigin";
+                Amount = 1;
+            }
+        }
+        Choice
+        {
+            text = "$UPG_01_DLG_01";
+            NextPage = "Wit";
+            Require
+            {
+                Item = "WitOrigin";
+                Amount = 1;
+            }
+        }
+        Choice
+        {
+            text = "$UPG_01_DLG_01";
+            NextPage = "Phy";
+            Require
+            {
+                Item = "PhyOrigin";
+                Amount = 1;
+            }
+        }
+    }
+    page // Page 2
+    {
+        Name = "AN EGG";
+        Dialog = "$UPG_01_DLG_02a";
+        Voice = "Egg01";
+        Choice
+        {
+            text = "$Leave";
+            Special = 80;
+            Arg0 = 156;
+            NextPage = 1;
+            CloseDialog = true;
+        }
+    }
+    page // Page 3
+    {
+        Name = "AN EGG";
+        Dialog = "$UPG_01_DLG_03a";
+        Voice = "Egg02";
+        Choice
+        {
+            text = "$Leave";
+            Special = 80;
+            Arg0 = 156;
+            NextPage = 1;
+            CloseDialog = true;
+        }
+    }
+    page // Page 4
+    {
+        Name = "AN EGG";
+        Dialog = "$UPG_01_DLG_04ba";
+        Voice = "Egg02";
+        Choice
+        {
+            text = "$Leave";
+            Special = 80;
+            Arg0 = 156;
+            GiveItem = "DT2";
+            Amount = 1;
+            NextPage = 1;
+            CloseDialog = true;
+        }
+    }
+    page // Page Strength
+    {
+        Name = "AN EGG";
+        PageName = "Str";
+        Dialog = "$UPG_02_DLG_01a1";
+        Choice
+        {
+            text = "$UPG_02_DLG_021";
+            NextPage = 2;
+            Special = 80;
+            Arg0 = 23;
+            GiveItem = "ER1";
+            Amount = 1;
+        }
+        Choice
+        {
+            text = "$UPG_02_DLG_031";
+            NextPage = 3;
+            Special = 80;
+            Arg0 = 23;
+            GiveItem = "DT2";
+            Amount = 1;
+        }
+        Choice
+        {
+            text = "$UPG_01_DLG_04b";
+            NextPage = "Str";
+        }
+        Choice
+        {
+            text = "$Leave";
+            NextPage = 1;
+            CloseDialog = true;
+        }
+    }
+    page // Page Wits
+    {
+        Name = "AN EGG";
+        PageName = "Wit";
+        Dialog = "$UPG_02_DLG_01a2";
+        Choice
+        {
+            text = "$UPG_02_DLG_022";
+            NextPage = 2;
+            Special = 80;
+            Arg0 = 23;
+            GiveItem = "ER1";
+            Amount = 1;
+        }
+        Choice
+        {
+            text = "$UPG_02_DLG_032";
+            NextPage = 3;
+            Special = 80;
+            Arg0 = 23;
+            GiveItem = "DT2";
+            Amount = 1;
+        }
+        Choice
+        {
+            text = "$UPG_01_DLG_04b";
+            NextPage = "Wit";
+        }
+        Choice
+        {
+            text = "$Leave";
+            NextPage = 1;
+            CloseDialog = true;
+        }
+    }
+    page // Page Physique
+    {
+        Name = "AN EGG";
+        PageName = "Phy";
+        Dialog = "$UPG_02_DLG_01a3";
+        Choice
+        {
+            text = "$UPG_02_DLG_023";
+            NextPage = 2;
+            Special = 80;
+            Arg0 = 23;
+            GiveItem = "ER1";
+            Amount = 1;
+        }
+        Choice
+        {
+            text = "$UPG_02_DLG_033";
+            NextPage = 3;
+            Special = 80;
+            Arg0 = 23;
+            GiveItem = "DT2";
+            Amount = 1;
+        }
+        Choice
+        {
+            text = "$UPG_01_DLG_04a";
+            NextPage = 4;
+            Special = 80;
+            Arg0 = 23;
+            GiveItem = "ER1";
+            Amount = 1;
+        }
+        Choice
+        {
+            text = "$Leave";
+            NextPage = 1;
+            CloseDialog = true;
+        }
+    }
+}
+
+conversation
+{
+    ID = 35;
+    page //Page 1
+    {
+         Name = "DAMAGED ELECTRONIC DEVICE";
+         Dialog = "$Tablet_1";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$Tablet_1a";
+			 NextPage = 2;
+			 Special = 80;
+			 Arg0 = 48;
+		 }
+		 Choice
+		 {
+			 text = "$Tablet_1b";
+			 NextPage = 3;
+			 Special = 80;
+			 Arg0 = 87;
+			 Require
+			 {
+				 Item = "WitOrigin";
+				 Amount = 1;
+			 }
+		 }
+    }
+	page //Page 2
+    {
+         Name = "ELECTRONIC DEVICE";
+         Dialog = "$Tablet_1a_1";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$Tablet_1b";
+			 NextPage = 5;
+			 Special = 80;
+			 Arg0 = 87;
+			 Require
+			 {
+				 Item = "WitOrigin";
+				 Amount = 1;
+			 }
+		 }
+    }
+	page //Page 3
+    {
+         Name = "ELECTRONIC DEVICE";
+         Dialog = "$Tablet_1b_1";
+		 GoodBye = "$Leave";
+		 Choice
+		 {
+			 text = "$Tablet_1a";
+			 NextPage = 4;
+			 Special = 80;
+			 Arg0 = 48;
+		 }
+    }
+	page //Page 4
+    {
+         Name = "ELECTRONIC DEVICE";
+         Dialog = "$Tablet_1a_1";
+		 GoodBye = "$Leave";
+    }
+	page //Page 5
+    {
+         Name = "ELECTRONIC DEVICE";
+         Dialog = "$Tablet_1b_1";
+		 GoodBye = "$Leave";
+    }
+}
+
+Conversation
+{
+    ID = 36;
+	page // Page 1
+    {
+		Name = "$ELock";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$ELock_a";
+			NextPage = "Wit_win";
+			Require
+			{
+				Item = "WitToken";
+				Amount = 2;
+			}
+		}
+		Choice
+		{
+			text = "$ELock_a";
+			NextPage = "Wit_fail";
+			Exclude
+			{
+				Item = "WitToken";
+				Amount = 2;
+			}
+		}
+		Choice
+		{
+			text = "1";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "2";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "3";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "4";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "5";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "6";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "7";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "8";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "9";
+			NextPage = 1;
+		}
+	}
+	page // Page 2
+    {
+		Name = "$ELock";
+        Dialog = " ";
+		Choice
+		{
+			text = "1";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "2";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "3";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "4";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "5";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "6";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "7";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "8";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "9";
+			NextPage = 1;
+		}
+	}
+	page // Page 3
+    {
+		Name = "$ELock";
+        Dialog = " ";
+		Choice
+		{
+			text = "1";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "2";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "3";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "4";
+			Special = 80;
+			Arg0 = 50;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "5";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "6";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "7";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "8";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "9";
+			NextPage = 1;
+		}
+	}
+	page // Win
+	{
+		Name = "$ELock";
+		PageName = "Wit_win";
+        Dialog = "$ELock_a_2";
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 50;
+			CloseDialog = TRUE;
+		}
+	}
+	page // Fail
+	{
+		Name = "$ELock";
+		PageName = "Wit_fail";
+        Dialog = "$ELock_a_1";
+		Choice
+		{
+			text = "$ELock_a";
+			NextPage = "Wit_fail";
+			Exclude
+			{
+				Item = "WitToken";
+				Amount = 2;
+			}
+		}
+		Choice
+		{
+			text = "1";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "2";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "3";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "4";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "5";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "6";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "7";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "8";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "9";
+			NextPage = 1;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation //File Cabinet - Burnt Book
+{
+    ID = 37;
+    page // Page 1
+    {
+		Name = "File Cabinet";
+        Dialog = "$Cabinet_3";
+		Voice = "FileCab1";
+		GoodBye = "$Leave";
+	}
+}
+
+conversation //Sjinn disciple
+{
+    ID = 98;
+    page // Page 1
+    {
+		Name = "$Sjinn";
+        Dialog = "$Sjinn_01";
+		GoodBye = "$Sjinn_01d";
+		Choice
+		{
+			text = "$Sjinn_01a2";
+			NextPage = "Threshold";
+			Require
+			{
+				item = "Key_Bell";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Sjinn_01a";
+			NextPage = 2;
+			Exclude
+			{
+				item = "Key_Bell";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Sjinn_01c";
+			NextPage = "Info2";
+		}
+		Choice
+		{
+			text = "$Sjinn_01b";
+			NextPage = "Info1";
+		}
+	}
+	page // Page 2
+    {
+		Name = "$Sjinn";
+        Dialog = "$Sjinn_01a_1";
+		Choice
+		{
+			text = "$Sjinn_01a_1a";
+			NextPage = 3;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 3
+    {
+		Name = "$Sjinn";
+        Dialog = "$Sjinn_01a_2";
+		Choice
+		{
+			text = "$Sjinn_01a_2a";
+			NextPage = 4;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 4
+    {
+		Name = "$Sjinn";
+        Dialog = "$Sjinn_01a_3";
+		Choice
+		{
+			text = "$Sjinn_01c";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$Sjinn_01b";
+			NextPage = 5;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 5
+    {
+		Name = "$Sjinn";
+        Dialog = "$Sjinn_01b_1";
+		Choice
+		{
+			text = "$Sjinn_01c";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$Sjinn_01b";
+			NextPage = 5;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Page 6
+    {
+		Name = "$Sjinn";
+        Dialog = "$Sjinn_01c_1";
+		Choice
+		{
+			text = "$Sjinn_01c";
+			NextPage = 6;
+		}
+		Choice
+		{
+			text = "$Sjinn_01b";
+			NextPage = 5;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Info1
+    {
+		Name = "$Sjinn";
+		PageName = "Info1";
+        Dialog = "$Sjinn_01b_1";
+		Choice
+		{
+			text = "$Sjinn_01a2";
+			NextPage = "Threshold";
+			Require
+			{
+				item = "Key_Bell";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Sjinn_01a";
+			NextPage = 2;
+			Exclude
+			{
+				item = "Key_Bell";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Sjinn_01c";
+			NextPage = "Info2";
+		}
+		Choice
+		{
+			text = "$Sjinn_01b";
+			NextPage = "Info1";
+		}
+		Choice
+		{
+			text = "$Sjinn_01d";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Info2
+    {
+		Name = "$Sjinn";
+		PageName = "Info2";
+        Dialog = "$Sjinn_01c_1";
+		Choice
+		{
+			text = "$Sjinn_01a2";
+			NextPage = "Threshold";
+			Require
+			{
+				item = "Key_Bell";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Sjinn_01a";
+			NextPage = 2;
+			Exclude
+			{
+				item = "Key_Bell";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Sjinn_01c";
+			NextPage = "Info2";
+		}
+		Choice
+		{
+			text = "$Sjinn_01b";
+			NextPage = "Info1";
+		}
+		Choice
+		{
+			text = "$Sjinn_01d";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	page // Threshold
+    {
+		Name = "$Sjinn";
+		PageName = "Threshold";
+        Dialog = "$Sjinn_04";
+		Choice
+		{
+			text = "$Next";
+			NextPage = "Threshold1";
+		}
+	}
+	page // Page Threshold1
+    {
+		Name = "$Duel";
+		PageName = "Threshold1";
+        Dialog = "$DUEL_02_DLG_01";
+		Choice
+		{
+			text = "$Duel_01c";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 61;
+			CloseDialog = true;
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = "Threshold_Info";
+		}
+		Choice
+		{
+			text = "$Duel_03";
+			NextPage = "Threshold_Examine";
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	Page // Page Threshold_Info
+    {
+		Name = "THRESHOLD";
+		PageName = "Threshold_Info";
+        Dialog = "$DUEL_01_DLG_03";
+		Choice
+		{
+			text = "$Duel_01c";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 61;
+			CloseDialog = true;
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = "Threshold_Info";
+		}
+		Choice
+		{
+			text = "$Duel_03";
+			NextPage = "Threshold_Examine";
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+	Page // Page Threshold_Examine
+    {
+		Name = "THRESHOLD";
+		PageName = "Threshold_Examine";
+        Dialog = "$DUEL_02_DLG_02";
+		Choice
+		{
+			text = "$Duel_01c";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 61;
+			CloseDialog = true;
+		}
+		Choice
+		{
+			text = "$Duel_02";
+			NextPage = "Threshold_Info";
+		}
+		Choice
+		{
+			text = "$Duel_03";
+			NextPage = "Threshold_Examine";
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}
+
+conversation
+{
+    ID = 99;
+    page // Page 1
+    {
+		Name = "$Sjinn";
+        Dialog = "$Sjinn_00";
+		GoodBye = "$Leave";
+	}
+}

@@ -1,0 +1,1173 @@
+Class Proxy : DF_Monster //9526
+{
+  Actor cfireball;
+  bool user_noSeeSound, aimed, light, preCrouch;
+  string user_itemDrop;
+  
+  static const String DeathType[] = {"ShotGib", "Poison", "Fire"};
+  
+  override void BeginPlay()
+  {
+    light = true;
+	radar_height = Height * 0.8;
+  }
+  
+  override void PostBeginPlay()
+  {
+    if(light)
+      A_AttachLight("CultistLight", DynamicLight.PulseLight, Color(256, 32, 0), 128, 144, 0, (0,0,56));
+  }
+  
+  override void Die(Actor source, Actor inflictor, int dmgFlags, Name MeansOfDeath)
+  {
+    A_RemoveLight("CultistLight");
+    A_KillChildren("Fire", KILS_KILLMISSILES);
+	
+	let pmo = players[consoleplayer].mo;
+	if(pmo && pmo.CheckInventory("CultistRoll", 1))
+	{
+	  pmo.A_TakeInventory("CultistRoll", 1);
+	  pmo.roll = 0.0;
+	  let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+	  if(ev)
+	    ev.SetParry(0.0, 0.0, 0.02, 30); 
+	}
+	
+	if(inflictor)
+      killerAng = inflictor.angle;
+	
+	if(MeansOfDeath == "Poison")
+	  Poisoned = true;
+	  
+	if(user_itemDrop != "")
+	  A_DropItem(user_itemDrop);
+	
+	super.Die(source, inflictor, dmgFlags, MeansOfDeath);
+  }
+
+  action void CultistPreBall(Vector3 ofs)
+  {
+    for(int i = 0; i < 8; i++)
+	{
+      Bool Left = Random (True,False);
+      A_SpawnParticleEx
+	  (
+		"FFFFFF",
+		TexMan.CheckForTexture("SPFLA0"),
+		style: STYLE_ADD,
+		flags: SPF_FULLBRIGHT|SPF_RELATIVE|SPF_ROLL,
+		lifetime: 35,
+		size: random(4,5),
+		angle: 0.,
+		xoff: ofs.x + FRandom (-8,8),
+		yoff: ofs.y + FRandom (-8,8),
+		zoff: ofs.z + FRandom (-8,8),
+		velx: FRandom (1.0,-1.0),
+		vely: FRandom (1.0,-1.0),
+		velz: FRandom (1.0,-1.0),
+		accelx: 0,
+		accely: 0,
+		accelz: -0.001,
+		startalphaf: 1.0,
+		fadestepf: -0.05,
+		sizestep: 0.0,
+		startroll: random(0,359),
+		rollvel: 0,
+		rollacc: 0
+	  );
+	}
+  }
+  
+  action void CultistFire(Vector3 SpawnPos)
+  {
+    if(target)
+	{
+	  int aimFlag = 2;
+	  if(Proxy(self).preCrouch)
+	    aimFlag = 0;
+		
+      for(int i = 0; i < 16; i++)
+	  {
+	    Actor msl = A_SpawnProjectile("CT_Pellet", SpawnPos.z, SpawnPos.y, flags: aimFlag);
+		if(msl)
+		{
+		  if(Proxy(self).aimed && GetCrouchFactor() > 0.5)
+		    msl.VelIntercept(target, -1);
+			
+		  msl.vel += (frandom(-2.0,2.0), frandom(-2.0,2.0), frandom(-0.5,2.0));
+		}
+	  }
+	}
+  }
+  
+  Default
+  {
+    //$Category "Enemies/Normal"
+    Health 120;
+    Radius 32;
+    Height 90;
+	XScale 0.72;
+	Yscale 0.6;
+    Mass 200;
+    Speed 4;
+    PainChance 185;
+	MeleeRange 88;
+	DamageFactor "Energy", 1.0;
+	DamageFactor "Trauma", 2.0;
+	DamageFactor "Poison", 2.0;
+	DamageFactor "Stun", 1.1;
+	DamageFactor "Explode", 10.0;
+	Species "Cultist";
+	//DamageFactor "Void", 3.0;
+    Monster;
+    +FLOORCLIP
+    +NOINFIGHTING
+	+DROPOFF
+	+DONTHARMSPECIES
+  }
+  States
+  {
+    Spawn:
+      CLHF L 10 A_Look;
+      Wait;
+	See:
+	  TNT1 A 0
+	  {
+	    if(!user_noSeeSound)
+		{
+	      A_SpawnItemEx("CultistFlare", zofs: 104, flags: SXF_SETMASTER);
+		  A_StartSound("Cultist/See", CHAN_AUTO);
+		  
+		  let pmo = players[consoleplayer].mo;
+		  if(pmo && Distance2D(pmo) && CheckSight(pmo))
+		  {
+		    pmo.A_GiveInventory("CultistRoll", 1);
+			pmo.A_SetBlend("Orange", 0.3, 24);
+			let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+			if(ev)
+			  ev.SetParry(0.0, 0.0, 0.02, 30); 
+		  }
+		}
+	  }
+    Chase:
+      CLWK AAACCCDDDEEEFFFHHHJJJKKKLLLMMMOOOPPP 1 A_Chase();
+      Loop;
+	Melee:
+	  TNT1 A 0
+	  {
+	    if(target && !(target is "DFPlayer"))
+		  return ResolveState("Missile");
+		  
+		return ResolveState(null);
+	  }
+	  CLTH DEF 2 A_FaceTarget();
+	  TNT1 A 0 A_StartSound("PsychoPipe/Swing", CHAN_AUTO);
+	  CLTH GHIJK 1 A_FaceTarget();
+	  CLTH K 1
+	  {
+	    A_CustomMeleeAttack(4, "Cultist/Melee", "", "Physical");
+		
+		if(target && CheckMeleeRange())
+		{
+		  target.Thrust(5, angle - 90);
+		  target.angle += 35;
+		}
+	  }
+	  CLTH LMNOP 2 A_FaceTarget();
+	  Goto Aim;
+	Missile:
+	  TNT1 A 0
+	  {
+	    if(target && Distance3D(target) > 384)
+		  return A_Jump(256, "Aim", "Fireball");
+		else
+		  return ResolveState("Aim");
+	  }
+	  Goto Chase;
+	//Missile:
+	Fireball:
+	  TNT1 A 0 A_StartSound("Cultist/ReadyFireBall", CHAN_AUTO, attenuation: 0.5);
+	  CLTH D 1 CultistPreBall((0, -45, 70));
+	  CLTH D 1 CultistPreBall((0, -46, 70));
+	  CLTH D 1 CultistPreBall((0, -47, 70));
+	  CLTH E 1 CultistPreBall((0, -48, 70));
+	  CLTH E 1 CultistPreBall((0, -49, 70));
+	  CLTH E 1 CultistPreBall((0, -50, 71));
+	  CLTH F 1 CultistPreBall((0, -50, 72));
+	  CLTH F 1 CultistPreBall((0, -50, 73));
+	  CLTH F 1 CultistPreBall((0, -50, 74));
+	  CLTH G 1 CultistPreBall((0, -51, 75));
+	  CLTH G 1 CultistPreBall((0, -51, 76));
+	  CLTH G 1 CultistPreBall((0, -51, 76));
+	  TNT1 A 0 A_FaceTarget();
+	  CLTH H 1 CultistPreBall((0, -50, 76));
+	  CLTH H 1 CultistPreBall((0, -50, 77));
+	  CLTH I 1 CultistPreBall((0, -49, 77));
+	  CLTH I 1 CultistPreBall((0, -49, 77));
+	  CLTH J 1 CultistPreBall((0, -48, 77));
+	  CLTH J 1 CultistPreBall((0, -47, 77));
+	  CLTH K 2
+	  {
+	    if(target && CheckSight(target))
+		  A_FaceTarget();
+		  
+		if(target)
+		{
+		  FLineTraceData RemoteRay;
+		  bool hit = LineTrace(AngleTo(target), Distance2D(target), 0, TRF_SOLIDACTORS, 77, 0, -47, RemoteRay);
+		  
+		  if(hit && RemoteRay.HitType == TRACE_HitWall)
+		    cfireball = A_SpawnProjectile("CultistFireball", 77);
+		  else
+			cfireball = A_SpawnProjectile("CultistFireball", 77, -47);
+		
+		  if(cfireball && target)
+		  {
+			double dist = Distance2D(target);
+			double vdisp = target.pos.z - cfireball.pos.z + frandom(8,32);
+			double ftime = 41;
+			   
+			double vvel = (vdisp + 0.25 * ftime*ftime) / ftime;
+			double hvel = dist / ftime;
+			   
+			cfireball.Thrust(hvel, angle);
+			cfireball.vel.z = vvel;
+			  
+			if(dist > 850)
+			  CultistFireball(cfireball).xSmoke = true;
+		  }
+		}
+	  }
+	  CLTH L 2;
+	  CLTH MNO 2;
+	  CLTH P 1;
+	  TNT1 A 0
+	  {
+	    Thrust(24, angle + randompick(-90,90));
+		A_GiveInventory("CultistFade", 1);
+	  }
+	  CLTH P 1 A_FaceTarget();
+	Aim:
+	  TNT1 A 0
+	  {
+	    aimed = true;
+		preCrouch = false;
+		A_StartSound("Cultist/Aim", CHAN_AUTO, attenuation: 0.65);
+	  }
+	  CLHF A 4 A_FaceTarget();
+	  TNT1 A 0
+	  {
+	    if(target && target is "DFPlayer")
+		  if(GetCrouchFactor() <= 0.5)
+		    preCrouch = true;
+	  }
+	  CLHF AAAAAAAAAAAAB 1
+	  {
+	    A_FaceTarget();
+		if(target && target is "DFPlayer")
+		{
+		  let ev = MovementHandler(EventHandler.Find("MovementHandler"));
+		  if(ev && ev.dodgeCD > 10)
+		    return ResolveState("ShootDodge");
+		}
+		  
+		return ResolveState(null);
+	  }
+	  Goto Shoot;
+	ShootDodge:
+	  CLHF "#" random(1,5) { aimed = false; }
+	  Goto Shoot;
+	Shoot:
+	  CLFL A 1 Bright
+	  {
+	    if(aimed)
+		  A_FaceTarget();
+	  }
+	  CLFL B 1 Bright 
+	  {
+	    if(aimed)
+		  A_FaceTarget();
+		  
+	    A_StartSound("Cultist/Fire", CHAN_AUTO, volume: 0.6, attenuation: 0.5);
+		CultistFire((0, 12, 70));
+	  }
+	  CLHF CDEF 1;
+	  CLHF G 3;
+	  CLHF HI 5;
+	  CLHF JK 4;
+	  CLHF L 2; 
+	  CLHF L 1 A_StartSound("CulPump1", CHAN_AUTO);
+	  CLHF M 1 A_SpawnItemEx("CT_Casing", 28, 4, 74, random(-1,0),random(8,12),random(8,10));
+	  CLHF N 2 A_StartSound("CulPump2", CHAN_AUTO);
+	  CLHF O 1;
+	  CLHF P 4;
+	  CLHF QRSS 3;
+	  Goto Chase;
+	Pain.Stun:
+	  "####" "#" 2
+	  {
+		A_Pain();
+		A_StunEffect();
+	  }
+	Stunned:
+	  CLHF "#" random(1,2)
+	  {
+	    frame = random(9,11);
+		if(!bStunSoft)
+	      A_DamageSelf(2, "Shock");
+		
+	    A_SpriteOffset(frandom(-3.0,3.0), frandom(0.0, -2.0));
+		
+		if(StunTime <= 0)
+		  return ResolveState("StunFinish");
+		else
+		  StunTime--;
+		  
+		return ResolveState(null);
+	  }
+	  Wait;
+	StunFinish:
+	  TNT1 A 0
+	  {
+	    A_ClearStun();
+		A_SpriteOffset(0.0, 0.0);
+	  }
+	  Goto Chase;
+	Death:
+	  CLD1 A 1;
+	  CLD1 A 1 A_SpriteOffset(0.0, 2.0);
+	  CLD1 A 1 A_SpriteOffset(0.0, 4.0);
+	  CLD1 B 1;
+	  CLD1 B 3
+	  {
+		A_SetSize(radius, 42);
+	    Thrust(8, players[consoleplayer].mo.angle);
+	    vel.z = 8;
+	  }
+	  CLD1 C 4
+	  {
+	    A_SpriteOffset(0.0, 0.0);
+	    SetOrigin(pos + (0,0,25), FALSE);
+	  }
+	FallLoop:
+	  CLD1 DDDDEEEEFFFF 1 A_CheckFloor("FallCrash");
+	  Loop;
+	FallCrash:
+	  CLD1 G 2 { vel.z = 4; }
+	  CLD1 HHI 1 A_CheckFloor("DeathCrash");
+	DeathCrash:
+	  CLD1 I 3 { vel *= 0.5; }
+	  CLD1 JKL 3;
+	  TNT1 A 0 A_Fall();
+ 	  CLD1 M -1;
+	  Stop;
+	Death.ShotGib:
+	Death.Sting:
+	  CDTS A 3
+	  {
+	    A_FaceTarget();
+		A_StartSound("BODSPLT5", CHAN_AUTO, volume: 0.6);
+	  }
+	  CDTS A 0 A_StartSound("BODSPLT3", CHAN_AUTO, volume: 0.9);
+	  CDTS A 0 A_TriggerBloodSplat(256);
+	  CDTS A 1
+	  {
+		A_SpawnItemEx("MeatChunk1", random(-12,12), random(-20,20), random(48,80), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("MeatChunk3", random(-12,12), random(-20,20), random(48,80), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("MeatChunk4", random(-12,12), random(-20,20), random(48,80), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("MeatChunk5", random(-12,12), random(-20,20), random(48,80), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(72,80), random(1,2), random(-2,2), random(4,5));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(72,80)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  CDTS AA 1
+	  {
+	    A_SpawnItemEx("Bone1", random(-8,8), random(-16,16), random(48,92), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("Bone2", random(-24,24), random(-20,20), random(48,92), frandom(-4.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("Bone2", random(-24,24), random(-20,20), random(48,92), frandom(-6.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(72,80), random(1,2), random(-2,2), random(4,5));
+	  }
+	  CDTS B 1
+	  {
+	    A_SpawnItemEx("DFBloodSquirt", 0, random(-4,4), frandom(90,92), random(1,2), random(-2,2), random(2,3));
+		A_SpawnItemEx("MeatChunk6", random(-12,12), random(-20,20), random(48,80), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("MeatChunk7", random(-12,12), random(-20,20), random(48,80), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(62,70), random(1,2), random(-2,2), random(4,5));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(62,70)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+		A_SpawnItemEx("P_TorsoGutSpawn", flags: SXF_SETMASTER);
+	  }
+	  CDTS B 1
+	  {
+	    A_SpawnItemEx("RibRack", random(-24,24), random(-20,20), 69, frandom(-4.0,-3.0), randompick(-2,2), frandom(6,8));
+		A_SpawnItemEx("Spine", 0, random(-12,-12), 69, frandom(-4.0,-3.0), randompick(-2,2), frandom(6,8));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(48,70), random(1,2), random(-2,2), random(4,5));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(48,70)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  CDTS B 1
+	  {
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(48,70), random(1,2), random(-2,2), random(4,5));
+		A_SpawnItemEx("DFBloodSquirt", 0, random(-4,4),frandom(48,76), random(1,2), random(-2,2), random(2,3));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(62,70)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  CDTS C 1
+	  {
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(48,68), random(1,2), random(-2,2), random(4,5));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(60,68)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  CDTS C 1
+	  {
+		A_SpawnItemEx("DFBlood", 0, random(-4,4),frandom(48,66), random(1,2), random(-2,2), random(2,3));
+		A_SpawnItemEx("DFBloodSquirt", 0, random(-4,4),frandom(48,66), random(1,2), random(-2,2), random(2,3));
+	  }
+	  CDTS C 1
+	  {
+	    //A_SpawnProjectile("HeadShotDecal", 96, 0, 180, CMF_AIMDIRECTION);
+		A_Fall();
+		A_SpriteOffset(0, 0);
+	  }
+	  CDTS DDD 1 A_SpawnItemEx("DFBlood", 0, random(-24,24),frandom(30,34));
+	  CDTS EEE 3 A_SpawnItemEx("DFBlood",random(-4,4), random(-20,20), frandom(23,28));
+	  CDTS FFF 1 A_SpawnItemEx("DFBlood",random(-4,4), random(-20,20), frandom(16,20));
+	  CDTS GGG 1
+	  {
+		A_SpawnItemEx("DFBlood",random(-4,4), random(-19,19), frandom(10,16));
+		A_SpawnItemEx("BloodHaze",random(-4,4), random(-19,19), frandom(10,16));
+	  }
+	  CDTS HHH 1
+	  {
+		A_SpawnItemEx("DFBlood", random(-4,4), random(-20,20), frandom(8,16));
+		A_SpawnItemEx("Blood", random(-4,4), random(-20,20), frandom(8,16));
+	  }
+	  CDTS I 1 A_SpriteOffset(0, -1.0);
+	  CDTS I 1
+	  {
+	    A_SpriteOffset(0, 0);
+		bFORCEXYBILLBOARD = true;
+	  }
+	  CDTS IIIII 1
+	  {
+		A_SpawnItemEx("DFBlood", random(-4,4), random(-20,20), frandom(8,16));
+		A_SpawnItemEx("Blood", random(-4,4), random(-20,20), frandom(8,16));
+	  }
+	  CDTS I -1;
+	  Stop;
+	Death.Energy:
+	Death.Explode:
+	  "####" A 0 A_StartSound("BODSPLT3", CHAN_AUTO);
+	  "####" A 0 
+	  {
+		A_SpawnItemEx("MeatChunk1", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("P_Arm1", random(-20,20), random(-20,20), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359));
+		int ang = random(0,359);
+		A_SpawnItemEx("ExplodeSprayer", random(-20,20), random(-20,20), random(80,96), 4, zvel: random(8,10), angle: ang);
+		A_SpawnItemEx("ExplodeSprayer", random(-20,20), random(-20,20), random(80,96), 4, zvel: random(8,10), angle: ang + 120);
+		A_SpawnItemEx("ExplodeSprayer", random(-20,20), random(-20,20), random(80,96), 4, zvel: random(8,10), angle: ang + 240);
+		A_TriggerBloodSplat(256);
+		  
+		vel = (0,0,0);
+	  }
+	  "####" A 1
+	  {
+	    A_SpawnItemEx("BloodFountain2");
+		SpawnGibPile(1.0);
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("P_Leg1", random(-20,20), random(-20,20), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("P_Arm2", random(-20,20), random(-20,20), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359));
+	  }
+	  "####" A 1
+	  {
+		A_SpawnItemEx("FlyingEyeball1", random(-20,20), random(-20,20), random(86,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("FlyingEyeball2", random(-20,20), random(-20,20), random(86,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("MeatChunk2", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  "####" A 1
+	  {
+	    A_SpawnItemEx("MeatChunk3", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+	    A_SpawnItemEx("SkullFrag1", random(-20,20), random(-20,20), random(88,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("P_Leg2", random(-20,20), random(-20,20), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk4", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-20,20), random(76,80), random(3,4), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-20,20), random(76,80), random(3,4), zvel: random(10,14), angle: random(0,359));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk5", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	//	A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("P_GutSpawn", flags: SXF_SETMASTER);
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItemEx("BigBone1", random(-8,8), random(-16,16), random(8,92), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("Bone2", random(-24,24), random(-20,20), random(8,92), frandom(-6.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		//A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk6", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItem("Blood", 0, 92);
+		A_SpawnItemEx("Bone1", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		//A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk7", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		//A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("BigBone1", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+	    A_SpriteOffset(0, 2.0);
+		A_SpawnItemEx("BigBone1", random(-8,8), random(-16,16), random(8,92), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		int ang = random(0,359);
+		for(int i = 0; i < random(3,4); i++)
+		{
+		  A_SpawnItemEx("BloodSquirt", zofs: random(64,80), xvel: random(5,6), zvel: random(8,10), angle: ang);
+		  ang += 90;
+		}
+	  }
+	  Stop;
+  }
+}
+
+Class CultistBrute : Proxy
+{
+  Actor sig;
+  int mag, fireWave_cd;
+  
+  void SlamFire()
+  {
+    for(int i = 0; i < 16; i++)
+	{
+	  Actor msl = A_SpawnProjectile("CT_Bullet", 97, 16, flags: CMF_AIMDIRECTION);
+	  if(msl)
+	  {
+	    msl.VelIntercept(target, -1);
+		msl.A_ChangeVelocity(0, frandom(-10.0,10.0), frandom(-0.5,4.0), CVF_RELATIVE);
+	  }
+	}
+  }
+  
+  override void BeginPlay()
+  {
+    mag = 5;
+	Armored = true;
+    user_noSeeSound = true;
+	A_SpawnItemEx("CultistBruteHead", zofs: 104, flags: SXF_SETMASTER);
+  }
+  
+  override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle) 
+  { 
+	 if(mod == "Trauma" || mod == "ShotGib" || mod == "SGShock" || mod == "Pen")
+	 {
+	   damage = 1;
+	   SetStateLabel("Block");
+	 }
+	 
+     return super.DamageMobj(inflictor, source, Damage, mod, flags, angle);        
+  }
+  
+  Default
+  {
+    Health 400;
+    XScale 1.0;
+	YScale 0.83;
+	+DONTTHRUST
+	+NOBLOOD
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(fireWave_cd > 0)
+	  fireWave_cd--;
+  }
+  
+  States
+  {
+    Block:
+	  CLBL A 1;
+	  CLBL A 1
+	  {
+	    A_FaceTarget();
+		if(!sig)
+		{
+		  Vector3 sPos = Vec3Offset(cos(angle) * 72 + sin(angle) * -24, sin(angle) * 72 + cos(angle) * -24, 104);
+		  sig = Spawn("CultistSigil", sPos);
+		  if(sig)
+		    sig.master = self;
+		}
+		else
+		{
+		  CultistSigil(sig).time = 0; //Reset the death time
+		  sig.Alpha = 1.0;
+		}
+	  }
+	  CLBL AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 1 A_FaceTarget();
+	  CLBL BBBCCCDDDEEE 1 A_FaceTarget();
+	  Goto Chase;
+    Missile:
+	  TNT1 A 0
+	  {
+	    if(target && Distance2D(target) < 350 && fireWave_cd <= 0)
+		  return ResolveState("FlameWave");
+		  
+		return ResolveState(null);
+	  }
+    Slamfire:
+	  CLHF Q 2
+	  {
+	    A_FaceTarget();
+		A_StartSound("Cul_Aim2", CHAN_AUTO, volume: 0.6, attenuation: 0.65);
+	  }
+	  CLHF RS 3 A_FaceTarget();
+	  CLHF AAAA 4 A_FaceTarget();
+	SlamfireLoop:
+	  CLFL A 4 A_FaceTarget();
+	  CLFL A 1 Bright A_FaceTarget();
+	  CLFL B 1 Bright 
+	  {
+		A_FaceTarget();
+	    A_StartSound("Cul_Fir4", 10, volume: 0.6, attenuation: 0.5);
+		A_SpawnItemEx("CT_Casing", 39, 6, 102, random(-1,0),random(8,12),random(8,10));
+		SlamFire();
+		mag--;
+	  }
+	  CLHF CD 1;
+	  CLHF CB 2;
+	  TNT1 A 0
+	  {
+	    if(mag <= 0)
+		  return ResolveState("SlamfireDone");
+		  
+		return ResolveState(null);
+	  }
+	  Loop;
+	SlamfireDone:
+	  TNT1 A 0 { mag = 5; }
+	  CLHF HI 5;
+	  CLHF JK 4;
+	  CLHF L 2; 
+	  CLHF L 1 A_StartSound("CulPump3", CHAN_AUTO, volume: 0.4, attenuation: 0.74);
+	  CLHF M 1;
+	  CLHF N 2 A_StartSound("CulPump4", CHAN_AUTO, volume: 0.4, attenuation: 0.74);
+	  CLHF O 1;
+	  CLHF P 4;
+	  CLHF QRSS 3;
+	  Goto Chase;
+    FlameWave:
+	  TNT1 A 0
+	  {
+	    A_FaceTarget();
+	    A_StartSound("Cultist/ReadyFireBall", CHAN_AUTO, attenuation: 0.5);
+		fireWave_cd = 35*10;
+	  }
+	  CLTH D 1 CultistPreBall((0, -62, 96));
+	  CLTH D 1 CultistPreBall((0, -63, 96));
+	  CLTH D 1 CultistPreBall((0, -64, 96));
+	  CLTH E 1 CultistPreBall((0, -65, 96));
+	  CLTH E 1 CultistPreBall((0, -66, 96));
+	  CLTH E 1 CultistPreBall((0, -67, 97));
+	  CLTH F 1 CultistPreBall((0, -67, 98));
+	  CLTH F 1 CultistPreBall((0, -67, 99));
+	  CLTH F 1 CultistPreBall((0, -67, 100));
+	  CLTH G 1 CultistPreBall((0, -68, 101));
+	  CLTH G 1 CultistPreBall((0, -68, 102));
+	  CLTH G 1 CultistPreBall((0, -68, 102));
+	  TNT1 A 0
+	  {
+	    A_FaceTarget();
+		A_SpawnItemEx("CultistFireShooter", flags: SXF_NOCHECKPOSITION);
+		let actr = Spawn("SoundDummy", pos + (0,0,100));
+		if(actr)
+		{
+		  actr.A_StartSound("Cul_FB3", CHAN_AUTO, volume: 0.4, attenuation: 0.6);
+		  actr.vel = (cos(angle) * 6.5, sin(angle) * 6.5, 0.0);
+		}
+	  }
+	  CLTH HIJ 2;
+	  CLTH KLMNOP 3;
+	  Goto Slamfire;
+	Death:
+	Death.Shotgib:
+	  TNT1 A 0;
+	  Goto Super::Death.Explode;
+  }
+}
+
+Class CultistFireShooter : Actor
+{
+  double ang;
+  override void BeginPlay()
+  {
+    ang = 90.0;
+  }
+  override void Tick()
+  {
+    Super.Tick();
+	
+    for(double i = 0; i < 13; i++)
+	{
+	  A_SpawnItemEx("CorvidFire", random(68,76), random(-4,4), random(108,112), random(5,8), frandom(-1.0,1.0), frandom(-1.0,1.0), ang);
+	  for(int j = 0; j < 3; j++)
+	  {
+	    A_SpawnItemEx("FireTrail", random(68,76), random(-4,4), random(108,112), random(5,8), frandom(-1.0,1.0), frandom(-1.0,1.0), ang - i);
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_ADD, SPF_RELATIVE|SPF_FULLBRIGHT, 35, 10, ang - i,
+	    random(68,76), random(-4,4), random(102,116), random(5,8), frandom(-2.0,2.0), frandom(-2.0,2.0));
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLC0"), STYLE_ADD, SPF_RELATIVE|SPF_FULLBRIGHT, 35, 10, ang - i,
+	    random(68,76), random(-4,4), random(102,116), random(5,8), frandom(-2.0,2.0), frandom(-2.0,2.0));
+	  }
+	}
+	
+	//A_SpawnItemEx("CorvidFire", random(68,76), random(-4,4), random(108,112), random(5,8), frandom(-1.0,1.0), frandom(-1.0,1.0), ang);
+	//A_SpawnItemEx("CorvidFire", random(68,76), random(-4,4), random(108,112), random(5,8), frandom(-1.0,1.0), frandom(-1.0,1.0), ang - 6);
+	
+	if(ang < -90.0)
+	  Destroy();
+	  
+	ang -= 12.0;
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+}
+
+Class CultistBruteHead : DF_Monster
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(health > 0 && master)
+	  SetOrigin(master.pos + (0,0,112), 0);
+  }
+  Default
+  {
+    Health 400;
+	Radius 35;
+	Height 50;
+	XScale 1.5;
+	YScale 1.25;
+    RenderStyle "Add";
+	Monster;
+	+BRIGHT
+	+DONTTHRUST
+	+FORCEXYBILLBOARD
+	+NOGRAVITY
+    +SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  CCKK ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  Loop;
+	Death:
+	  TNT1 A 1
+	  {
+		A_QuakeEx(4, 9, 9, 35, 0, 2048, "DSEMPTY", QF_RELATIVE|QF_SCALEDOWN|QF_SHAKEONLY);
+		A_QuakeEx(0, 0, 0, 4, 0, 2048, "DSEMPTY", QF_SHAKEONLY, rollintensity: 5);
+		if(master)
+		{
+		  master.A_SpawnItemEx("ExplosionFlare", zofs: 48);
+		  master.A_DamageSelf(1000, "Explode");
+		}
+	  }
+	  TNT1 A 1
+	  {
+		A_StartSound("Bar_Exp1", CHAN_AUTO, attenuation: 0.7);
+		if(master)
+		  master.A_SpawnItemEx("MineExplosion3", zofs: 32);
+	  }
+	  TNT1 A 1
+	  {
+	    if(master)
+		{
+	      A_SpawnItemEx("MineExplosion", zofs: 8);
+		  A_SpawnItemEx("MineExplosion2", zofs: 2);
+		}
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ExplosionTracer2", pos + newPos);
+		  if(puff)
+		    puff.vel = newVel * frandom(0.5, 0.8);
+	    }
+	  }
+	  TNT1 A 1
+	  {
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ESpark",  pos + (random(24,32) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch))));
+		  if(puff)
+		    puff.vel = newVel;
+	    }
+	  }
+	  TNT1 A 90;
+	  Stop;
+  }
+}
+
+Class CultistFlare : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() < 6)
+	  A_SetScale(scale.x + 0.1);
+	else
+	  A_SetScale(scale.x + 0.005);
+	
+	if(GetAge() < 20)
+	  A_FadeIn(0.05);
+	  
+	if(GetAge() > 40)
+	  A_FadeOut(0.05);
+	  
+	if(master)
+	  SetOrigin(master.pos + (0,0,104), FALSE);
+  }
+  Default
+  {
+    Alpha 0.0;
+	Scale 0.1;
+    RenderStyle "Add";
+    +BRIGHT
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  CFL1 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  CFL2 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  CFL3 ABCDEFGH 1;
+	  Stop;
+  }
+}
+	  
+Class CultistFade : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner && GetAge() < 14)
+	  owner.A_SpawnItemEx("MonsterFade", flags: SXF_TRANSFERSCALE|SXF_TRANSFERSPRITEFRAME);
+	else
+	  Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class CultistFireball : Actor
+{
+  bool xSmoke;
+  
+  override void Tick()
+  {
+    if(InStateSequence(CurState, ResolveState("Spawn")))
+	{
+		Bool Left = Random (True,False);
+		A_SpawnParticleEx
+		(
+			"FFFFFF",
+			TexMan.CheckForTexture("SMMMA0"),
+			style: STYLE_Translucent,
+			flags: SPF_RELATIVE|SPF_ROLL,
+			lifetime: 45,
+			size: random(48,64),
+			angle: 0.,
+			xoff: FRandom (-4,4),
+			yoff: FRandom (-4,4),
+			zoff: FRandom (-4,4),
+			velx: FRandom (1.5,-1.5),
+			vely: FRandom (1.5,-0.5),
+			velz: FRandom (0.4,3.0),
+			accelx: 0,
+			accely: 0,
+			accelz: -0.001,
+			startalphaf: 1.0,
+			fadestepf: -1,
+			sizestep: 4.0,
+			startroll: random(0,359),
+			rollvel: Left ? 0.5 : -0.5,
+			rollacc: Left ? 0.02 : -0.02
+		);
+		
+		A_SpawnParticleEx
+		(
+			"FFFFFF",
+			TexMan.CheckForTexture("FTH2A0"),
+			style: STYLE_ADD,
+			flags: SPF_FULLBRIGHT|SPF_RELATIVE|SPF_ROLL,
+			lifetime: 35,
+			size: random(56,64),
+			angle: 0.,
+			xoff: FRandom (-4,4),
+			yoff: FRandom (-4,4),
+			zoff: FRandom (-4,4),
+			velx: FRandom (1.5,-1.5),
+			vely: FRandom (1.5,-0.5),
+			velz: FRandom (0.4,3.0),
+			accelx: 0,
+			accely: 0,
+			accelz: -0.001,
+			startalphaf: 1.0,
+			fadestepf: 0.1,
+			sizestep: -4.0,
+			startroll: random(0,359),
+			rollvel: Left ? 0.5 : -0.5,
+			rollacc: Left ? 0.02 : -0.02
+		);
+		
+		Super.Tick();
+		
+		if(xSmoke)
+		{
+		  Vector3 p = GMVectorUtil.lerpVec3(Prev, Pos, 0.5);
+		  A_SpawnParticleEx
+		  (
+			"FFFFFF",
+			TexMan.CheckForTexture("SMMMA0"),
+			style: STYLE_Translucent,
+			flags: SPF_RELATIVE|SPF_ROLL,
+			lifetime: 45,
+			size: random(48,64),
+			angle: 0.,
+			xoff: (p.x - Pos.x) + FRandom (-4,4),
+			yoff: FRandom (-4,4),
+			zoff: FRandom (-4,4),
+			velx: FRandom (1.5,-1.5),
+			vely: FRandom (1.5,-0.5),
+			velz: FRandom (0.4,3.0),
+			accelx: 0,
+			accely: 0,
+			accelz: -0.001,
+			startalphaf: 1.0,
+			fadestepf: -1,
+			sizestep: 4.0,
+			startroll: random(0,359),
+			rollvel: Left ? 0.5 : -0.5,
+			rollacc: Left ? 0.02 : -0.02
+		  );
+		}
+	}
+	else
+	  Super.Tick();
+  }
+  
+  Default
+  {
+    Radius 4;
+    Height 12;
+	Projectile;
+	Gravity 0.5;
+	Scale 0.3;
+	RenderStyle "Add";
+	SeeSound "Cultist/FireBall";
+	+BRIGHT
+	//+THRUACTORS
+	+FORCEXYBILLBOARD
+	+ROLLSPRITE
+	-NOGRAVITY
+  }
+  States
+  {
+    Spawn:
+	  CFB1 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1 A_SetRoll(roll - 2, SPF_INTERPOLATE);
+	  Loop;
+    Death:
+	  TNT1 A 1
+	  {
+	    vel = (0, 0, 0);
+		A_AlertMonsters();
+        A_Explode(50, 230, damagetype: "Energy");
+		A_QuakeEx(4, 9, 9, 35, 0, 2048, "DSEMPTY", QF_RELATIVE|QF_SCALEDOWN|QF_SHAKEONLY);
+		A_QuakeEx(0, 0, 0, 4, 0, 2048, "DSEMPTY", QF_SHAKEONLY, rollintensity: 5);
+		A_SpawnItemEx("ExplosionFlare", zofs: 48);
+		
+		if(master)
+		  master.Destroy();
+	  }
+	  TNT1 A 1
+	  {
+		A_StartSound("Bar_Exp1", CHAN_AUTO, attenuation: 0.7);
+		A_SpawnItemEx("MineExplosion3", zofs: 32);
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MineExplosion2", zofs: 2);
+		let actr = Spawn("MineExplosion", pos + (0,0,8));
+		if(actr)
+		  actr.A_SetRenderStyle(1.0, STYLE_ADD);
+		
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ExplosionTracer2", pos + newPos);
+		  if(puff)
+		    puff.vel = newVel * frandom(0.5, 0.8);
+	    }
+	  }
+	  TNT1 A 1
+	  {
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ESpark",  pos + (random(24,32) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch))));
+		  if(puff)
+		    puff.vel = newVel;
+	    }
+	  }
+	  TNT1 A 90;
+	  Stop;
+  }
+}
+
+Class CT_Casing : ShellCasing
+{
+  Default
+  {
+    Scale 0.15;
+  }
+}
+
+Class CultistRoll : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	  owner.roll += 0.5;
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+    Inventory.Maxamount 1;
+  }
+}
+
+Class CultistSigil : Actor
+{
+  int time;
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(time > 35)
+	  A_FadeOut(0.1);
+	  
+	if(master)
+	  A_Warp(AAPTR_MASTER, 72, -24, 104, flags: WARPF_NOCHECKPOSITION);
+	  
+	time++;
+  }
+  
+  Default
+  {
+    RenderStyle "Translucent";
+	Alpha 0.7;
+	Scale 0.35;
+	+BRIGHT
+	+NOINTERACTION
+    +WALLSPRITE
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  BSPR A 1 { roll += 1; }
+	  Wait;
+  }
+}

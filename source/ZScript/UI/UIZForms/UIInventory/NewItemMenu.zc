@@ -1,0 +1,175 @@
+Class NewItemMenu : UIGenericMenu
+{
+  Array<String> cmd;
+  UILabel nContent, nTitle, nHelp;
+  UIFrame box;
+  UIImage icon;
+  String iText, iName, iGfx;
+  double tAlpha, pAlpha;
+  int titleY, picY;
+  bool bob;
+  Font fnt;
+  
+  string getKey(string keybind) 
+  {
+    Array<int> keyInts;
+    Bindings.GetAllKeysForCommand(keyInts, keybind);
+    return Bindings.NameAllKeys(keyInts);
+  }
+  
+  override void Init(Menu parent)
+  {
+    Super.Init(parent);
+	
+	PlayerPawn pmo = players[consoleplayer].mo;
+	string itemInfo = DFPlayer(pmo).newitem;
+	itemInfo.Split(cmd, ":");
+	iName = cmd[0];
+	iText = cmd[1];
+	iGfx = cmd[2];
+	
+	fnt = Font.GetFont("DF_FONT");
+	bob = false;
+	tAlpha = 0.0;
+	pAlpha = 0.0;
+	titleY = 8;
+	picY = 42;
+	
+	MenuSound("NewItem");
+	SetBaseResolution((720, 400));
+	DrawImageBackground();
+	
+	if(iText.Left(1) ~== "$")
+	  iText = StringTable.Localize(iText);
+	
+	if(cmd.Size() >= 5)
+	  if(cmd[4] != "") //For hotkeys
+	    iText.AppendFormat("\n\n\cFHotkey: \cD[%s]", cmd[4]);
+	  
+	box = new("UIFrame").Create((248, 100), (224, 231));
+	box.Pack(mainframe);
+	
+	nTitle = new('UILabel').Create
+	(
+	  (20, titleY),
+	  (184, 15),
+	  text: iName,
+	  fnt: fnt,
+	  alignment: UILabel.AlignType_Center,
+	  wrap: true,
+	  autoSize: true,
+	  textScale: 0.7
+	);
+	nTitle.setAlpha(tAlpha);
+	nTitle.Pack(box);
+	
+	nContent = new('UILabel').Create
+	(
+	  (20, 125),
+	  (184, 100),
+	  text: iText,
+	  fnt: fnt,
+	  alignment: UILabel.AlignType_Center,
+	  wrap: true,
+	  autoSize: true,
+	  textScale: 0.45
+	);
+	nContent.setAlpha(tAlpha);
+	nContent.Pack(box);
+	
+	if(cmd[3] != "")
+	  icon = UIImage(new("UIImage")).Create((32, picY), (160, 90), image: iGfx, imagescale: (0.4,0.4));
+	else
+	  icon = UIImage(new("UIImage")).Create((68, picY), (90, 90), image: iGfx);
+	  
+	icon.setAlpha(pAlpha);
+	icon.Pack(box);
+
+	String nHelpText = String.Format("\cD[Esc] \cJLeave");
+	nHelp  = new('UILabel').Create
+	(
+	  (420, 344),
+	  (250, 36),
+	  text: nHelpText,
+	  fnt: fnt,
+	  alignment: UILabel.AlignType_TopLeft,
+	  wrap: true,
+	  autoSize: true,
+	  textScale: 0.45
+	);
+	nHelp.Pack(mainframe);
+  }
+  
+  override bool OnUIEvent(UIEvent ev)
+  {
+	if(ev.Type == UIEvent.Type_KeyDown)
+	{
+	  Array<String> keyList;
+	  getKey("+Use").Split(keyList, "\cM, "); // -________________________-
+	  
+	  for(int i = 0; i < keyList.Size(); i++)
+	    if(ev.KeyString == keyList[i])
+		{
+		  MenuSound("Note/Up");
+		  Close();
+		}
+	}
+	
+	return Super.OnUIEvent(ev);
+  }
+  
+  override void Ticker()
+  {
+	Super.Ticker();
+	
+	if(tAlpha < 1.0)
+	  if(nContent && nTitle)
+	  {
+	    tAlpha += 0.05;
+		nContent.setAlpha(tAlpha);
+		nTitle.setAlpha(tAlpha);
+	  }
+	  
+	if(titleY > 3)
+	{
+	  titleY--;
+	  nTitle.setPosY(titleY);
+	}
+	
+	if(pAlpha < 1.0)
+	{
+	  if(icon)
+	  {
+	    pAlpha += 0.025;
+		icon.setAlpha(pAlpha);
+	  }
+	}
+	
+	if(!bob && picY > 24)
+	{
+	  picY -= 2;
+	  icon.setPosY(picY);
+	}
+	else
+	  bob = true;
+	  
+	if(bob)
+	  if(picY < 26)
+	  {
+	    picY++;
+	    icon.setPosY(picY);
+	  }
+  }
+  
+  override void Drawer()
+  {
+	Screen.Dim(Color(0,0,0), 1.0, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+	Super.Drawer();
+  }
+  
+  void DrawImageBackground()
+  {
+	UIImage bg = UIImage(new("UIImage")).Create((248, 100), (228, 231), image: "Graphics/NewItemBG.png");
+	bg.Pack(mainframe);
+  }
+}

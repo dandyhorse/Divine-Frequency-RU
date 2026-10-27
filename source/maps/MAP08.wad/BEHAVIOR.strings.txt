@@ -1,0 +1,84 @@
+#aa@
+*KK@
+*KK@
+,NN@
+1__@
+SPTR
+SNAM
+Init
+Radiation
+STRL
+dev_debug
+Saver
+Autosave
+GenericScreenStuff
+Clean
+Door01b
+MP2_B1
+DFPlayer
+BuildRadiation
+DustSpawnerBudget
+MusicFade
+MP2_B2
+DoorTP11
+DoorTP12
+MidZone
+LowZone
+MP2_B4
+Radiation
+DoorTP7
+CLIMB
+ACS_FONT
+This door must not be opened.
+Locked02
+A force from the other side is holding this door shut.
+StrToken
+M2_BellPhrase1
+Ritual12
+D_NULL
+DSEMPTY
+Anom_03
+Buried Levels\nResonance Proximity: Caution
+Shaman_SigilFire
+RitualGiant
+MP2_B3
+EyeMark_Basic
+icon_enable
+A  P  P  R  O  A  C  H
+StrOrigin
+Bong
+M2_Altar
+MoodCandle
+Eyeball_Follow
+BigRepair
+Follow
+Ritual10
+Ritual11
+CrabSummoner
+CrabFighter_Script
+Spectate
+Cyclonic winds are drawn forth from the depths.
+The tides and currents now whirling into a storm.
+Ritual15
+Ritual13
+Dreamer_TP
+EyeSpawner
+Light
+ElecHit1
+Flashbang
+SetHUD
+M2_BuriedDone
+LanternKill
+''Closer''
+''Found You''
+Spook05
+PulseShaderHit
+dsempty
+''Welcome You''
+ZoomShaderHit
+Stud_01
+Spook03
+SetHud
+HighPipeGuy
+GiveExaltation
+ACSe

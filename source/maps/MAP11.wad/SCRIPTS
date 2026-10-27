@@ -1,0 +1,492 @@
+#include "zcommon.acs"
+
+Script "Jawn" (void)
+{
+	GiveInventory("Hands", 1);
+	GiveInventory("Trenchgun", 1);
+	GiveInventory("SSG", 1);
+	GiveInventory("ShellLoaded", 10);
+	GiveInventory("ShotgunAmmo", 31);
+	GiveInventory("Stim", 1);
+	GiveInventory("Bong", 1);
+	GiveInventory("StimRefill", 1);
+	GiveInventory("isPlaying", 1);
+	GiveInventory("BlueArmor", 1);
+	GiveInventory("ExaltXP", 50000);
+	SpawnSpot("Stars", 10, 10, 0);
+}
+
+Script "Init" ENTER
+{
+	if(GetUserCVar(0, "dev_debug") == 0)
+	{
+		ScriptCall("Saver", "Autosave");
+	}
+	SetMusic("D_NULL");
+	ScriptCall("DFPlayer", "SetLocation", "Imminent Departure");
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+	ScriptCall("GenericScreenStuff", "Clean");
+	GiveInventory("LowZone", 1);
+	ChangeCamera(14, 0, 0);
+	FadeTo(0, 0, 0, 1.0, 0.0);
+	Delay(35);
+	/*SetFont (const:"ACS_FONT");
+	HudMessage(s:"At last, when density is finally brought to a standstill.";
+	0, 1, CR_UNTRANSLATED, 1.5, 0.5, 4.0);
+	Delay(35*4);
+
+	HudMessage(s:"When friction between presence and absence becomes unbearable.";
+	0, 1, CR_UNTRANSLATED, 1.5, 0.5, 4.0);
+	Delay(35*6);
+
+	HudMessage(s:"Come forth emerging a symbol.";
+	0, 1, CR_UNTRANSLATED, 1.5, 0.5, 4.0);*/
+	Delay(35);
+	SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN);
+	ChangeCamera(0, 0, 0);
+	FadeTo(0, 0, 0, 0.0, 5.0);
+	ACS_NamedExecute("BeginChatter", 0);
+	ACS_NamedExecute("Entrance", 0);
+	//Delay(35*7);
+
+	/*HudMessage(s:"Gather and behold, those of highs and lows.\nCome witness the alchemical transformation.";
+	0, 1, CR_UNTRANSLATED, 1.5, 0.05, 6.0);
+	Delay(35*6);
+
+	HudMessage(s:"In the dance between life and death, their only certainty is each other.";
+	HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 5.0, 1.0);*/
+}
+
+Script "Entrance" (void)
+{
+	Delay(140);
+	PlaySound(200, "Arena00B", CHAN_BODY, 0.01, 0, 0.15);
+	Delay(128);
+	ACS_NamedExecute("FadeCrowd", 0);
+	LocalAmbientSound("Arena00", 127);
+	Delay(46);
+	PlaySound(201, "Arena00A", CHAN_AUTO, 0.6, 0, 0.1);
+	Delay(30);
+	//Delay(35); //Remove later
+	//SetMusic("MP2_BOS1");
+	SpawnSpot("DS_Music_01", 25, 25, 0);
+	GiveInventory("Duel_Prep", 1);
+	if(CheckInventory("ShotgunAmmo") <= 0)
+	{
+		GiveInventory("ShotgunAmmo", 3);
+		GiveInventory("ShellLoaded", 5);
+	}
+	if(CheckInventory("PistolAmmo") <= 0)
+	{
+		GiveInventory("PistolAmmo", 8);
+	}
+	ACS_NamedExecute("FadeCrowd2", 0);
+	Delay(10);
+	ACS_NamedExecute("Torch", 0);
+	Delay(22); //28 total
+	ACS_NamedExecute("Lightz", 0);
+	Delay(6);
+	PlaySound(202, "Arena00C", CHAN_AUTO, 0.5, 0, 0.08);
+	//
+	Delay(160);
+	SpawnSpot("Stars", 10, 1000, 0);
+	//Do tutorial if we's really them boys!
+	if(CheckInventory("PhyOrigin") > 0)
+	{
+		ScriptCall("GenericScreenStuff", "PromptTutorial", "Tip_DuelPhy");
+	}
+	else if(CheckInventory("StrToken") > 0)
+	{
+		ScriptCall("GenericScreenStuff", "PromptTutorial", "Tip_DuelStr");
+	}
+	Delay(245);
+	SetActorState(1000, "IntroUltWait", 0);
+	Delay(67);
+	SetActorState(1000, "IntroUltEnd", 0);
+	Delay(22);
+	SpawnSpot("DS_Music_02", 26, 26, 0);
+	Delay(46);
+	SetMusic("MP2_BOS1");
+	Delay(30);
+	if(GetActorProperty(0, APROP_Health) > 20)
+	{
+		ScriptCall("Saver", "Autosave");
+	}
+}
+
+
+Script "LightningCircle" (void)
+{
+	LocalAmbientSound("Crab/BoltLayer", 127);
+	SpawnSpot("FakeBolt", 22, 0, 0);
+	Delay(12);
+	FadeRange(255, 255, 255, 0.1, 255, 255, 255, 0.0, 1.0);
+	ACS_NamedExecute("Phase1Lighting", 0);
+}
+
+Script "Phase1Lighting" (void)
+{
+	Light_Fade(17, 144, 20);
+	Light_Fade(18, 144, 20);
+	Thing_Deactivate(20);
+	Light_ChangeToValue(16, 0);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 0);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 0);
+	Thing_Deactivate(667);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Thing_Activate(667);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 0);
+	Thing_Deactivate(667);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Thing_Activate(667);
+}
+
+Script "Phase2Lighting" (void)
+{
+	Delay(50);
+	Light_ChangeToValue(16, 0);
+	Light_ChangeToValue(17, 0);
+	Light_ChangeToValue(18, 0);
+	Thing_Deactivate(667);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Light_ChangeToValue(17, 160);
+	Light_ChangeToValue(18, 160);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 0);
+	Light_ChangeToValue(17, 0);
+	Light_ChangeToValue(18, 0);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Light_ChangeToValue(17, 160);
+	Light_ChangeToValue(18, 160);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 0);
+	Light_ChangeToValue(17, 0);
+	Light_ChangeToValue(18, 0);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Light_ChangeToValue(17, 160);
+	Light_ChangeToValue(18, 160);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 0);
+	Light_ChangeToValue(17, 128);
+	Light_ChangeToValue(18, 128);
+	Thing_Activate(18);
+}
+
+Script "Phase3Lighting" (void)
+{
+	ACS_Execute(2, 0);
+	FadeRange(255, 76, 211, 0.3, 0, 0, 0, 0.0, 2.0);
+	Thing_Activate(667);
+	Thing_Deactivate(18);
+	Thing_Deactivate(19);
+	Light_Glow(16, 128, 104, 35);
+	Light_ChangeToValue(17, 64);
+	Light_ChangeToValue(18, 128);
+	while(TRUE)
+	{
+		Thing_Deactivate(41);
+		Thing_Activate(40);
+		Delay(40);
+		Thing_Deactivate(40);
+		Thing_Activate(41);
+		Delay(40);
+	}
+}
+
+Script "Phase4Lighting" (void)
+{
+	Thing_Deactivate(667);
+	Light_Stop(16);
+	ACS_NamedTerminate("Phase3Lighting", 0);
+	Thing_Activate(19);
+	Thing_Deactivate(40);
+	Thing_Deactivate(41);
+	Light_ChangeToValue(16, 0);
+	Light_ChangeToValue(17, 0);
+	Light_ChangeToValue(18, 0);
+	Delay(random(1,3));
+	Thing_Remove(667);
+	ACS_Execute(3, 0);
+	Light_ChangeToValue(16, 128);
+	Light_ChangeToValue(17, 160);
+	Light_ChangeToValue(18, 160);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 0);
+	Light_ChangeToValue(17, 0);
+	Light_ChangeToValue(18, 0);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Light_ChangeToValue(17, 160);
+	Light_ChangeToValue(18, 160);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 0);
+	Light_ChangeToValue(17, 0);
+	Light_ChangeToValue(18, 0);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Light_ChangeToValue(17, 160);
+	Light_ChangeToValue(18, 160);
+	Delay(random(1,3));
+	Light_ChangeToValue(16, 128);
+	Light_ChangeToValue(17, 160);
+	Light_ChangeToValue(18, 160);
+}
+
+Script "Phase4Firework" (void)
+{
+	Light_ChangeToValue(16, 48);
+	Light_ChangeToValue(17, 64);
+	Light_ChangeToValue(18, 64);
+	Thing_Deactivate(18);
+	Delay(49);
+	for(int k = 500; k <= 515; k++)
+	{
+		Delay(5);
+		SpawnSpot("Firework4", k, 0, 0);
+	}
+	Light_ChangeToValue(16, 48);
+	Light_ChangeToValue(17, 64);
+	Light_ChangeToValue(18, 64);
+	Thing_Deactivate(18);
+	Delay(49);
+}
+
+int l;
+Script "BeginChatter" (void)
+{
+	Thing_Activate(9);
+	for(l = 1; l <= 100; l++)
+	{
+		SoundVolume(9, CHAN_BODY, 0.01 * l);
+		Delay(1);
+	}
+}
+
+int i;
+Script "FadeCrowd" (void)
+{
+	for(i = 1; i <= 100; i += 2)
+	{
+		SoundVolume(9, CHAN_BODY, 1.0 - (0.01 * i));
+		Delay(1);
+	}
+}
+
+int j;
+Script "FadeCrowd2" (void)
+{
+	for(j = 1; j <= 50; j++)
+	{
+		SoundVolume(200, CHAN_BODY, 0.01 * j);
+		Delay(1);
+	}
+}
+
+Script "Torch" (void)
+{
+	for(int k = 500; k <= 515; k++)
+	{
+		//Thing_Activate(k);
+		SetActorFlag(k, "Dormant", FALSE);
+		SetActorState(k, "Spawn", FALSE);
+		SpawnSpot("MapSpot", k, 0, 0);
+		Delay(2);
+	}
+}
+
+Script "Lightz" (void)
+{
+	Thing_Activate(20);
+	for(int n = 400; n <= 404; n++)
+	{
+		Thing_Activate(n);
+		Delay(2);
+	}
+	for(n = 0; n <= 5; n++)
+	{
+		Thing_Deactivate(400);
+		Thing_Deactivate(401);
+		Thing_Deactivate(402);
+		Thing_Deactivate(403);
+		Thing_Deactivate(404);
+		Delay(2);
+		Thing_Activate(400);
+		Thing_Activate(401);
+		Thing_Activate(402);
+		Thing_Activate(403);
+		Thing_Activate(404);
+		Delay(2);
+	}
+}
+
+Script "BloodRain" (void)
+{
+	SpawnSpot("BloodRainSpawner", 1, 0, 0);
+}
+
+Script "RoseRain" (void)
+{
+	SpawnSpot("RoseRainSpawner", 1, 0, 0);
+}
+
+Script "Crowd_Cheer" (void)
+{
+	PlaySound(random(2,7), "Arena/Cheer", CHAN_AUTO, 0.5, 0, 0.1);
+}
+
+Script "ResumeChatter" (void)
+{
+	SoundVolume(9, CHAN_BODY, 0.75);
+	Thing_Activate(9);
+}
+
+Script "ResumeChatter2" (void)
+{
+	SoundVolume(9, CHAN_BODY, 1.0);
+	Thing_Activate(9);
+}
+
+Script "StopChatter" (void)
+{
+	Thing_Deactivate(9);
+}
+
+Script "Ceremony" (void)
+{
+	SpawnSpot("FireworkSpawner", 12, 0, 32);
+	LocalAmbientSound("Firework", 127);
+	LocalAmbientSound("Arena06", 127);
+	Delay(245);
+	LocalAmbientSound("Arena08", 127);
+	Delay(100);
+	SetPlayerProperty(0, 1, 4);
+	FadeTo(255, 255, 255, 1.0, 10.0);
+	Delay(35*8);
+	Delay(35);
+	Delay(10);
+
+	Teleport_NoFog(11, 1, 11);
+	SetActorPitch(0, 0.0);
+	Delay(35*4);
+	FadeTo(255, 255, 255, 0.0, 5.0);
+	SetPlayerProperty(0, 0, 4);
+}
+
+Script "EndingCheer" (void)
+{
+	Delay(140);
+	LocalAmbientSound("Arena07", 127);
+}
+
+Script "RedStorm" (void)
+{
+	SpawnSpot("LightningStorm", 12, 0, 0);
+}
+
+Script "HealMessage" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Your health is fully restored.";
+	HUDMSG_PLAIN, 1, CR_WHITE, 1.5, 0.85, 3.0);
+}
+
+Script "Boss_Resist" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Echoing Syzygy will no longer be affected by this power.";
+	HUDMSG_PLAIN, 1, CR_WHITE, 1.5, 0.85, 6.0);
+}
+
+Script "Ending_Music" (void)
+{
+	SetMusic("D_NULL");
+	SetActorState(27, "Active", 0);
+}
+
+Script "Banana" (void)
+{
+	SetMusic("D_NULL");
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+	QuakeEx(0, 9, 9, 9, 35, 0, 64, "dsempty");
+	LocalAmbientSound("DS_Bnn", 127);
+	FadeTo(192, 192, 192, 1.0, 0.3);
+	ScriptCall("ShaderHandler", "SetImageGlitcher", TRUE);
+	Delay(35*5);
+	ScriptCall("ShaderHandler", "SetImageGlitcher", FALSE);
+	FadeTo(192, 192, 192, 0.0, 4.0);
+	Teleport_NoFog(11, 1, 11);
+	Delay(35*3);
+	SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN);
+}
+
+Script 1 (void)
+{
+	LocalAmbientSound("Tome14", 127);
+	GiveInventory("M2_DreamDone", 1);
+	TakeInventory("Duel_Prep", 1);
+	Thing_Deactivate(15);
+	SetMusic("D_NULL");
+	SetPlayerProperty(0, 1, 4);
+	FadeTo(0, 0, 0, 1.0, 4.0);
+	Delay(35*4);
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+	Delay(10);
+	Teleport_NewMap(6, 2, 0);
+}
+
+Script 2 (void)
+{
+	SetActorState(21, "Spin", FALSE);
+	for(int x = 900; x < 912; x++)
+	{
+		SetActorState(x, "Bounce", FALSE);
+		Delay(5);
+	}
+}
+
+Script 3 (void)
+{
+	SetActorState(21, "Reset", FALSE);
+	for(int x = 900; x < 912; x++)
+	{
+		SetActorState(x, "Reset", FALSE);
+	}
+}
+
+Script "Duel_Exit" (void)
+{
+	Thing_Remove(25);
+	Thing_Remove(26);
+	Thing_Remove(27);
+	FadeTo(0, 0, 0, 1.0, 0.0);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+	ChangeCamera(24, 0, 0);
+	Teleport_NoFog(23, 1, 0);
+	GiveInventory("M2_DuelExit", 1);
+	TakeInventory("Duel_Prep", 1);
+	SetMusic("D_NULL");
+	LocalAmbientSound("DuelExit", 96);
+	Thing_Remove(1000);
+	Delay(35*3);
+	Teleport_NewMap(6, 2, 0);
+}
+
+Script "Duel_PowerTip" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Empowered Shots bypass damage resistance.";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 4.5, 1.0, 1.0);
+	Delay(35*60);
+}

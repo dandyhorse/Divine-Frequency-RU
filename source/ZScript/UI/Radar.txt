@@ -1,0 +1,166 @@
+class RadarHandler : StaticEventHandler
+{
+  Array<Actor> detected;
+  int scan_tic, scan_mo_index, sw, sh;
+  bool scan_mo_sight, tex_setup;
+  TextureID blipTex, bracketTex;
+  double BracketAlpha,BracketScale;
+
+  const SCAN_DIST = 1536.0;
+  const DRAW_DIST = 1024.0;
+
+  //Trigger a rescan off the rip
+  override void WorldLoaded(WorldEvent e)
+  {
+    detected.Clear();
+    scan_tic = 35;
+	BracketScale = 5.0;
+  }
+
+  override void WorldTick()
+  {
+    let pmo = players[consoleplayer].mo;
+    if(!pmo || pmo && !DFPlayer(pmo).radar)
+	  return;
+	//if(!pmo)
+	  //return;
+	  
+	sw = Screen.GetWidth();
+    sh = Screen.GetHeight();
+	
+	if(BracketScale > 0.0)
+	  BracketScale -= 0.16;
+	else
+	  BracketScale = 2.0;
+	
+	if(!tex_setup)
+	{
+	  blipTex = TexMan.CheckForTexture("LAN_ON0");
+	  bracketTex = TexMan.CheckForTexture("RadarBox");
+	  tex_setup = true;
+	}
+	
+    if(scan_tic >= 35)
+    {
+      scan_tic = 0;
+      detected.Clear();
+      BlockThingsIterator it = BlockThingsIterator.Create(pmo, SCAN_DIST);
+      while(it.Next())
+      {
+        if(it.thing == pmo)
+		  continue;
+		  
+        if(!it.thing.bShootable)
+		  continue;
+        
+		if(it.thing.Health <= 0)
+		  continue;
+		  
+		if(it.thing.bFriendly || !it.thing.bIsMonster)
+		  continue;
+		  
+		if(it.thing is "DF_Monster" && DF_Monster(it.thing).bNoRadar)
+		  continue;
+		  
+		detected.Push(it.thing);
+      }
+    }
+	scan_tic++;
+	
+	if(detected.size() > 0)
+	{
+	  for(int i = 0; i < detected.size(); i++)
+      {
+	    Actor mo = detected[i];
+	    if(mo)
+	    {
+	      if(DF_Monster(mo).radar_sight)
+            DF_Monster(mo).radar_alpha -= 0.05; 
+          else
+            DF_Monster(mo).radar_alpha += 0.02;
+		
+          DF_Monster(mo).radar_alpha = clamp(DF_Monster(mo).radar_alpha, 0.0, 1.0);
+	    }
+		if(!mo || mo.Health <= 0)
+          detected.Delete(i);
+	  }
+    }
+	
+	if(scan_mo_index < detected.Size())
+    {
+      Actor mo = detected[scan_mo_index];
+      if(mo && mo is "DF_Monster" && mo.Health > 0)
+        DF_Monster(mo).radar_sight = pmo.CheckSight(mo, SF_IGNOREVISIBILITY);
+		
+      scan_mo_index++;
+    }
+	else
+	  scan_mo_index = 0;
+  }
+  
+  override void RenderUnderlay(RenderEvent e)
+  {
+    if(automapactive != 0)
+	  return;
+	  
+    let pmo = players[consoleplayer].mo;
+    if(!pmo || pmo && !DFPlayer(pmo).radar)
+	  return;
+	//if(!pmo)
+	  //return;
+
+    if(detected.Size() == 0)
+	  return;
+	  
+    double fovH = (e.camera.player) ? e.camera.player.FOV : e.camera.cameraFOV;
+    GMMatrix4 worldToClip = GMMatrix4.worldToClip(
+    e.viewPos, e.viewAngle, e.viewPitch, e.viewRoll,
+    fovH, Screen.GetAspectRatio());
+
+    for(int i = 0; i < detected.Size(); i++)
+    {
+	  Actor mo = detected[i];
+      if(!mo || (mo && DF_Monster(mo).radar_alpha <= 0.0))
+	    continue;
+		
+	  // Not in view. Skip this.
+      if(mo && pmo.Distance2D(mo) > DRAW_DIST) 
+	    continue;
+		
+      Vector3 lerp_pos = GMVectorUtil.lerpVec3(mo.Prev, mo.Pos, e.Fractic);
+      lerp_pos.z += DF_Monster(mo).radar_height;
+      Vector3 adjustedPos = e.viewPos + LevelLocals.vec3Diff(e.viewPos, lerp_pos);
+	  
+      let ndcPos = worldToClip.multiplyVector3(adjustedPos);
+      if(ndcPos.z < -1 || ndcPos.z > 1)
+	    continue;
+	  
+      Vector2 screenPos = GMGlobalMaths.ndcToViewPort(ndcPos);
+      screenPos.x = clamp(screenPos.x, -sw * 0.5, sw * 1.5);
+      screenPos.y = clamp(screenPos.y, -sh * 0.5, sh * 1.5);
+	  
+	  double dist = pmo.Distance2D(mo);
+	  double edge_fade = clamp((DRAW_DIST - dist) / 128.0, 0.0, 1.0);
+	  double alpha = 1.0 - (dist / DRAW_DIST);
+      alpha *= DF_Monster(mo).radar_alpha;
+	  alpha *= edge_fade;
+	  alpha = clamp(alpha, 0.0, 0.55);
+	 
+	  Screen.DrawTexture(bracketTex, true, screenPos.x, screenPos.y,
+	  DTA_ScaleX, BracketScale,
+	  DTA_ScaleY, BracketScale,
+      DTA_Alpha, alpha,
+	  DTA_Color, color(255, 255, 0, 0),
+	  DTA_LegacyRenderStyle, STYLE_Add,
+      DTA_CenterOffset, true);
+	  
+      Screen.DrawTexture(blipTex, true, screenPos.x, screenPos.y,
+	  DTA_ScaleX, 3.0,
+	  DTA_ScaleY, 3.0,
+      DTA_Alpha, alpha,
+	  DTA_Color, color(255, 255, 0, 0),
+	  DTA_LegacyRenderStyle, STYLE_Add,
+      DTA_CenterOffset, true);
+    }
+  }
+}

@@ -1,0 +1,224 @@
+[enu default]
+//Let your soul contend the tidal waves of reality.
+M01_ADB = "Actor Dude Bro";
+M01_ADB01 =
+"\cDAs you approach the hooded figure, you begin to feel alarmingly exposed. Your instincts warn you that there are multiple gazes focused on you, "
+"even though there's no one else in the room besides you and the figure.";
+M01_ADB01a = "\cD[Ignore the sensation] \cJHey.";
+M01_ADB01b = "I'm looking for directions.";
+M01_ADB01c = "Are you doing something to me?";
+M01_ADB02 =
+"\cDThe creature turns its skull towards you. There are no eyes in the sockets, but you can feel them examining you.";
+M01_ADB02b = "What are you?";
+M01_ADB02c = "I met a talking lantern earlier, can you speak as well?";
+M01_ADB03 =
+"\cDIt continues to stare at you. The paranoia you've felt prior is now in full throttle, you're overwhelmed with the instinct to flee. "
+"There is something deeply off-putting about this pile of bones, like its existence was misplaced into this world by some higher order.\n\n"
+"You can feel a faint vibration building in your own skull, its form shifting into a high pitched sound before the reverberation "
+"oscillates into a deep, distorted, booming voice.";
+M01_ADB04 =
+"Yes?";
+M01_ADB04a = "I need directions.";
+M01_ADB04b = "Huh?";
+M01_ADB04c = "\cQ(Leave) \cJYou’re a weird guy. Good-bye.";
+M01_ADB05 =
+"A ''huh''? Iskatel' glubiny?";
+M01_ADB05a = "Wha-?";
+M01_ADB06 =
+"\cDBefore you could even get your words out, the creature suddenly looks up at the space around you. It appears lost in thought, "
+"as if trying to solve some unseen riddle. After a brief silence, the creature speaks again.\n\n"
+"\cJTurn around. Go first right. Then up. Then more down. Below the benthic -- inside one frame of time, is destination.";
+M01_ADB06a = "\cQ(Leave) \cD[Nod]";
+M01_ADB06b = "\cQ(Leave) \cJThanks.";
+M01_ADB06c = "\cQ(Leave) \cJWhat?";
+M01_ADB06x = "\cQ[Memory Reflex] \cJImpressive telepathy. Were you a member of the Covenant?";
+M01_ADB07_01 =
+"\cDThe creature laughs raucously, its laughter loud enough to shatter your eardrums and pop your head open like a balloon. But you feel surprisingly fine.\n\n"
+"\cJWe're done. Not finished, alas. Not by a league.";
+M01_ADB07_02 =
+"\cDThe creature laughs raucously, its laughter loud enough to shatter your eardrums and pop your head open like a balloon. But you feel surprisingly fine.\n\n"
+"\cJWe're done. Not finished, alas. Not by a league. Go ahead and say it.";
+M01_ADB07_02a = "\cQ(Leave) \cJSay wh...??";
+M01_ADB07_03 =
+"\cDThe creature laughs raucously, its laughter loud enough to shatter your eardrums and pop your head open like a balloon. But you feel surprisingly fine.\n\n"
+"\cJSix becomes Four. The Covenant lives in black red cloud. But you. Me. We're done. Not finished, alas. Not by a league.";
+M01_ADB08 =
+"\cDThe creature remains silent.";
+
+//Second Encounter
+M01_ADB_E01 =
+"\cDThe hooded figure remains as ominous as before.";
+M01_ADB_E01a = "How did you end up here?";
+M01_ADB_E01a_1 = "\cDActor Dude Bro speaks. But the cosmic noise around you drowns out any meaning.";
+
+M01_ADB_E01b = "What is this place?";
+M01_ADB_E01b_1 = 
+"Putrefactio. Mind matter endured meshing to dissolvement. Peaks and valleys in rhythm with the song.\n\n"
+"Rot. Few if any will survive...";
+
+//Third Encounter
+M01_ADB09 =
+"\cDYou find the same creature again. This time it's huddling in a corner, soaked from head to toe bones. It looks at you and brings a finger to "
+"its jaw, gesturing a shushing motion.\n\n"
+"\cJThe storm is here...";
+M01_ADB09a = "What storm?";
+M01_ADB09b = "What are you doing here?";
+M01_ADB09c = "You've been following me...";
+M01_ADB09a_01 =
+"Above. Superconsciousness. One million screaming choirs marching through nowhere.";
+M01_ADB09a_01a = "I don't hear or see any storm.";
+M01_ADB09a_02 =
+"Soon you will. \cDThe creature turns its gaze elsewhere. \cJEvents driving attractions to collision.";
+M01_ADB09c_01 =
+"No...";
+M01_ADB09c_01a = "Then why are you here?";
+M01_ADB09c_01b = "Very well, I have no reason to doubt you.";
+M01_ADB09c_01c = "\cD[Aim your handgun at its skull] \cJEnough games, skeleton. You die here.";
+M01_ADB09c_01d = "\cQ(Leave) \cJI find that hard to believe. I don't trust you.";
+M01_ADB09c_01a_01 =
+"\cDActor Dude Bro stares at you in response.";
+M01_ADB09c_01c_1 =
+"\cDBefore you can react, the slide of your handgun pulls back on its own and ejects the cartridge inside the chamber. "
+"The magwell lock also disengages and out slides the magazine, which starts floating mid-air and strangely enough, "
+"begins lengthening itself before sliding back into the gun.\n\n"
+"\cF(Handgun Max. Capacity +4)";
+M01_ADB09c_01c_1a = "Oh...";
+M01_ADB09c_01c_1b = "My sincerest apologies. I may have overreacted.";
+M01_ADB09c_01c_1c = "Thanks. Just so you know, I was only bluffing.";
+M01_ADB09c_01c_1d = "Keep your hands to yourself!";
+M01_ADB09c_01c_1e_1 =
+"\cDAnd just like that, the magazine returns back to its original size. What poor choice of words. Smh.\n\n"
+"\cR(Handgun Max. Capacity -4)";
+M01_ADB10 = "Impossible. Static pouring down from the clouds. Alas, not yet.";
+M01_ADB10a = "Where are we now?";
+M01_ADB10a_01 = "Sub-level thought field membrane -- below dream... Sssshhh.";
+M01_ADB11 =
+"\cDActor Dude Bro looks around you, then reaches into his robe and places an item down by his side.";
+
+///////******* TRAIN
+M01_ADB11_00 = 
+"\cDOnce again, the motionless figure greets you with its empty eye sockets.";
+M01_ADB11_01 =
+"\cDYour mind is met with a familiar booming echo. \cJYou defeated.";
+M01_ADB11_01a = "Yes. Victory was achieved.";
+M01_ADB11_01b = "It was difficult, but all preys are eventually slaughtered.";
+M01_ADB11_01c = "I barely survived.";
+M01_ADB11_01a_1 =
+"\cDActor Dude Bro brings his hands together. \cJVery good, a well sounded musical announcement. "; 
+M01_ADB11_01c_1 =
+"...yet emerged victorious.\n\n"
+"\cDActor Dude Bro brings his hands together. \cJStill, very good, a well sounded musical announcement. ";
+//Main bulk ///////////////////////////////
+M01_ADB12 = "\cDActor Dude Bro turns towards you. \cJQuestion?";
+M01_ADB12a = "\cD[Show the strange book] \cJCan you read this?"; //Ignorant minds consuming its consumer's consumption!
+M01_ADB12b = "Where is this train headed to?";
+M01_ADB12b_1 =
+"To nowhere.";
+M01_ADB12b_1a = "What do you mean by that?";
+M01_ADB12b_1a_1 =
+"Haaaaaaa?";
+M01_ADB12b_1b = "Can we change course somehow?";
+M01_ADB12b_1b_1 =
+"No.";
+M01_ADB12b_1c = "More nonsensical responses. Why can't you say anything normal?";
+M01_ADB12b_1c_1 =
+"\cDHe laughs at you mockingly. \cJLanguages. Rules for clarity, insanity it is. Wretched beings spinning think linearly.";
+M01_ADB12c_2a = "\cQ(Physique) \cJTheeeyyy--believed it was destined. It is purely-–by chance. The resonanceee--consuuumessss.";
+M01_ADB12a_1 =
+"\cDActor Dude Bro takes the book and starts rapidly flipping through all the pages, you're not sure if he's even reading any of it. "
+"Once finished, he begins explaining the content.";
+M01_ADB12a_2 =
+"\cDThis book is written in a form of hypertemporal calligraphy. There is no way you could have deciphered the writing unless you were able to "
+"look at time with an unbound freedom. The text contains a brief hypothesis about the success of exposing the ordinary mind to exotic materials.\n\n"
+"\cU''The resonance, as told before many times, affects all layers of this universe, an aberrant mutation that is only capable of resonating with mind "
+"layers results in the mutation affecting only that which pertains to the mind. In this case, due to the interaction with the ego and other facets of "
+"the mind, the mutation is self-contained and of tight reach.\n\n"
+"The end result then, is a mind that becomes wholly from another universe, while the body remains trapped in this universe. "
+"The ''divinity'' of such a mind means that it interprets our universe with the ruleset of the other universe, allowing "
+"for manifestation of extrasensory powers, as well as naturokinesis (control over the elements), amongst other paranatural mind powers.''";
+M01_ADB12_2a = "Can you teach me this?";
+M01_ADB13 = "Ah. Know letters, don't know words. Let's write a sentence.";
+M01_ADB14 = "\cDActor Dude Bro remains silent.";
+//AHHHHHHH~!!!!!!!!!!!!!!!!!///////////////////////
+Psi_01 = "\cI[Learn Psionic Abilities]";
+Psi_01a = "\cD[Consume 4000 Exaltation]";
+Psi_01b = "\cD[Consume 3000 Exaltation]";
+Psi_01c = "Nevermind.";
+
+Psi_HG_01 = "\cI[Psychoentomo Communion]";
+Psi_HG_02 =
+"\cIPSYCHOENTOMO COMMUNION:\n"
+"\Conjure a swarm of insects to inflict Brain Rot on a target. Victims under the Brain Rot status become friendly and take constant damage.\n"
+"\cFResonant Weapon: \cJHandgun\n"
+"\cFAttunement Slot Required: \cJ1\n"
+"\cFCost: \cJ4000 Exaltation \cJ| \cDAvailable: \cJitem_find:ExaltXP: Exaltation";
+Psi_HG_03 =
+"\Billions influence. Collective programming. Irresistible.\n\n"
+"\cI(Psychoentomo Communion Acquired)";
+
+Psi_SG_01 = "\cI[Psychoelectrokinesis Attraction]";
+Psi_SG_02 =
+"\cIPSYCHOELECTROKINESIS ATTRACTION:\n"
+"Pluck at the air current to shock a primary target and up to 2 additional targets. Each victim struck by the link will become Stunned, empowering the Trench Gun and its wielder.\n"
+"\cFResonant Weapon: \cJTrench Gun\n"
+"\cFAttunement Slot Required: \cJ1\n"
+"\cFCost: \cJ4000 Exaltation \cJ| \cDAvailable: \cJitem_find:ExaltXP: Exaltation";
+Psi_SG_03 =
+"Invisible consciousness. Destined polarity. Glowing roots.\n\n"
+"\cI(Psychoelectrokinesis Attraction Acquired)";
+
+Psi_SP_01 = "\cI[Psychosomatic Bonding]";
+Psi_SP_02 =
+"\cIPSYCHOSOMATIC BONDING:\n"
+"Forcibly tear apart the biomass of fallen enemies and fuse it with your own to replace damaged or missing parts. The enemy corpse has to be somewhat intact to qualify.\n"
+"\cFResonant Weapon: \cJSpray Can\n"
+"\cFAttunement Slot Required: \cJ1\n"
+"\cFCost: \cJ3000 Exaltation \cJ| \cDAvailable: \cJitem_find:ExaltXP: Exaltation";
+Psi_SP_03 =
+"Life consumes life. Inversion causal.\n\n"
+"\cI(Psychosomatic Bonding Acquired)";
+
+Psi_Fail =
+"Ignorant minds will consume its consumer's consumption!\n\n"
+"\cR(Insufficient Psionic Attunement)";
+
+
+
+//M01_ADB11_01 =
+//"There remained that which is to be seen yet. I must see to it.\n\n"
+//"\cDThe creature stares at you. Then places an item for you next to itself.";
+
+///////******* ACT II
+M02_ADB_00 =
+"Below the \cDcourtyard\cJ... Failures of flesh commune with oblivion. Converging to spiral.\n\n"
+"...False, Pyramidal God. Lingering before bed under death.";
+M02_ADB_00a = "What are you talking about?";
+M02_ADB_00b = "Of course, more riddles from the dusty relic.";
+M02_ADB_00c = "I see.";
+M02_ADB_00a_1 = "Senses constrict canvas imagination towards the chaos undifferentiated. But potential of the Prima Materia are wider, its blessed sight unseen.\n\nResonance offsets ontological tides through infected dreams.";
+M02_ADB_01 =
+"\cDActor Dude Bro speaks, but the noise muddles and cannot reach your mind.";
+/*
+M02_ADB_00 = "\cDThe creature stares at you.";
+M02_ADB_01 = "Greetings.";
+M02_ADB_01a = "Why are you here?";
+M02_ADB_01a_1 = "I currently stand right from here before you walked towards.";
+M02_ADB_01a_1a = "What? That's not what I meant.";
+M02_ADB_01a_1b = "Okay. Whatever you say, freak.";
+M02_ADB_01a_1c = "\cDSay nothing.";
+M02_ADB_01a_2 =
+"Allora forse dovresti imparare che non tutti condividono il significato che dai alla tua affermazione. "
+"E tu, chi cazzo sei? Entri nel mio dojo, mi fissi, guardi un delinquente.. So molto piu di quanto tu possa comprendere.";
+M02_ADB_02a = "Can you tell me something note-worthy about this building?";
+M02_ADB_02b = "Can you remove my Toxin & Radiation?";
+M02_ADB_02b_1 = "\cDWith a snap of the finger. All your Toxin & Radiation are wiped away.";
+M02_ADB_03 = "Request.";
+M02_ADB_03a = "Anything to watch out for?";
+M02_ADB_03b = "I have questions about the layout.";
+M02_ADB_03a_1 = "One person... not far of here. Through forms in fragmented lights. Is similar to your kind.";
+M02_ADB_03a_2 = "Speak.";
+M02_ADB_03a_2a_1 = "The Upper Level. Vectors to highest and lowest points. Not mere locations. But of greater importance.";
+M02_ADB_03a_2b_1 = "The Lower Level. Remembrance. All paths originated here. Not your memories.";
+M02_ADB_03a_2c_1 = "The Buried Level. Soil... inside ground, inside air. What is dead lives on.";
+M02_ADB_03a_2d_1 = "The The Spiral. Your destination. A ladder to pitch black.";
+M02_ADB_Reset = "On second thought...";

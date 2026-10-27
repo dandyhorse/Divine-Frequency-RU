@@ -1,0 +1,476 @@
+Class Nest : DF_Monster
+{
+  string user_item;
+  int user_spawnAmount;
+  bool user_spawnAggro;
+
+  void A_SpawnSpider()
+  {
+	Actor actr = Spawn("Spider", pos + (random(-24,24), random(-24,24), random(8,16)));
+	if(actr)
+	{
+	  actr.angle = random(0,359);
+	  actr.ChangeTid(tid);
+	  actr.vel = (random(-8,8), random(-8,8), random(6,8));
+	  Spider(actr).user_aggressive = user_spawnAggro;
+	  if(bFriendly)
+	    actr.bFriendly = true;
+	}
+  }
+  
+  override void Die(Actor source, Actor inflictor, int dmgFlags, Name MeansOfDeath)
+  {
+    A_KillChildren("Fire", KILS_KILLMISSILES);
+	A_StartSound("BODSPLT6", CHAN_AUTO, volume: 0.6);
+	A_SpawnItemEx(String.Format("CrushGore%d", random(1,4)));
+	
+	let actr = Spawn("BloodFountain3", pos);
+	if(actr)
+	  actr.scale = (0.54, .45);
+	
+	double oradius = radius;
+	double oheight = sHeight;
+	double amt = radius / 10.0;
+		  
+	for(int i = 0; i < amt; i++)
+	{
+	    A_SpawnItemEx("InsectJuice", random(-oradius, oradius), random(-oradius, oradius), random(32,oheight), random(-1,1), random(-1,1), frandom(0.0,0.4));
+		A_SpawnItemEx("InsectJuice", random(-oradius, oradius), random(-oradius, oradius), random(32,oheight), random(-1,1), random(-1,1), frandom(0.0,0.4));
+		A_SpawnItemEx("InsectJuice", random(-oradius, oradius), random(-oradius, oradius), random(32,oheight), random(-1,1), random(-1,1), frandom(0.0,0.4));
+	
+		  A_SpawnParticleEx("FFA500", TexMan.CheckForTexture("BPTCA0"), STYLE_Shaded, SPF_ROLL|SPF_RELATIVE, random(50,80), 4, angle,
+		  12, frandom(-16,16), 0, frandom(3,5), frandom(-2,2), frandom(1,3), accelz: -frandom(0.12,0.15), fadestepf: 0.0, startroll: random(0,359), rollvel: 1);
+
+		  bool Left = random(0,1);
+	      A_SpawnParticleEx
+		  (
+		    "FFA500",
+			TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+			style: STYLE_Translucent,
+			flags: SPF_RELATIVE|SPF_ROLL,
+			lifetime: 28,
+			size: random(88,112),
+			angle: random(0,359),
+			xoff: random(-oradius, oradius),
+			yoff: random(-oradius, oradius),
+			zoff: random(24,oheight),
+			velx: frandom(-1.0,1.0),
+			vely: frandom(-1.0,1.0),
+			velz: frandom(-1.0,1.0),
+			accelx: 0,
+			accely: 0,
+			accelz: 0,
+			startalphaf: frandom(0.8,0.9),
+			sizestep: 2.0,
+			startroll: random(0,359),
+			rollvel: Left ? 0.5 : -0.5,
+			rollacc: Left ? 0.02 : -0.02
+		  );
+	}
+	
+	if(user_item != "")
+	  A_DropItem(user_item, 1);
+	
+	super.Die(source, inflictor, dmgFlags, MeansOfDeath);
+  }
+  
+  override void BeginPlay()
+  {
+    A_SetSize(16.0 * scale.x, 48.0 * scale.y);
+    Super.BeginPlay();
+  }
+  
+  Default
+  {
+    //$Category "Enemies/Passive"
+	//$Color 4
+	Health 100;
+    Tag "Nest";
+    Radius 16;
+    Height 48;
+	Monster;
+	DamageFactor "Sting", 10.0;
+	DamageFactor "Poison", 8.0;
+	+DONTTHRUST
+	+FLOORCLIP
+	+SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  0000 A 0;
+	  TNT1 A 0
+	  {
+	    if(user_spawnAmount > 0)
+		  return ResolveState("Move");
+		  
+		return ResolveState(null);
+	  }
+	  0000 A -1;
+	  Stop;
+	Move:
+	  0000 AAABBBCCCDDDEFFFGGGHHHIIIJJJKLMMMNNNOOOPPPQQQ 1;
+      Loop;
+	Death:
+	  TNT1 A 1
+	  {
+	    if(user_spawnAmount <= 0)
+		  return ResolveState("DeathIdle");
+		
+		A_SetTics(random(0,3));
+	    A_SpawnSpider();
+		user_spawnAmount--;
+		
+		return ResolveState(null);
+	  }
+	  Wait;
+	Death.Poison:
+	DeathIdle:
+	  TNT1 A 1;
+	  Stop;
+	
+  }
+}
+
+Class Spider : DF_Monster //29458
+{
+  int type;
+  bool user_aggressive;
+  
+  override void Die(Actor source, Actor inflictor, int dmgFlags, Name MeansOfDeath)
+  {
+    super.Die(source, inflictor, dmgFlags, MeansOfDeath);
+	
+	A_KillChildren("Fire", KILS_KILLMISSILES);
+	
+	if(bPossessed)
+	  A_SpawnItemEx("Swarm_Explosion", zofs: (sHeight * scale.y) * 0.5);
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(bFriendly && GetAge() > 1050)
+	  A_Die();
+  }
+  
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+	
+	type = random(1,3);
+	scale.y = frandom(0.3,0.4);
+	scale.x = frandom(1.0,1.2) * scale.y;
+	A_SetSize(scale.x * 49.0, scale.y * 56.0);
+	radar_height = Height * 0.7;
+  }
+  
+  Default
+  {
+    //$Category "Enemies/Normal"
+	Health 20;
+	Tag "Spider";
+	Mass 400;
+	GibHealth 20;
+	MeleeRange 64;
+	MeleeThreshold 16;
+	DamageFactor "Poison", 5.0;
+	Species "Spider";
+	Monster;
+	+BRIGHT
+	+DROPOFF
+	+FLOORCLIP
+	+LOOKALLAROUND
+	+THRUSPECIES
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  TNT1 A 0
+	  {
+	    sprite = GetSpriteIndex(String.Format("SP%dW", type));
+	  }
+	  "####" A 10
+	  {
+	    if(bFriendly)
+		  return ResolveState("See");
+		else
+	      A_Look();
+		
+		return ResolveState(null);
+	  }
+	  Wait;
+	See:
+	  "####" A 0
+	  {
+	    A_SetSpeed(random(5,9));
+	    A_Jump(256, "Chase1", "Chase2", "Chase3");
+	  }
+	Chase1:
+	  "####" AAADDDGGGJJJ 1 A_Chase();
+	  Goto See;
+	Chase2:
+	  "####" BBBEEEHHHKKK 1 A_Chase();
+	  Goto See;
+	Chase3:
+	  "####" CCCFFFIIILLL 1 A_Chase();
+	  Goto See;
+	Wander:
+	  "####" A 0
+	  {
+	    A_SetSpeed(random(5,9));
+	    A_Jump(256, "Wander1", "Wander2", "Wander3");
+	  }
+	Wander1:
+	  "####" AAADDDGGGJJJ 1 A_Wander();
+	  Goto Wander;
+	Wander2:
+	  "####" BBBEEEHHHKKK 1 A_Wander();
+	  Goto Wander;
+	Wander3:
+	  "####" CCCFFFIIILLL 1 A_Wander();
+	  Goto Wander;
+	Melee:
+	  "####" A 0 
+	  {
+	    A_FaceTarget();
+		//A_StartSound("Fly_Atk2", CHAN_AUTO);
+	   // ThrustThing(angle*256/360,32,1,0);
+	   // ThrustThingZ(0, 35, 0, 0);
+	  }
+	  "####" OPQ random(1,2);
+	  "####" I 0
+	  {
+	    A_SetTics(random(2,4));
+	    frame = random(18,23);
+	  }
+	  "####" R 1;
+	  "####" P random(1,3)
+	  {
+	    A_CustomMeleeAttack(1*random(2,6), "Spider/Bite", "DSEMPTY", "Sting");
+		
+		if (target && CheckMeleeRange())
+		{
+		  if(target is "DFPlayer")
+		  {
+		    DFPlayer(target).SetDrunk(1.2, 0.008, 1.0);
+			if(!DFPlayer(target).isDodging && !DFPlayer(target).bResistToxin)
+			  DFPlayer(target).SetToxin(random(1,4));
+		  }
+		}
+	  }
+	  "####" NM random(1,3);
+	  "####" M 0
+	  {
+	    if(user_aggressive)
+		  return ResolveState("See");
+		  
+	    return ResolveState(null);
+	  }
+	  Goto Reset;
+	Reset:
+	  "####" A 0 A_SetSpeed(random(10,13));
+	  "####" ABCDEFGHIJKL 1 A_Wander();
+	  "####" A 0 A_Jump(192, "See");
+	  Loop;
+	Stun:
+	Death:
+	  TNT1 A 1
+	  {
+	    A_StartSound("Spider/Die", CHAN_AUTO, volume: 0.5);
+	    A_SpawnItemEx("BloodHaze"); //Haze to enhance point of impact
+		A_SpawnItemEx("DFBlood"); //Point of impact
+		A_SpawnItemEx("DFBloodSmall3", yvel: frandom(-2.0,2.0), zvel: frandom(-2.0,2.0)); //Point of impact
+	    A_SpawnItemEx("DFBloodSpray", xvel: frandom(-3.0, -2.0), zvel: frandom(2.0, 3.5), angle: random(-32,32)); //Spray blood
+		
+		for(int i = 0; i < random(8,12); i++)
+		    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BPTCA0"), STYLE_None, SPF_ROLL|SPF_RELATIVE, random(50,80), random(1,2), angle,
+		    12, frandom(-16,16), 0, frandom(3,5), frandom(-2,2), frandom(1,3), accelz: -frandom(0.12,0.3), startroll: random(0,359), rollvel: 1);
+	  }
+	  TNT1 A 70
+	  {
+	    for(int i = 0; i < random(0,8); i++)
+		{
+		  bool left = random(0,1);
+		  double xofs = random(-16,16);
+		  double yofs = left ? random(8,16) : random(-16,-8);
+		  Vector3 SpawnPos = Vec3Offset(xofs * cos(angle) + yofs * sin(angle), xofs * sin(angle) - yofs * cos(angle), random(0,8));
+		  let actr = Spawn("SpiderLeg", SpawnPos);
+		  if(actr)
+		  {
+		    double xvel = random(-4,4);
+			double yvel = left ? random(4,8) : random(-8,-4);
+		    Vector3 newVel = (xvel * cos(angle) + yvel * sin(angle), xvel * sin(angle) - yvel * cos(angle), random(2,5));
+			actr.vel = newVel;
+			actr.bSpriteFlip = left;
+		  }
+		}
+	  }
+	  Stop;
+	Dummy:
+	  SP1W A -1;
+	  SP2W A -1;
+	  SP3W A -1;
+	  Stop;
+  }
+}
+
+Class SpiderLeg: Actor
+{
+  int rol;
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+	
+	roll = random(-40,0);
+	rol = random(1,16) * random(-1,1);
+	scale.y = frandom(0.2,0.3);
+	scale.x = 1.2 * scale.y;
+  }
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(!level.isFrozen())
+	  if(InStateSequence(CurState, ResolveState("Spawn")))
+	    A_SetRoll(roll + rol, SPF_INTERPOLATE);
+  }
+  Default
+  {
+    BounceType "Doom";
+	BounceCount 2;
+	BounceFactor 0.7;
+	RenderStyle "Translucent";
+    +MISSILE
+	+THRUACTORS
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_Jump(256, random(1,8));
+	  SPLG ABCDEFGH 4;
+	  Goto Spawn+1;
+	Death:
+	  SPLG "#" 700 A_SetRoll(0);
+	  SPLG "#" 1 A_FadeOut(0.05);
+	  Wait;
+  }
+}
+
+Class DeadNest : Corpse
+{
+  Default
+  {
+    Health 100;
+    Radius 20;
+	Height 48;
+    Scale 0.8;
+	Tag "Dead Insect Nest";
+	Corpse.Exp 100;
+	+DONTTHRUST
+	+SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  0000 A -1;
+	  Stop;
+	Death:
+	  TNT1 A 1 A_StartSound("BODSPLT3", CHAN_AUTO, volume: 0.6);
+	  TNT1 A 0 
+	  {
+		let pmo = DFPlayer(players[consoleplayer].mo);
+		if(pmo)
+		{
+		  angle = AngleTo(pmo);
+		  
+		  if(Distance3D(pmo) <= 256)
+		    pmo.BloodSplat();
+		}
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("MeatChunk1", random(-12,12), random(-20,20), random(8,56), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("MeatChunk3", random(-12,12), random(-20,20), random(8,56), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("MeatChunk4", random(-12,12), random(-20,20), random(8,56), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("MeatChunk5", random(-12,12), random(-20,20), random(8,56), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(72,80), random(1,2), random(-2,2), random(4,5));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(8,56)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItemEx("Bone1", random(-8,8), random(-16,16), random(8,56), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("Bone2", random(-24,24), random(-20,20), random(8,56), frandom(-4.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("Bone2", random(-24,24), random(-20,20), random(8,56), frandom(-6.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(8,56), random(1,2), random(-2,2), random(4,5));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("DFBloodSquirt", 0, random(-4,4), frandom(8,56), random(1,2), random(-2,2), random(2,3));
+		A_SpawnItemEx("MeatChunk6", random(-12,12), random(-20,20), random(8,56), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("MeatChunk7", random(-12,12), random(-20,20), random(8,56), frandom(-10.0,-5.0), frandom(-2.0,2.0), frandom(7,9));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(8,56), random(1,2), random(-2,2), random(4,5));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(8,56)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("RibRack", random(-24,24), random(-20,20), 32, frandom(-4.0,-3.0), randompick(-2,2), frandom(6,8));
+		A_SpawnItemEx("Spine", 0, random(-12,-12), 32, frandom(-4.0,-3.0), randompick(-2,2), frandom(6,8));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(8,56), random(1,2), random(-2,2), random(4,5));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(8,56)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(8,56), random(1,2), random(-2,2), random(4,5));
+		A_SpawnItemEx("DFBloodSquirt", 0, random(-4,4),frandom(8,56), random(1,2), random(-2,2), random(2,3));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(8,56)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("SkullFrag1", 0, random(-16,16), random(40,56), frandom(-2.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("SkullFrag2", 0, random(-16,16), random(40,56), frandom(-2.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("SkullFrag3", 0, random(-16,16), random(40,56), frandom(-2.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("TorsoBlood", 0, random(-4,4),frandom(40,56), random(1,2), random(-2,2), random(4,5));
+		
+		let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(8,56)));
+		if(actr)
+		{
+		  actr.A_SetScale(frandom(0.6,0.7));
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("DFBlood", 0, random(-4,4),frandom(8,56), random(1,2), random(-2,2), random(2,3));
+		A_SpawnItemEx("DFBloodSquirt", 0, random(-4,4),frandom(8,56), random(1,2), random(-2,2), random(2,3));
+	  }
+	  Stop;
+  }
+}

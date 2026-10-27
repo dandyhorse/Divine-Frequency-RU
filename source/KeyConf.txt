@@ -1,0 +1,15 @@
+clearplayerclasses
+addplayerclass DFPlayer
+alias "Dodge" "netevent Dodge"
+alias "Sprint" "netevent Sprint"
+alias "FastHeal" "netevent FastHeal"
+alias "SwitchFireMode" "netevent SwitchFireMode"
+alias "UseWithoutPickup" "netevent UseWithoutPickup"
+alias "QuickUse1" "netevent QuickUse1"
+alias "QuickUse2" "netevent QuickUse2"
+alias "QuickUse3" "netevent QuickUse3"
+alias "QuickUse4" "netevent QuickUse4"
+alias "doquicksave" "netevent MQuicksave"
+alias "OpenInventory" "Use InventoryActivator"
+alias "OpenMap" "netevent MapActivate"
+alias "OpenSave" "netevent LoadActivate"

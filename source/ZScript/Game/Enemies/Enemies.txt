@@ -1,0 +1,1170 @@
+#include "ZScript/Game/Enemies/Normal/Cultist.txt"
+#include "ZScript/Game/Enemies/Normal/Enlightened.txt"
+#include "ZScript/Game/Enemies/Normal/Fly.txt"
+#include "ZScript/Game/Enemies/Normal/Kinsman.txt"
+#include "ZScript/Game/Enemies/Normal/Pod.txt"
+#include "ZScript/Game/Enemies/Normal/Proxy.txt"
+#include "ZScript/Game/Enemies/Normal/Rotten.txt"
+#include "ZScript/Game/Enemies/Normal/Spider.txt"
+
+#include "ZScript/Game/Enemies/Heavy/Crab.txt"
+#include "ZScript/Game/Enemies/Heavy/Giant.txt"
+#include "ZScript/Game/Enemies/Heavy/Necrophagy.txt"
+#include "ZScript/Game/Enemies/Heavy/Shaman.txt"
+
+#include "ZScript/Game/Enemies/Psionic/Antibody.txt"
+#include "ZScript/Game/Enemies/Psionic/Corvid.txt"
+#include "ZScript/Game/Enemies/Psionic/GKCell.txt"
+#include "ZScript/Game/Enemies/Psionic/Parasite.txt"
+
+#include "ZScript/Game/Enemies/Boss/Gary.txt"
+#include "ZScript/Game/Enemies/Boss/Champion.txt"
+#include "ZScript/Game/Enemies/Boss/MA.txt"
+#include "ZScript/Game/Enemies/Boss/Echo.txt"
+#include "ZScript/Game/Enemies/Boss/Six.txt"
+
+#include "ZScript/Game/Enemies/NPC/Static.txt"
+#include "ZScript/Game/Enemies/NPC/Visitor.txt"
+
+#include "ZScript/Game/Enemies/Blood.txt"
+#include "ZScript/Game/Enemies/BloodFlat.txt"
+#include "ZScript/Game/Enemies/BurnBase.txt"
+#include "ZScript/Game/Enemies/BurnDeath.txt"
+#include "ZScript/Game/Enemies/Gib.txt"
+
+Class DF_Monster : Actor
+{
+  int sHeight, StunTime, moddedDmg, AP, APMax, parry_time;
+  double killerAng, radar_alpha, radar_height;
+  bool Armored, died, hasSight, Poisoned, pOpen, TNTDeath, stunInit, unScannable, radar_sight;
+  uint DFMFlags;
+  flagdef Stunned : DFMFlags, 0;
+  flagdef PossessImmune : DFMFlags, 1;
+  flagdef StunSoft : DFMFlags, 2;
+  flagdef Dazed : DFMFlags, 3;
+  flagdef PoisonResist : DFMFlags, 4;
+  flagdef StunResist : DFMFlags, 5;
+  flagdef Possessed : DFMFlags, 6;
+  flagdef Large : DFMFlags, 7;
+  flagdef NoRadar : DFMFlags, 8;
+  
+  override void Die(Actor source, Actor inflictor, int dmgFlags, Name MeansOfDeath)
+  {
+    super.Die(source, inflictor, dmgFlags, MeansOfDeath);
+	
+	A_StopSound(24);
+  }
+  
+  override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod)
+  {
+    if(!source)
+	  return Super.DamageMobj(inflictor, source, damage, mod);
+	  
+	if(mod == "Poison")
+	{
+	  if(bPoisonResist)
+	    damage = 0;
+	  
+	  if(ApplyDamageFactor("Poison", 10) > 0)
+	  {
+	    bool left = random(0,1);
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BBLLD0"), STYLE_NONE, SPF_ROLL|SPF_RELATIVE, random(24,35), random(6,9), 0,
+		random(-radius, radius), frandom(-radius, radius), frandom(8, height - 8), velz: frandom(0.0,0.8), fadestepf: 0.0, startroll: random(0,359), rollvel: left ? -2.0 : 2.0);
+	  }
+	}
+	
+	if(!bStunResist && !stunInit && mod == "Stun")
+	{
+	  stunInit = true;
+	}
+	
+	return Super.DamageMobj(inflictor, source, damage, mod);
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(stunInit)
+	{
+	  if(health <= 0)
+	    A_Die("Shock");
+	  else
+	  {
+	    stunInit = false;
+	    SetStateLabel("Stun");
+	  }
+	}
+  }
+
+  Default
+  {
+    PainChance "Poison", 256;
+    PainChance "Sting", 0;
+    PainChance "Stun", 256;
+	DamageFactor "Wave", 1.0;
+	MaxStepHeight 32;
+	MaxDropOffHeight 64;
+    //$Color 4
+  }
+  
+  override void PostBeginPlay()
+  {
+    sHeight = self.Height;
+	StunTime = 0;
+	//console.printf("%d", sHeight);
+  }
+  
+  void A_GiveExp(int amount)
+  {
+    Actor xpg = Spawn("ExpGiver", pos);
+	if(xpg)
+	  ExpGiver(xpg).Amount = amount;
+  }
+  
+  void A_DazeEffect()
+  {
+    bNOPAIN = true;
+	bNOINFIGHTING = true;
+	bDazed = true;
+	A_GiveInventory("DazeToken", 1);
+	
+	let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  pmo.A_SetBlend("Orange", 0.13, 17);
+	  
+	if(target)
+	  angle = AngleTo(target);
+  }
+  
+  void A_EndDaze()
+  {
+    bNOPAIN = false;
+	bNOINFIGHTING = false;
+	bDazed = false;
+	A_TakeInventory("DazeToken", 1);
+  }
+  
+  void A_StunEffect()
+  {
+    bNOPAIN = true;
+	bNOINFIGHTING = true;
+	
+	if(!bStunSoft)
+	{
+	  A_SpawnItemEx("StunPrimary", zofs: self.height / 2);
+	  
+	  let itm = FindInventory("StunToken");
+	  if(itm)
+	    StunToken(itm).lifeTime = 210;
+		
+	  A_GiveInventory("StunToken", 1);
+	}
+	else
+	{
+	  let itm = FindInventory("StunTokenSoft");
+	  if(itm)
+	    StunTokenSoft(itm).lifeTime = 210;
+		
+	  A_GiveInventory("StunTokenSoft", 1);
+	}
+  }
+  
+  void A_ClearStun()
+  {
+    A_TakeInventory("StunToken", 1);
+	A_TakeInventory("StunTokenSoft", 1);
+	bStunned = false;
+	bStunSoft = false;
+	bNOPAIN = false;
+	bNOINFIGHTING = false;
+	StunTime = 0;
+  }
+  
+  Actor A_DoAimedMissile(String mType, Vector3 SpawnPos)
+  {
+    Actor msl;
+    double ang = self.angle; //Credit: Boondorl
+	double s = sin(ang);
+	double c = cos(ang);
+
+	Vector3 newPos = Vec3Offset(SpawnPos.x * c + SpawnPos.y * s, SpawnPos.x * s - SpawnPos.y * c, SpawnPos.z);
+
+    if(target && target is "DFPlayer")
+	{
+	  if(!DFPlayer(target).isDodging) //If target is player
+	  {
+	    msl = SpawnMissileXYZ(newPos, target, mType);
+		if(msl)
+		  msl.VelIntercept(target, -1);
+	  }
+	  else
+	  {
+	    SpawnMissileXYZ(newPos, target, mType);
+	  }
+	}
+	
+	else if(target) //If target isn't player
+	{
+	    msl = SpawnMissileXYZ(newPos, target, mType);
+		if(msl)
+		  msl.VelIntercept(target, -1);
+	}
+	
+	return msl;
+  }
+  
+  void A_TriggerBloodSplat(int distance)
+  {
+    let pmo = DFPlayer(players[consoleplayer].mo);
+	if(pmo && Distance3D(pmo) <= distance)
+	  pmo.BloodSplat();
+  }
+	
+  action state A_TNTDeath()
+  {
+    int type = random(0,1);
+	if(type == 1)
+	{
+	  ThrustThing(random(0,255), random(0,30), 0, 0);
+	  ThrustThingZ(0, random(80,127), 0, 0);
+	  DF_Monster(self).TNTDeath = true;
+	  return ResolveState("Death");
+	}
+	return ResolveState(null);
+  }
+  
+  void SetArmor(int value)
+  {
+    AP = value;
+	APMax = value;
+  }
+  
+  void SetCritical()
+  {
+    A_StartSound("Parry01", CHAN_7, 0, 1.0, 0.0);
+	A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BWAVA0"), STYLE_Add, SPF_RELATIVE, 35, 200,
+	zoff: self.height * 0.5, startalphaf: 1.0, fadestepf: 0.1, sizestep: 50);
+	A_SpawnParticleEx(Color(128, 64, 0), TexMan.CheckForTexture("EXPFA0"), STYLE_ADD, SPF_FULLBRIGHT, 50, 500, 0,
+	zoff: self.height * 0.5, startalphaf: 0.5, fadestepf: 0.05);
+	//Gotteem -- Critmark size is 1.3 if revert is needed
+	let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+	if(ev)
+	  ev.SetParry(1.0, 0.04, 0.02, 30); 
+  }
+  
+  void SetDrunk(double intensity, double zoom, double duration)
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo)
+	{
+      ShaderHandler ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+	  if(ev)
+	    ev.SetDrunk(intensity, zoom, duration);
+	}
+  }
+  
+  void SetParryWindow(bool on)
+  {
+    pOpen = on;
+  }
+  
+  void A_SpawnGore(string texName, double xofs, double yofs, double zofs, double xvel, double yvel, double zvel, int angle, int size, int lifeTime, double acelz = -0.05)
+  {
+    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture(texName),
+	STYLE_NONE, SPF_ROLL|SPF_RELATIVE|SPF_LOCAL_ANIM, lifeTime, size, angle,
+	xofs, yofs, zofs, xvel, yvel, zvel, accelz: acelz, startroll: random(0,359));
+  }
+  
+  void SpawnGibPile(double scale = 1.0)
+  {
+    string cls = String.Format("GibPile%d", random(1,4));
+    let actr = Spawn(cls, (pos.x, pos.y, floorz));
+	if(actr)
+	{
+	  actr.scale.x = scale;
+	  actr.scale.y = actr.scale.x * 0.83;
+	  actr.bSpriteFlip = random(0,1);
+	}
+  }
+  ////////////////////////////
+  //PARRYING nd SHIXTZ zzz
+  Actor flash;
+  void ParryFlash(double xofs, double yofs, double zofs, double time)
+  {
+    double c = cos(angle);
+	double s = sin(angle);
+	Vector3 spawnPos = Vec3Offset(xofs * c + yofs * s, xofs * s - yofs * c, zofs);
+	flash = Spawn("CounterFlash", spawnPos);
+	if(flash)
+	{
+	  flash.master = self;
+	  CounterFlash(flash).xw = xofs;
+	  CounterFlash(flash).yw = yofs;
+	  CounterFlash(flash).zw = zofs;
+	  CounterFlash(flash).duration = time;
+	}
+  }
+  
+  void ParryFlashPosition(int xofs, int yofs, int zofs)
+  {
+    if(flash)
+	{
+	  CounterFlash(flash).xw = xofs;
+	  CounterFlash(flash).yw = yofs;
+	  CounterFlash(flash).zw = zofs;
+	}
+  }
+  
+   void SetParryTime(int time)
+  {
+    parry_time = time + CVar.FindCVar("modf_parry").GetInt();
+  }
+  
+  
+  States
+  {
+	Decay:
+	  "####" "#" 0
+	  {
+	    if(self.TNTDeath)
+		  return A_Jump(256, 2);
+		return ResolveState(null);
+	  }
+	  "####" "#" 4;
+	  Goto Poof;
+	  "####" "#" 2 A_CheckFloor("Poof");
+	  Wait;
+	Poof:
+	  TNT1 A 0 A_KillChildren("Fire", KILS_KILLMISSILES);
+	  //TNT1 A 0 A_SpawnItemEx("BurnDeathAlt");
+	  Stop;
+  }
+}
+
+Class DF_Boss : DF_Monster
+{
+  int boss_StaggerBlock, boss_StaggerBlockMax, staggerTrigger, staggerTime, disrespect;
+  bool boss_staggered, boss_fisted, boss_weak, boss_can_counter;
+  double mDamp;
+  string hp_gfx;
+  
+  void ShowBossHP()
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  DFPlayer(pmo).boss_ptr = self;
+  }
+  
+  void HideBossHP()
+  {
+    let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  DFPlayer(pmo).boss_ptr = null;
+  }
+  
+  void StaggerFatal()
+  {
+    let ev = ShaderHandler(EventHandler.Find("ShaderHandler"));
+	if(ev)
+	{
+	  ev.SetParry(0.0, 0.0, 0.02, 30); 
+	  ev.ig_time = 22;
+	}
+  }
+  
+  Default
+  {
+    //$Category "Enemies/Boss"
+    //$Color 4
+	PainChance "Poison", 0;
+    PainChance "Sting", 0;
+    PainChance "Stun", 256;
+	DamageFactor "Wave", 0.2;
+	MaxStepHeight 40;
+	MaxDropOffHeight 64;
+	+DF_Monster.PossessImmune
+	+DF_Monster.NoRadar
+  }
+}
+
+Class Duel_Prep : Inventory
+{
+  int bullet, ht_max, he_max, shell, gas, void_shell, heavy_bullet;
+  override void AttachToOwner(Actor other)
+  {
+    if(other)
+	{
+	  other.GiveInventory("Skill_Exit", 1);
+	  DFPlayer(other).bDuel_Buff = true;
+	  DFPlayer(other).DoHeal(300);
+	  DFPlayer(other).armorStack = DFPlayer(other).armorMax;
+	  
+	  let bl = other.FindInventory("BulletLoaded");
+	  let ht = other.FindInventory("PistolAmmo");
+	  let he = other.FindInventory("PierceAmmo");
+	  let sh = other.FindInventory("ShellLoaded");
+	  let gs = other.FindInventory("GasAmmo");
+	  let vs = other.FindInventory("VoidLoaded");
+	  let hb = other.FindInventory("HeavyLoaded");
+	  
+	  if(bl)
+	    bullet = bl.amount;
+		
+	  if(ht)
+	    ht_max = ht.MaxAmount;
+		
+	  if(he)
+	    he_max = he.MaxAmount;
+		
+	  if(sh)
+	    shell = sh.amount;
+		
+	  if(gs)
+	    gas = gs.amount;
+		
+	  if(vs)
+	    void_shell = vs.amount;
+		
+	  if(hb)
+	    heavy_bullet = hb.amount;
+	}
+	
+    Super.AttachToOwner(other);
+  }
+  
+  override void DetachFromOwner()
+  {
+    let pmo = players[consoleplayer].mo;
+    if(pmo)
+	{
+	  pmo.TakeInventory("Skill_Exit", 1);
+	  DFPlayer(pmo).bDuel_Buff = false;
+	  
+	  let bl = pmo.FindInventory("BulletLoaded");
+	  let ht = pmo.FindInventory("PistolAmmo");
+	  let he = pmo.FindInventory("PierceAmmo");
+	  let sh = pmo.FindInventory("ShellLoaded");
+	  let gs = pmo.FindInventory("GasAmmo");
+	  let vs = pmo.FindInventory("VoidLoaded");
+	  let hb = pmo.FindInventory("HeavyLoaded");
+	  
+	  if(bl)
+	    bl.amount = bullet;
+		
+	  if(ht)
+	    ht.MaxAmount = ht_max;
+		
+	  if(he)
+	    he.MaxAmount = he_max;
+		
+	  if(sh)
+	    sh.amount = shell;
+		
+	  if(gs)
+	    gs.amount = gas;
+		
+	  if(vs)
+	    vs.amount = void_shell;
+		
+	  if(hb)
+	    hb.amount = heavy_bullet;
+	}
+	
+    Super.DetachFromOwner();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+  }
+}
+
+Class BlockStackRefill : Inventory
+{
+  int block_amt;
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner && owner is "DF_Boss")
+	{
+	  if(block_amt < 100 && DF_Boss(owner).boss_StaggerBlock < 100)
+	  {
+	    DF_Boss(owner).boss_StaggerBlock += 4;
+		block_amt += 4;
+	  }
+	  else if(block_amt >= 100 || DF_Boss(owner).boss_StaggerBlock >= 100)
+	    Destroy();
+	}
+  }
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class BlockStackRefill_Partial : Inventory
+{
+  int block_amt;
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner && owner is "DF_Boss")
+	{
+	  if(block_amt < 75 && DF_Boss(owner).boss_StaggerBlock < 75)
+	  {
+	    DF_Boss(owner).boss_StaggerBlock += 5;
+		block_amt += 5;
+	  }
+	  else if(block_amt >= 75 || DF_Boss(owner).boss_StaggerBlock >= 75)
+	    Destroy();
+	}
+  }
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class CounterFlash : Actor
+{
+  double xw, yw, zw, duration;
+  
+  override void PostBeginPlay()
+  {
+    let actr = Spawn("CounterFlash_FX", pos);
+	if(actr)
+	{
+	  CounterFlash_FX(actr).duration = duration;
+	  actr.master = self;
+	}
+	  
+    Super.BeginPlay();
+  }
+  
+  override void Tick()
+  {
+	if(master && master.target)
+	  A_Warp(AAPTR_MASTER, xw, yw, zw, AngleTo(master.target), WARPF_ABSOLUTEANGLE|WARPF_NOCHECKPOSITION|WARPF_COPYINTERPOLATION);
+	  
+	Super.Tick();
+  }
+  
+  Default
+  {
+    +NOINTERACTION
+  }
+  
+  States
+  {
+    Spawn:
+	  TNT1 A -1;
+	  Stop;
+  }
+}
+
+Class CounterFlash_FX : Actor
+{
+  double duration, fade_step;
+  double step_x, step_y;
+  
+  override void PostBeginPlay()
+  {
+    fade_step = 2.0 / duration; //duration
+	if(duration > 6)
+	{
+	  step_x = 1.6;
+	  step_y = 0.15;
+	}
+	else if(duration <= 6)
+	{
+	  step_x = 1.6;
+	  step_y = 0.2;
+	  scale.x = 6.0;
+	  scale.y = 0.75;
+	}
+	//else
+	  //step_y = 0.1;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(scale.x < 12.0)
+	  scale.x *= step_x;
+	
+	if(scale.y > 0.2)
+	  scale.y -= step_y;
+	
+	A_Warp(AAPTR_MASTER, flags: WARPF_ABSOLUTEANGLE|WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE);
+  }
+  
+  Default
+  {
+	Alpha 0.0;
+    RenderStyle "AddShaded";
+	StencilColor "994C00";
+    +BRIGHT
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+      CFLF AA 1 A_FadeIn(0.5);
+	  CFLF A 0
+	  {
+	    Alpha = 2.0;
+		SetShade("FFFF66");
+	  }
+	  CFLF A 1
+	  {
+	    A_FadeOut(fade_step);
+	  }
+	  Wait;
+  }
+}
+
+Class CounterFlash2 : Actor
+{
+  double xw, yw, zw, duration, fade_step;
+  
+  override void PostBeginPlay()
+  {
+    fade_step = 2.0 / duration;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(scale.x < 12.0)
+	  scale.x *= 1.4;
+	
+	if(scale.y > 0.2)
+	  scale.y -= 0.1;
+	
+	if(master && master.target)
+	  A_Warp(AAPTR_MASTER, xw, yw, zw, AngleTo(master.target), WARPF_ABSOLUTEANGLE|WARPF_NOCHECKPOSITION|WARPF_COPYINTERPOLATION);
+  }
+  
+  Default
+  {
+	Alpha 0.0;
+    RenderStyle "AddShaded";
+	StencilColor "994C00";
+    +BRIGHT
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+      CFLF AAAAA 1 A_FadeIn(0.1);
+	  CFLF A 0
+	  {
+	    Alpha = 2.0;
+		SetShade("FFFF66");
+	  }
+	  CFLF A 1
+	  {
+	    A_FadeOut(fade_step);
+	  }
+	  Wait;
+  }
+}
+
+Class ExpGiver : Actor
+{
+  int amount;
+  
+  Default
+  {
+    +NOINTERACTION
+  }
+  
+  States
+  {
+    Spawn:
+	  TNT1 A 35;
+	  TNT1 A 1
+	  {
+	    let cp = players[consoleplayer].mo;
+		if(cp)
+		  DFPlayer(cp).GiveExaltation(amount);
+	  }
+	  Stop;
+  }
+}
+
+Class ExplodeWarning : Actor
+{
+  int delay;
+  Default
+  {
+    +BRIGHT
+    +FLATSPRITE
+	+NOINTERACTION
+	RenderStyle "AddStencil";
+	StencilColor "Red";
+	Alpha 0.0;
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  BWAV AAAAA 1 A_FadeIn(0.2);
+	  BWAV A 1
+	  {
+	    if(delay <= 0)
+		  return ResolveState("Death");
+		  
+		delay--;
+		
+		return ResolveState(null);
+	  }
+	  Wait;
+	Death:
+	  TNT1 A 1;
+	  Stop;
+  }
+}
+
+Class FlashBang : Inventory
+{
+  override void AttachToOwner(Actor user)
+  {
+    user.A_SetBlend("snow", 1.0, 105);
+	
+    Super.AttachToOwner(user);
+  }
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+    Destroy();
+  }
+}
+
+Class mMissileTarget : Actor
+{
+  Default
+  {
+    Radius 4;
+	Height 4;
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 4;
+	  Stop;
+  }
+}
+
+Class Decoy : Actor
+{
+  Default
+  {
+    -SOLID
+	+NOGRAVITY
+	-SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A -1;
+	  Stop;
+  }
+}
+
+Class HitboxDebug : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	scale.x = cvar.findcvar("val_a").getfloat();
+	scale.y = cvar.findcvar("val_b").getfloat();
+	
+	if(master)
+	  SetOrigin(master.pos, 0);
+  }
+  Default
+  {
+    RenderStyle "Translucent";
+	Alpha 0.5;
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  HTBX A -1;
+	  Stop;
+  }
+}
+
+Class BossDefeatSndActor : Actor
+{
+  String snd;
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 350 NoDelay A_StartSound(snd, CHAN_AUTO, 0, 1.0, ATTN_NONE);
+	  Stop;
+  }
+}
+
+Class CasterAura : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(master)
+	{
+	  SetOrigin(master.pos, false);
+	  sprite = master.sprite; 
+	  frame = master.frame;
+	  scale = master.scale + (0.5,0.5);
+	  angle = master.angle;
+	}
+  }
+  
+  Default
+  {
+    +BRIGHT
+    +NOINTERACTION
+	RenderStyle "Fuzzy";
+  }
+}
+
+Class MonsterWeakAura : Actor
+{
+  int a;
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	alpha = 0.075 + (0.075 * Cos(a*8));
+	
+	if(a == 360)
+	  a = 0;
+	
+	a++;
+	
+	if(master)
+	{
+	  SetOrigin(master.pos, false);
+	  sprite = master.sprite; 
+	  frame = master.frame;
+	  scale = master.scale;
+	  angle = master.angle;
+	}
+  }
+  
+  Default
+  {
+    +BRIGHT
+    +NOINTERACTION
+	RenderStyle "AddStencil";
+	StencilColor "Red";
+  }
+}
+
+Class MonsterFade : Actor
+{
+  Default
+  {
+    +NOINTERACTION
+	RenderStyle "Translucent";
+  }
+  States
+  {
+    Spawn:
+	  "####" "#" 1 A_FadeOut(0.07);
+	  Wait;
+  } 
+}
+
+Class MonsterGlitch : Actor
+{
+  int offs, offz;
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	if(offs == 0)
+	  offs = 8;
+	  
+	if(offz == 0)
+	  offz = 1;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(master)
+	{
+	  angle = master.angle;
+	  SetOrigin(master.pos + (random(-offs,offs), random(-offs,offs), random(-offz,offz)), false);
+	}
+  }
+  
+  Default
+  {
+	+NOINTERACTION
+	RenderStyle "Add";
+  }
+  States
+  {
+    Spawn:
+	  "####" "#" 1 A_FadeOut(0.1);
+	  Wait;
+  }
+}
+
+Class EliteVFX : Inventory
+{
+  int fTic;
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(!owner)
+	  Destroy();
+	
+	if(owner && owner.health <= 0)
+	  Destroy();
+	
+	if(fTic > 3)
+	{
+	  if(owner)
+	    owner.A_SpawnItemEx("MonsterFade", random(-4,4), random(-4,4), random(0,3), flags: SXF_TRANSFERSCALE|SXF_TRANSFERSPRITEFRAME);
+		
+	  fTic = 0;
+	}
+	else
+	  fTic++;
+  }
+}
+
+Class RageFade : Actor
+{
+  Default
+  {
+    Alpha 0.78;
+    +NOINTERACTION
+	RenderStyle "AddShaded";
+	StencilColor "Red";
+  }
+  States
+  {
+    Spawn:
+	  "####" "#" 1 A_FadeOut(0.07);
+	  Wait;
+  } 
+}
+
+Class AlphaDrain : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	  owner.A_FadeOut(0.05);
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  } 
+}
+
+Class AlphaDrainClamp : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	  owner.A_FadeOut(0.05, FTF_CLAMP);
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  } 
+}
+
+Class AlphaReset : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner && owner.alpha < 1.0)
+	  owner.alpha += 0.05;
+	else
+	  Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  } 
+}
+
+Class DazeToken : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner && !level.isFrozen() && GetAge() % 3 == 0)
+	  for(int i = 0; i < random(1,4); i++)
+	    owner.A_SpawnParticleEx(
+	    "FFFFFF",
+		TexMan.CheckForTexture("DAZEA0"),
+		STYLE_ADD, SPF_FULLBRIGHT, 3, random(16,28),
+		xoff: random(owner.radius * -0.8, owner.radius * 0.8),
+		yoff: random(owner.radius * -0.8, owner.radius * 0.8),
+		zoff: random(owner.height * 1.1, owner.height * 0.8),
+		startalphaf: frandom(0.6,1.0), fadestepf: frandom(0.0,0.1)
+	    );
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class ExaltationSpark : Actor
+{
+  int fRate;
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+	
+	fRate = random(2,4);
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() > 20)
+	  A_FadeOut(0.05);
+  }
+  Default
+  {
+    Scale 0.4;
+	Alpha 0.8;
+    RenderStyle "Add";
+	+FORCEXYBILLBOARD
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  SPFL G 4 A_SetTics(fRate);
+	  SPFL G 4 Bright A_SetTics(fRate);
+	  Loop;
+  }
+}
+
+Class GasDeath : Actor
+{
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 1 NoDelay
+	  {
+	    let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(16,32)));
+		if(actr)
+		{
+		  actr.A_SetScale(1.5, 1.0);
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+		
+		A_SpawnItemEx("BloodFountain3");
+	  }
+	  TNT1 AA 0
+	  {
+	    let actr = Spawn("BloodHaze", pos + (random(-8,8), random(-8,8), random(16,32)));
+		if(actr)
+		{
+		  actr.A_SetScale(1.5, 1.0);
+		  actr.vel = (random(1,2), random(-2,2), random(1,2));
+		}
+		
+		for(int i = 0; i < 3; i++)
+		{
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BL1_1"),
+		  STYLE_NONE, SPF_ROLL|SPF_RELATIVE|SPF_LOCAL_ANIM, 23, random(224,256), random(0,359),
+		  random(-48,48), random(-24,24), random(8,24), random(-2,2), random(-2,2), random(2,4), accelz: -0.3, startroll: random(0,359));
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BL2_1"),
+		  STYLE_NONE, SPF_ROLL|SPF_RELATIVE|SPF_LOCAL_ANIM, 17, random(224,256), random(0,359),
+		  random(-48,48), random(-24,24), random(8,24), random(-2,2), random(-2,2), random(2,4), accelz: -0.3, startroll: random(0,359));
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BL3_1"),
+		  STYLE_NONE, SPF_ROLL|SPF_RELATIVE|SPF_LOCAL_ANIM, 17, random(224,256), random(0,359),
+		  random(-48,48), random(-24,24), random(8,24), random(-2,2), random(-2,2), random(2,4), accelz: -0.3, startroll: random(0,359));
+		  
+		}
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx(String.Format("CrushGore%d", random(1,4)));
+		A_StartSound("BODSPLT5", CHAN_AUTO, volume: 0.43);
+	  }
+	  TNT1 A 1 //Spawn arms
+	  {
+		A_SpawnItemEx("MeatChunk1", random(-20,20), random(-20,20), random(4,32), frandom(2.0,5.0), zvel: random(5,9), angle: random(0,359));
+	  }
+	  TNT1 A 1 //Spawn Legs
+	  {
+		A_SpawnItemEx("MeatChunk2", random(-20,20), random(-20,20), random(4,32), frandom(2.0,5.0), zvel: random(5,9), angle: random(0,359));
+		A_SpawnItemEx("MeatChunk3", random(-20,20), random(-20,20), random(4,32), frandom(2.0,5.0), zvel: random(5,9), angle: random(0,359));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("MeatChunk4", random(-20,20), random(-20,20), random(4,32), frandom(2.0,5.0), zvel: random(5,9), angle: random(0,359));
+		A_SpawnItemEx("MeatChunk5", random(-20,20), random(-20,20), random(4,32), frandom(2.0,5.0), zvel: random(5,9), angle: random(0,359));
+		A_SpawnItemEx("MeatChunk6", random(-20,20), random(-20,20), random(4,32), frandom(2.0,5.0), zvel: random(5,9), angle: random(0,359));
+		A_SpawnItemEx("MeatChunk7", random(-20,20), random(-20,20), random(4,32), frandom(2.0,5.0), zvel: random(5,9), angle: random(0,359));
+	  }
+	  Stop;
+  }
+}
+
+Class SoundDummy : Actor
+{
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 350;
+	  Stop;
+  }
+}

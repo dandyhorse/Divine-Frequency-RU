@@ -1,0 +1,234 @@
+KO- 
+74_!
+64$"
+64()
+64()
+SPTR0
+SNAM
+Init
+Level_Alter
+Alter_Level_01
+Alter_Level_02
+Radiation
+Light_Wheel
+UpdateMap
+BathroomLight
+Cutscene_Skip
+Wits_Update
+STRL
+dev_debug
+GenericScreenStuff
+Clean
+HBeat01
+Saver
+Autosave
+MP2_A1a
+DFPlayer
+MusicFade
+SetLocation
+Unknown
+Weather
+SetPrecipitationType
+Thunderstorm
+NoLight
+SOLID
+Key_Train
+StrOrigin
+StrToken
+Vodka
+Cells
+M2_DreamDone
+SetMapMenu
+Graphics/Maps/Map_03.png
+Alter_Level_02
+D_NULL
+GiveExaltation
+InjectorUpgrade
+SetMap
+Utility
+Graphics/Maps/Map_02u_UT1.png
+M2_DuelExit
+M2_BuriedDone
+Alter_Level_01
+Lower Level
+Graphics/Maps/Map_02.png
+DustSpawnerBudget
+Elev_TP
+Parking
+Graphics/Maps/Map_02_P.png
+Elev_03
+MP2_A1c
+DialogIcon
+ActorDudeBro
+Ready
+RoseObj
+MoodCandle
+MoodCandle2
+MoodCandle4
+F_CARP52
+F_CARP01
+M_BRK15
+F_TILE39
+YellowMushroom
+M_MEAT07
+Key_Chicken
+Giant
+PATERN18
+Grass
+Grass5
+Grass4
+Grass3
+Tick
+M_MEAT06
+MoodCandle3
+BuildRadiation
+ShowPicture
+Pic_03
+M2_SixDoc
+DoorTP1
+DoorTP2
+Upper Levels
+MidZone
+Lower Levels
+LowZone
+MidZoneFX
+Anom_03
+ACS_FONT
+Upper Level\nResonance Proximity: Caution
+Shore00
+Locked04
+It's stuck...
+TutorialKey
+Unlock5
+Unlocked.
+Locked01
+The door is locked.
+Key_Coin
+Vending
+SuperSoda
+M2_BellPhrase1
+M2_BellPhrase2
+M2_BellPhrase3
+All three phrases have been discovered.
+Hallway B1
+Graphics/Maps/Map_02u_HB1.png
+Data Not Found
+Graphics/Maps/Map_02_Ew.png
+MP2_A4
+MP2_A3
+Hallway A3
+Graphics/Maps/Map_02_HA3.png
+HighZone
+MP2_A1b
+Hallway A2
+Graphics/Maps/Map_02_HA2.png
+Laugh01
+Unlock1
+The door is locked from the other side...
+Locked02
+Something is blocking the door from the other side...
+Crow
+BirdSee1
+Anom_01
+Lower Levels\nResonance Proximity: >?Error!#
+SetObjective
+$Obj_03
+$Obj_04
+$Obj_05
+Death
+Elev_02
+LSw_1
+Follow
+MP2_A3b
+MP2_A3c
+MP2_A3d
+LSw_0
+Spawn
+Assembly Hall
+Graphics/Maps/Map_02_AS.png
+Elev_01
+Elev_04
+Hallway A1
+Graphics/Maps/Map_02_HA1.png
+No response...
+Elev_TP2
+Lobby
+Graphics/Maps/Map_02u_LB.png
+ELevBell
+It won't budge...
+MP2_A1d
+UpdateMap
+BestiaryPack04
+ACS_UpdateItem
+(2) Bestiary files added.
+Note3
+CardBoardBoxShort
+New map file added.
+Keycard
+Exhibit0
+FireworkWeak
+DoorTP11
+Volt
+Bag_Up
+Key_Bell
+Tome14
+SetHUD
+Graphics/Maps/Map_00.png
+AntidoteRun
+M2_FridgeQuest
+GoatDemon
+ARPickup
+AlphaDrain
+Wing01
+Key_CabinetRoom
+Door05
+Key_LevelUpRoom
+Door02a
+Light_Wheel
+Renovated Courtyard
+Graphics/Maps/Map_02u_CY.png
+The Crossroads has now awakened.
+EyeMark_Basic
+Ladder2
+Act2_In1
+Act2_In2
+SkipCutscene
+Cutscene_Skip
+Entering\nAct II - Pure, Naked Minds
+SetHud
+Security Room
+Graphics/Maps/Map_02u_SC.png
+Hallway B3
+Graphics/Maps/Map_02u_HB3.png
+Nothing happened...
+FRIENDLY
+WitToken
+DetectAmbush
+BeginStat
+PhyToken
+Main Office
+Graphics/Maps/Map_02_OF.png
+File Room A
+Graphics/Maps/Map_02_FRA.png
+File Room B
+Graphics/Maps/Map_02_FRB.png
+Office C
+Graphics/Maps/Map_02_OFC.png
+Data Corrupted
+Graphics/Maps/Map_02_Q1.png
+Graphics/Maps/Map_02_UT1.png
+Office A
+Graphics/Maps/Map_02_OFA.png
+Graphics/Maps/Map_02_Q2.png
+Graphics/Maps/Map_02_HA1_b.png
+Hallway B2
+Graphics/Maps/Map_02u_HB2.png
+Gallery A
+Graphics/Maps/Map_02u_GA1.png
+Gallery B
+Graphics/Maps/Map_02u_GA2.png
+Shop
+Graphics/Maps/Map_02u_SH.png
+Graphics/Maps/Map_02u_UT.png
+MINI
+ACSe[

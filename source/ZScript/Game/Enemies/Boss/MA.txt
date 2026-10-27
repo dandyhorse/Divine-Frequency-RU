@@ -1,0 +1,3246 @@
+Class MA : DF_Boss //15987
+{
+  //Exclusive --
+  Actor fireball_ptr, bigball;
+  bool aura;
+  bool combo_stop; //Prevent attack chain
+  bool combo_limit; //Reduce branching possibility
+  bool stun_left, stun_right; //Directional guide for stagger
+  bool first_brawl;
+  bool first_stagger, phase2_intro, phase2, phase2_ab5, spin_empower, true_hit;
+  int leap_delay;
+  double leap_xy, leap_z;
+  int phyThres, staggerThres;
+  int spd_gp;
+  int full_stagger;
+  Vector3 tp_start, tp_end;
+  //random shit
+  int a2_cd, a3_cd, a7_cd;
+  bool w_crank, w_taunt, p2_opening, air_horn, tbag, banana_deth;
+  
+  int debug_time;
+  
+  override void BeginPlay()
+  {
+    mDamp = 1.0;
+	boss_StaggerBlock = 100;
+	boss_StaggerBlockMax = 100;
+	hp_gfx = "BossDef1";
+	//testing only
+	//boss_can_counter = true;
+	//ShowBossHP();
+	//phase2 = true; //test
+	//boss_StaggerBlock = 0; //test
+	//aura = true; //test 
+	//boss_weak = true; //test
+	//full_stagger = 2; //test
+  }
+  
+  override void Die(Actor source, Actor inflictor, int dmgFlags, Name MeansOfDeath)
+  {
+    SetMusicVolume(1.0);
+	
+	if(source && source is "DFPlayer" && source.health > 0)
+	{
+	  //source.A_GiveInventory("M1_ChampDead", 1);
+	}
+	
+	super.Die(source, inflictor, dmgFlags, MeansOfDeath);
+  }
+  
+  void CalculateLeap(double distance)
+  {
+    double dist_modf = distance - 300;
+	leap_xy = 12.0 + (dist_modf * 0.04);
+	leap_z = 10.0 + (dist_modf * 0.0033);
+	leap_delay = int(20.0 - (dist_modf * 0.005));
+  }
+  
+  void LeapSpike()
+  {
+    for(int i = 0; i < 360; i += 45)
+	{
+	  Vector3 sPos = Vec3Offset(88 * cos(i), 88 * sin(i), -14);
+	  let actr = Spawn("FistSpike", sPos);
+	  if(actr)
+	  {
+		actr.angle = i;
+		actr.pitch = 50;
+	  }
+		  
+	  sPos = Vec3Offset(132 * cos(i - 22.5), 132 * sin(i - 22.5), -18);
+	  actr = Spawn("FistSpike", sPos);
+	  if(actr)
+	  {
+		actr.angle = i - 22.5;
+	    actr.pitch = 50;
+	  }
+		  
+	  sPos = Vec3Offset(176 * cos(i), 176 * sin(i), -14);
+	  actr = Spawn("FistSpike2", sPos);
+	  if(actr)
+	  {
+		actr.angle = i;
+		actr.pitch = 50;
+	  }
+		  
+	  sPos = Vec3Offset(220 * cos(i - 22.5), 220 * sin(i - 22.5), -24);
+	  actr = Spawn("FistSpike", sPos);
+	  if(actr)
+	  {
+		actr.angle = i - 22.5;
+		actr.pitch = 50;
+	  }
+		  
+	  sPos = Vec3Offset(264 * cos(i), 264 * sin(i), -14);
+	  actr = Spawn("FistSpike3", sPos);
+	  if(actr)
+	  {
+		actr.angle = i;
+		actr.pitch = 50;
+	  }
+	}
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	//console.printf("%d", distance2d(players[consoleplayer].mo));
+	//console.printf("Ability1:%d Ability2:%d\nAbility3:%d Ability4:%d\n", 0, a2_cd, a3_cd, 0);
+	
+	if(InStateSequence(CurState, ResolveState("Ability6Cycle")))
+	{
+	  //console.printf("t: %d", debug_time);
+	  debug_time++;
+	}
+	
+	if(health <= 0)
+	  return;
+	  
+	if(aura)
+	  A_SpawnItemEx("RageFade", random(0,4), random(-4,4), random(0,3), flags: SXF_TRANSFERSCALE|SXF_TRANSFERSPRITEFRAME);
+	
+	if(mDamp < 1.0)
+	{
+	  mDamp += 0.01;
+	  SetMusicVolume(mDamp);
+	}
+
+	if(a2_cd > 0)
+	  a2_cd--;
+	 
+	if(a3_cd > 0)
+	  a3_cd--;
+	  
+	if(a7_cd > 0)
+	  a7_cd--;
+	  
+	if(parry_time > 0)
+	  parry_time--;
+	
+	if(staggerTrigger == 1)
+	{
+	  SetStateLabel("Stagger");
+	  staggerTrigger--;
+	}
+	else if(staggerTrigger > 0)
+	  staggerTrigger--;
+	   
+	if(staggerTime == 1)
+	{
+	  SetStateLabel("StaggerFinish");
+	  staggerTime--;
+	}
+	else if(staggerTime > 0)
+	  staggerTime--;
+  }
+  
+  override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle) 
+  {
+    if(!phase2)
+	{
+	  if(parry_time > 0 && target && Distance2D(target) <= 777 && (mod == "ShotGib" || mod == "SGShock"))
+	  {
+	    damage *= 0.1;
+	    staggerTrigger = 1;
+	    vel = (0,0,0);
+	  }
+	  else if(parry_time <= 0 && !boss_staggered)
+	  {
+	    if(players[consoleplayer].mo && DFPlayer(players[consoleplayer].mo).bPhyOrigin)
+	    {
+		  damage *= 0.1;
+		  DirectDamage(mod);
+	    }
+	    else
+	    {
+	      if(source && source is "DFPlayer")
+	      {
+		    damage *= 0.1;
+	        GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	        if(mod != "None" && ev)
+	          ev.SetShieldIcon();
+		  }
+	    }
+	  }
+	
+	  if(boss_staggered)
+	  {
+	    if(mod == "Gauntlet")
+	      damage *= 2.3;
+		else if(mod == "Explode")
+		  damage *= 6.9; //lol
+		else if(mod == "Trauma")
+		  damage *= 46.0;
+	    else
+	      damage *= 6.3;
+		  
+	    staggerTime = 2;
+	  
+	    if(source && source is "DFPlayer")
+	      source.GiveBody(source.GetMaxHealth(True));
+	  }
+	}
+	else //Phase 2 type shit
+	{
+	  if(mod == "Pen")
+	  {
+		damage *= 2.0;
+		if(damage > 360)
+		{
+		  damage *= 1.5;
+		  staggerThres = 400;
+		  
+		  if(source && source is "DFPlayer")
+	        DFPlayer(source).DoHeal(50);
+			
+		  if(damage >= 700) //Triggered by a riposte
+		    damage = 300;
+		}
+		damage = clamp(damage, 0, 600);
+	  }
+	  
+	  if(mod == "Explode")
+	    damage *= 0.48;
+		
+	  damage *= 1.9;
+	  staggerThres += ApplyDamageFactor(mod, damage);
+	  if(staggerThres >= 400)
+	  {
+	    staggerTrigger = 1;
+	    vel = (0,0,0);
+		staggerThres = 0;
+	  }
+	}
+	
+    return super.DamageMobj(inflictor, source, Damage, mod, flags, angle);
+  }
+  
+  void DirectDamage(string dam_type)
+  {
+    if(dam_type == "Trauma")
+	  boss_StaggerBlock -= 12;
+	else if(dam_type == "Explode")
+	  boss_StaggerBlock -= 34;
+	else if(dam_type == "ShotGib")
+	  boss_StaggerBlock -= 3;
+	  
+	if(boss_StaggerBlock <= 0 && !CheckInventory("BlockStackRefill", 1))
+	  staggerTrigger = 1;
+  }
+  
+  void ParryImpact(double dir)
+  {
+    //Visual Effects //
+	A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_Add, SPF_RELATIVE, 10, 300, 0,
+	16, 0, 100, -10, dir, startalphaf: 2.0, sizestep: 50);
+	for(int i = 0; i < 12; i++)
+	{
+	  //Smokez
+	  bool left = random(0,1);
+	  A_SpawnParticleEx("A0A0A0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+	  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 25, random(128,278), 0,
+	  36, left ? random(-88,-32) : random(32,88), random(0,16), frandom(4.0,6.0),
+	  left ? frandom(-3.0,-2.0) : frandom(2.0,3.0), frandom(-1.0,2.0),
+	  startalphaf: frandom(0.6,0.7), sizestep: -0.5, startroll: random(0,359), rollvel: Left ? -0.5 : 0.5, rollacc: Left ? 0.02 : -0.02);
+	  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+	  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, random(128,278), 0,
+	  random(24,64), random(-64,64), 0,
+	  frandom(-1.0,1.0), frandom(-1.0,1.0), frandom(-1.0,1.0),
+	  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+	  //Tiny Flares
+	  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 60, 10, random(-45,45),
+	  0, 0, 100, frandom(8.0,14.0), 0, frandom(0.0, 10.0), accelz: -0.5, startalphaf: 2.0, fadestepf: 0.0);
+	  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 60, 10, random(-45,45),
+      0, 0, 100, frandom(8.0,14.0), 0, frandom(0.0, 10.0), accelz: -0.5, startalphaf: 2.0, fadestepf: 0.0);
+	  //Sparks
+      int pitch = random(-32,32);
+	  int ang = angle + random(-45,45);
+	  Vector3 newPos = random(64,128) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch));
+	  Vector3 basePos = Vec3Offset(64 * cos(ang), 64 * sin(ang), 100);
+	  Vector3 newVel = 0.2 * newPos;
+	  Actor puff = Spawn("CrabSpark",  basePos + (random(24,32) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch))));
+	  if(puff)
+	  {
+		puff.scale = (1.0,1.0);
+		puff.vel = newVel;
+	  }
+	}
+  }
+
+  Default
+  {
+	Health 2500;
+	Radius 40;
+	Height 182;
+	Speed 5;
+	YScale 0.83;
+	PainChance 0;
+	MaxTargetRange 1024;
+	MeleeRange 114;
+	MissileChanceMult 0.0625;
+	DamageFactor "Acid", 0.0;
+	DamageFactor "Energy", 0.0;
+	DamageFactor "Trauma", 0.2;
+	DamageFactor "Explode", 0.2;
+	DamageFactor "ShotGib", 0.3;
+	DamageFactor "SGShock", 0.1;
+	DamageFactor "Void", 0.001;
+	DamageFactor "Poison", 0.0;
+	DamageFactor "Pen", 0.15;
+	DamageFactor "MeleeLight", 0.2;
+	DamageFactor "HeavyCombo", 0.15;
+	Tag "Mirrored Anatomy";
+	Monster;
+	+BOSS
+	+DONTTHRUST
+	+DROPOFF
+	+NOINFIGHTING
+	+NOBLOOD
+	+DF_Monster.StunResist
+	+DF_Monster.NoRadar
+  }
+  States
+  {
+    Spawn:
+	  //TNT1 A 1 A_Look();
+	  //Wait;
+	Intro:
+	  TNT1 A 3;
+	  SKSM D 30
+	  {
+	    SetOrigin(pos + (0,0,1000), false);
+		let pmo = players[consoleplayer].mo;
+		if(pmo)
+		{
+		  let inv = pmo.FindInventory("Hands");
+		  if(inv)
+			Hands(inv).restrict_ = true;
+		}
+	  }
+	  SKGP IJ 3;
+	  SKGP KLM 1;
+	  TNT1 A 0 A_StartSound("MA_Imp11", CHAN_AUTO, volume: 1.0, attenuation: 0.2);
+	  SKGP N 1;
+	  SKGP OP 2;
+	  SKGP Q 1;
+	  SKGP R 1 A_CheckFloor("IntroLand");
+	 Wait;
+	IntroLand:
+	  SKGP R 7
+	  {
+	    A_FaceTarget();
+	    A_QuakeEx(1, 1, 2, 7, 0, 4096, "dsempty");
+		//Glowing crack
+		let crack = Spawn("CrackDecal8", pos + (0,0,6));
+		if(crack)
+		  crack.scale = (1.5,1.5);
+		  
+		let crack_bg2 = Spawn("CrackDecal5", pos + (0,0,2));
+		if(crack_bg2)
+		  crack_bg2.scale = (2.5,2.5);
+		
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPRK1_01"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 14, size: random(350,376), xoff: 88, startalphaf: 2.0, sizestep: 20);
+		for(int i = 0; i < 12; i++)
+		{
+		  //Smokez
+		  bool left = random(0,1);
+		  A_SpawnParticleEx("A0A0A0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 25, random(128,278), 0,
+		  36, left ? random(-88,-32) : random(32,88), random(0,16), frandom(4.0,6.0),
+		  left ? frandom(-3.0,-2.0) : frandom(2.0,3.0), frandom(-1.0,2.0),
+		  startalphaf: frandom(0.6,0.7), sizestep: -0.5, startroll: random(0,359), rollvel: Left ? -0.5 : 0.5, rollacc: Left ? 0.02 : -0.02);
+		  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, random(128,278), 0,
+		  random(24,64), random(-64,64), 0,
+		  frandom(-1.0,1.0), frandom(-1.0,1.0), frandom(-1.0,1.0),
+		  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+		  //Tiny Flares
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 32, 10, random(-45,45),
+		  random(24,64), 0, 48, frandom(18.0,24.0), 0, frandom(0.0, 10.0), startalphaf: 2.0);
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 32, 10, random(-45,45),
+		  random(24,64), 0, 48, frandom(18.0,24.0), 0, frandom(0.0, 10.0), startalphaf: 2.0);
+		  //Sparks
+		  int pitch = random(2,32);
+		  int ang = angle + random(-45,45);
+		  Vector3 newPos = random(64,128) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch));
+		  Vector3 basePos = Vec3Offset(64 * cos(ang), 64 * sin(ang), 0);
+		  Vector3 newVel = 0.2 * newPos;
+		  Actor puff = Spawn("CrabSpark",  basePos + (random(24,32) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch))));
+	      if(puff)
+		  {
+			puff.scale = (1.0,1.0);
+			puff.vel = newVel;
+		  }
+	    }
+	  }
+	 SKGP R 1
+	  {
+	    A_QuakeEx(0, 0, 9, 45, 0, 4096, "dsempty", QF_SCALEDOWN);
+		//Blast wave
+		let actr = Spawn("BlastDecal", pos + (0,0,20));
+		if(actr)
+		{
+		  actr.scale = (2.0,2.0);
+		  BlastDecal(actr).fade = 0.05;
+		  BlastDecal(actr).sc_mult = 1.3;
+		}
+		//More visual effects
+		for(int i = 0; i < 30; i++)
+		{
+		  //Smokez
+		  bool left = random(0,1);
+		  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, 450, random(0,359),
+		  512, 0, 0, 25.0, frandom(-1.0,1.0), -5.0,
+		  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+		}
+	  }
+	  SKGP R 56
+	  {
+	    for(int i = 0; i < 30; i++)
+		{
+		  bool left = random(0,1);
+		  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, 450, random(0,359),
+		  512, 0, 0, 25.0, frandom(-1.0,1.0), -5.0,
+		  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+		}
+	  }
+	  
+	  SKGP S 20;
+	  TNT1 A 0
+	  {
+	    A_StartSound("MA_Fite1", CHAN_AUTO, attenuation: 0.0);
+		if(players[consoleplayer].mo)
+		  players[consoleplayer].mo.ACS_NamedExecute("RoundOne");
+	  }
+	  SKR1 ABC 3;
+	  SKBW A 17;
+	  SKBW B 3;
+	  SKBW CDEFGHI 3;
+	  SKBW J 17;
+	  SKBW KLNOPQRST 3;
+	  TNT1 A 0
+	  {
+	    S_ChangeMusic("MPX_BOS1");
+		ShowBossHP();
+	  }
+	  SKBW A 1 A_Look();
+	  Wait;
+	See:
+	  TNT1 A 0
+	  {
+	    if(!tbag)
+		{
+	      let pmo = players[consoleplayer].mo;
+	      if(pmo && pmo.Health <= 0 && Health < 250)
+		  {
+		    tbag = true;
+		    return ResolveState("TBag");
+		  }
+		}  
+		return ResolveState(null);
+	  }
+	  TNT1 A 0 A_Jump(192, "Walk1");
+	  TNT1 A 0 A_Jump(256, "Walk1", "Walk3");
+	Walk1:
+	  SKW1 ABC 4
+	  {
+	    A_FaceTarget();
+	    Thrust(1.0, angle);
+		if(target && Distance2D(target) <= 128)
+		  return A_Jump(256, "Shove");
+		
+		return ResolveState(null);
+	  }
+	  TNT1 A 0
+	  {
+	    return A_Jump(128, "Missile");
+	  }
+	  SKW1 DEFG 4
+	  {
+	    A_FaceTarget();
+	    Thrust(1.0, angle);
+		if(target && Distance2D(target) <= 128)
+		  return A_Jump(256, "Shove");
+		
+		return ResolveState(null);
+	  }
+	  TNT1 A 0
+	  {
+	    return A_Jump(128, "Missile");
+	  }
+	  SKW1 HIJKLM 4
+	  {
+	    A_FaceTarget();
+	    Thrust(1.0, angle);
+		if(target && Distance2D(target) <= 128)
+		  return A_Jump(256, "Shove");
+		
+		return ResolveState(null);
+	  }
+	  Goto Missile;
+	Walk2:
+	  TNT1 A 0
+	  {
+	    if(!w_crank)
+		{
+		  w_crank = true;
+		  return ResolveState(null);
+		}
+		else
+		{
+		  w_crank = false;
+		  return ResolveState("Walk1");
+		}
+	  }
+	  TNT1 A 0
+	  {
+	    bool vari = random(0,1);
+		if(vari == 0)
+		  sprite = GetSpriteIndex("SKW2");
+		else if(vari == 1)
+		  sprite = GetSpriteIndex("SKW4");
+	  }
+	  "####" ABCDEFGHIJKLM 4
+	  {
+	    A_FaceTarget();
+	    Thrust(1.0, angle);
+		if(target && Distance2D(target) <= 128)
+		  return A_Jump(256, "Shove");
+		
+		return ResolveState(null);
+	  }
+	  TNT1 A 0
+	  {
+	    return A_Jump(256, "Ability1", "M_Ability2Faster", "M_Ability3");
+	  }
+	  Goto See;
+	Walk3:
+	  TNT1 A 0
+	  {
+	    if(!w_taunt)
+		{
+		  w_taunt = true;
+		  return ResolveState(null);
+		}
+		else
+		{
+		  w_taunt = false;
+		  return ResolveState("Walk1");
+		}
+	  }
+	  SKW3 ABCDEFGH 3
+	  {
+	    A_FaceTarget();
+	    Thrust(1.0, angle);
+	  }
+	  SKW3 IJKLM 3
+	  {
+	    A_FaceTarget();
+	    Thrust(1.0, angle);
+	    if(target && Distance2D(target) <= 128)
+		  return A_Jump(256, "Shove");
+		
+		return ResolveState(null);
+	  }
+	  Goto Missile;
+	Stagger:
+	  TNT1 A 0
+	  {
+	    if(fireball_ptr)
+		{
+		  if(MA_FB(fireball_ptr).light)
+		    MA_FB(fireball_ptr).light.Destroy();
+			
+		  fireball_ptr.Destroy();
+		}
+		if(phase2)
+		{
+		  if(players[consoleplayer].ReadyWeapon && players[consoleplayer].ReadyWeapon is "Hands")
+		    DFPlayer(players[consoleplayer].mo).DoHeal(100);
+			
+		  if(bigball)
+		  {
+		    bigball.master = null;
+		    bigball = null;
+		  }
+		}
+		  
+		A_SetScale(1.0, 0.83);
+		A_StartSound("MA_Parry", CHAN_AUTO, volume: 0.52, attenuation: 0.15);
+		players[consoleplayer].mo.A_SetBlend("Orange", 0.2, 17);
+		boss_StaggerBlock -= 34;
+		parry_time = 0;
+		if(!phase2 && boss_StaggerBlock <= 0)
+		  return ResolveState("FullStagger");
+		
+		if(stun_left)
+		  return ResolveState("StaggerLeft");
+		else if(stun_right)
+		  return ResolveState("StaggerRight");
+		else   
+		  return ResolveState(null);
+	  }
+	  TNT1 A 0 A_Jump(256, "StaggerLeft", "StaggerRight");
+	StaggerLeft:
+	  SKSL B 3
+	  {
+	    A_FaceTarget();
+		if(target)
+	      Thrust(18, target.angle + 45);
+		  
+		ParryImpact(10);
+		stun_left = false;
+		stun_right = false;
+	  }
+	  SKSL C 3;
+	  SKSL D 3 { vel *= 0.8; }
+	  SKSL EFGH 3;
+	  SKSL I 3
+	  {
+	    if(disrespect > 1)
+	      return A_Jump(256, "StaggerToCounter1");
+		  
+		return ResolveState(null);
+	  }
+	  SKSL JK 3;
+	  TNT1 A 0
+	  {
+	    if(!first_stagger || phase2)
+		{
+		  first_stagger = true;
+		  return A_Jump(256, "Walk2");
+		}
+		  
+	    return A_Jump(256, "Walk1", "Walk2", "Walk3");
+	  }
+	  Goto See;
+	StaggerToCounter1:
+	  TNT1 A 0
+	  {
+	    A_FaceTarget();
+	    Thrust(60, angle);
+	  }
+	  Goto Counter1+3;
+	StaggerRight:
+	  SKSR B 3
+	  {
+	    A_FaceTarget();
+	    Thrust(24, angle + 155);
+		ParryImpact(-7);
+		stun_left = false;
+		stun_right = false;
+	  }
+	  SKSR C 3;
+	  SKSR D 3 { vel *= 0.8; }
+	  SKSR EFGH 3;
+	  SKSR I 3
+	  {
+	    if(disrespect > 1)
+	      return A_Jump(256, "StaggerToCounter2");
+		  
+		return ResolveState(null);
+	  }
+	  SKSR JK 3;
+	  TNT1 A 0
+	  {
+	    if(!first_stagger || phase2)
+		{
+		  first_stagger = true;
+		  return A_Jump(256, "Walk2");
+		}
+	    return A_Jump(256, "Walk1", "Walk2", "Walk3");
+	  }
+	  Goto See;
+	StaggerToCounter2:
+	  TNT1 A 0
+	  {
+	    A_FaceTarget();
+	    Thrust(60, angle);
+		A_StartSound("MA_Sw4", CHAN_AUTO, volume: 0.58);
+		A_StartSound("Fist_Ctr", CHAN_AUTO, volume: 0.6);
+	  }
+	  SKC2 B 2;
+	  Goto Counter2Faster+2;
+	FullStagger:
+	  TNT1 A 0
+	  {
+	    if(target)
+		  Thrust(10, target.angle);
+		
+	    A_QuakeEx(2, 2, 4, 21, 0, 1024, "DSEMPTY", QF_SCALEDOWN);
+		StaggerFatal();
+		parry_time = 0;
+		boss_staggered = true;
+		mDamp = 0.3;
+		disrespect = 0;
+		players[consoleplayer].mo.A_SetBlend("Orange", 0.3, 17);
+	  }
+	  SKFS ABCD 1;
+	  SKFS EF 2;
+	  TNT1 A 0 A_StartSound("Parry", CHAN_AUTO, volume: 1.0, attenuation: 0.0);
+	  SKFS GHI 3;
+	  TNT1 A 0
+	  {
+	    if(!air_horn)
+		{
+		  air_horn = true;
+		  players[consoleplayer].mo.ACS_NamedExecute("AirHorn");
+		}
+	  }
+	  SKFS JKLM 3;
+	  SKFS N 3;
+	  SKFS OP 3;
+	  SKFS Q 2;
+	  SKFS RS 3;
+	  SKFS T 105;
+	  TNT1 A 0 { boss_StaggerBlock = 34; }
+	  Goto See;
+	StaggerFinish:
+	  TNT1 A 0
+	  {
+	    bSHOOTABLE = false;
+	    full_stagger++;
+		if(full_stagger == 3 || Health <= 1300)
+		{
+		  S_ChangeMusic("D_Null");
+		  phase2 = true;
+		}
+		  
+		if(players[consoleplayer].mo)
+		{
+		  players[consoleplayer].mo.A_GiveInventory("ShellLoaded", 4);
+		  players[consoleplayer].mo.GiveBody(players[consoleplayer].mo.GetMaxHealth(True));
+	    }
+		  
+		A_FaceTarget();
+		A_StartSound("BODSPLT5", CHAN_AUTO, attenuation: 0.0);
+		A_QuakeEx(2, 2, 2, 45, 0, 5000, "DSEMPTY", QF_SCALEDOWN);
+		A_SpawnItemEx("AntibodyTrail", flags: SXF_TRANSFERALPHA|SXF_TRANSFERSCALE|SXF_TRANSFERSPRITEFRAME);
+		boss_staggered = false;
+	    if(players[consoleplayer].mo)
+	      Thrust(40, players[consoleplayer].mo.angle);
+		  
+		return ResolveState(null);
+	  }
+	  SKFS U 3;
+	  SKFS V 2 SetOrigin((pos.x, pos.y, pos.z + 24), false);
+	  SKFS W 2;
+	  SKFS XXXXXXXXXX 4
+	  {
+	    A_FaceTarget();
+		A_SpawnItemEx("AntibodyTrail", flags: SXF_TRANSFERALPHA|SXF_TRANSFERSCALE|SXF_TRANSFERSPRITEFRAME);
+	  }
+	  TNT1 A 0
+	  {
+	    if(!phase2)
+		{
+		  boss_StaggerBlock = 0;
+	      A_GiveInventory("BlockStackRefill", 1);
+		}
+	  }
+	  TNT1 A 0
+	  {
+	    if(phase2)
+		  return ResolveState("Ultimate");
+		  
+		return ResolveState(null);
+	  }
+	  TNT1 A 0 { bSHOOTABLE = true; }
+	  Goto See;
+	Ultimate:
+	  SKTB GFED 3;
+	  SKTB C 3;
+	  TNT1 A 0
+	  {
+	    if(players[consoleplayer].mo)
+		  players[consoleplayer].mo.ACS_NamedExecute("Rule_Change");
+		  
+		let pmo = players[consoleplayer].mo;
+		if(pmo)
+		{
+		  let inv = pmo.FindInventory("Hands");
+		  if(inv)
+			Hands(inv).restrict_ = false;
+		}
+	  }
+	UltimateIdle:
+	  SKID ABCDEFGGFEDCBA 4;
+	  Loop;
+	UltimateContinue:
+	  SKPB A 10;
+	  SKPB A 2 A_StartSound("MA_Fite6", CHAN_AUTO, attenuation: 0.0, volume: 0.8);
+	  SKPB B 2
+	  {
+	    bNOBLOOD = false;
+		boss_weak = true;
+		boss_can_counter = true;
+		if(players[consoleplayer].mo)
+		{
+		  players[consoleplayer].mo.A_GiveInventory("SprintIcon", 1);
+		  for(Inventory item = players[consoleplayer].mo.Inv; item; item = item.Inv)
+		  {
+			if(item is "DF_Weapon")
+			{
+			  DF_Weapon(item).jam = false;
+			  DF_Weapon(item).isInDanger = false;
+			  DF_Weapon(item).hasWarned = false;
+			  DF_Weapon(item).wep_cond = DF_Weapon(item).wep_condMax;
+			}
+		  }
+		}
+	    GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+		if(ev)
+		  ev.shield_disable = true;
+	  }
+	  SKPB CD 3;
+	  SKSB ABCD 3;
+	  SKSB EFG 2;
+	  SKSB HI 3;
+	  SKSB JKL 2;
+	  SKSB MN 3;
+	  TNT1 A 0
+	  {
+	    A_StartSound("MA_Fite2", CHAN_AUTO, attenuation: 0.0); //72t before optimal transtn
+		if(players[consoleplayer].mo)
+		  players[consoleplayer].mo.ACS_NamedExecute("RoundTwo");
+	  }
+	  SKSB OP 3; 
+	  SKSB QRSTUVWXYZ 2;
+	  //Flex
+	  SKR2 DE 1;
+	  SKFL ABCDE 1;
+	  SKFL FG 2;
+	  SKFL H 3;
+	  SKFL IJIJIJ 2;
+	  SKFL I 10;
+	  SKFL HG 3;
+	  SKFL FE 2;
+	  TNT1 A 0 { bSHOOTABLE = true; }
+	  Goto Ability5Fire;
+	Missile:
+	  TNT1 A 0
+	  {
+	    if(target && Distance2D(target) <= 128)
+		{
+		  return A_Jump(256, "Shove");
+		}
+	    if(phase2)
+		{
+		  if(target && Distance2D(target) > 1100)
+		    return A_Jump(256, "Ability6", "Ability1", "Ability8");
+	      else
+		    return A_Jump(256, "Ability5", "Ability6", "Ability1", "M_Ability2", "M_Ability3", "Ability8");
+		}
+	    else
+	      return A_Jump(256, "Ability1", "M_Ability2", "M_Ability3");
+	  }
+	Shove:
+	  SKC4 ABC 1;
+	  TNT1 A 0 A_StartSound("MA_Imp4", CHAN_AUTO, volume: 0.65, attenuation: 0.7);
+	  SKC4 DE 2;
+	  SKC4 F 1
+	  {
+	    if(target && Distance2D(target) <= 168)
+		{
+		  A_FaceTarget();
+		  target.Thrust(60, angle);
+		}
+		//make_range = false;
+	  }
+	  SKC4 G 1;
+	  SKC4 H 3;
+	  SKC4 IJ 2;
+	  SKC4 KLMO 3;
+	  TNT1 A 0 A_Jump(256, "Ability1", "Ability2", "Ability3");
+	  Goto See;
+	Counter1:
+	  SKC3 A 3 A_SetScale(0.98, 0.81);
+	  SKC3 B 3 A_SetScale(0.95, 0.78);
+	  SKC3 C 2;
+	  SKC3 D 2 A_StartSound("MA_Sw4", CHAN_AUTO);
+	  SKC3 E 2;
+	  SKC3 FGHI 1
+	  { 
+	    A_FaceTarget();
+	    Thrust(8, angle);
+	  }
+	  SKC3 JKL 1
+	  { 
+	    vel *= 0.2;
+	    if(target && Distance2D(target) <= 136)
+	      return ResolveState("Counter1Hit");
+		  
+		return ResolveState(null);
+	  }
+	  Goto Counter1End;
+	Counter1Hit:
+	  SKC3 L 2
+	  {
+	    if(target)
+		{
+		  A_Stop();
+		  A_StartSound("MA_Imp14", CHAN_AUTO, volume: 0.9, attenuation: 0.5);
+	      target.DamageMobj(self, self, 30, "Physical");
+		  target.A_QuakeEx(3, 3, 3, 14, 0, 128, "DSEMPTY", QF_SCALEDOWN);
+		  target.Thrust(70, angle + 30);
+		  if(target && target is "DFPlayer")
+		  {
+			if(target && target is "DFPlayer" && !DFPlayer(target).bAdvanced_Str && !DFPlayer(target).bRecoilPower)
+			{
+			  target.roll = -8.0;
+		      SetDrunk(0.5, 0.1, 15);
+			  let item = target.FindInventory("HeadRoll");
+			  if(item)
+			  {
+			    HeadRoll(item).amt = 0.5;
+			  }
+			  else
+			  {
+			    let item = target.GiveInventoryType("HeadRoll");
+			    if(item)
+			    {
+			      HeadRoll(item).amt = 0.5;
+			    }
+			  }
+			}
+		  }
+		}
+	  }
+	  //TNT1 A 0 A_Jump(256, "Counter1to2");
+	  Goto Counter1End;
+	Counter1End:
+	  TNT1 A 0 { disrespect = 0; }
+	  SKC3 MNOP 3;
+	  TNT1 A 0 A_SetScale(1.0, 0.83);
+	  TNT1 A 0 { w_taunt = false; }  
+	  Goto Walk3;
+	Counter1to2:
+	  SKCX DEFG 2;
+	  Goto Counter2Faster;
+	Counter2:
+	  SKCX A 1 A_SetScale(0.98, 0.81);
+	  SKCX B 1 A_SetScale(0.95, 0.78);
+	  SKCX C 1 A_SetScale(0.92, 0.76);
+	Counter2Faster:
+	  TNT1 A 0
+	  {
+	    A_StartSound("MA_Sw4", CHAN_AUTO, volume: 0.58);
+		A_StartSound("Fist_Ctr", CHAN_AUTO, volume: 0.6);
+	  }
+	  SKC2 B 3 A_SetScale(0.88, 0.73);
+	  SKC2 CDEF 1
+	  { 
+	    A_FaceTarget();
+	    Thrust(8, angle);
+	  }
+	  SKC2 GHH 1
+	  { 
+	    vel *= 0.2;
+	    if(target && Distance2D(target) <= 136)
+	      return ResolveState("Counter2Hit");
+		  
+		return ResolveState(null);
+	  }
+	  SKC2 H 2;
+	  Goto Counter2End;
+	Counter2Hit:
+	  SKC2 H 1
+	  {
+	    if(target)
+		{
+		  A_FaceTarget();
+		  A_Stop();
+		  A_StartSound("MA_Imp13", CHAN_AUTO, volume: 0.9, attenuation: 0.5);
+	      target.DamageMobj(self, self, 30, "Physical");
+		  target.A_QuakeEx(3, 3, 3, 14, 0, 128, "DSEMPTY", QF_SCALEDOWN);
+		  target.Thrust(70, angle - 80);
+		  if(target && target is "DFPlayer")
+		  {
+			if(target && target is "DFPlayer" && !DFPlayer(target).bAdvanced_Str && !DFPlayer(target).bRecoilPower)
+			{
+			  target.roll = 8.0;
+		      SetDrunk(0.5, 0.1, 15);
+			  let item = target.FindInventory("HeadRoll");
+			  if(item)
+			  {
+			    HeadRoll(item).amt = 0.5;
+			  }
+			  else
+			  {
+			    let item = target.GiveInventoryType("HeadRoll");
+			    if(item)
+			    {
+			      HeadRoll(item).amt = 0.5;
+			    }
+			  }
+			}
+		  }
+		}
+	  }
+	  Goto Counter2End;
+	Counter2End:
+	  TNT1 A 0 { disrespect = 0; }
+	  SKC2 IJ 3;
+	  //TNT1 A 0 A_Jump(256, "Ability4Faster");
+	  SKC2 K 3 A_SetScale(0.92, 0.76);
+	  SKC2 L 3 A_SetScale(0.95, 0.78);
+	  SKC2 M 3 A_SetScale(1.0, 0.83);
+	  SKC2 NOP 2;
+	  TNT1 A 0 { w_taunt = false; }  
+	  Goto Walk3;
+	M_Ability2:
+	  TNT1 A 0
+	  {
+	    if(a2_cd <= 0)
+		{
+		  a2_cd = 35*8;
+		  return ResolveState("Ability2");
+		}
+		else
+		  return ResolveState("Missile");
+	  }
+	  Goto See;
+	M_Ability2Faster:
+	  TNT1 A 0
+	  {
+	    if(a2_cd <= 0)
+		{
+		  a2_cd = 35*8;
+		  return ResolveState("Ability2Faster");
+		}
+		else
+		  return ResolveState("Missile");
+	  }
+	  Goto See;
+	M_Ability3:
+	  TNT1 A 0
+	  {
+	    if(a3_cd <= 0)
+		{
+		  a3_cd = 35*8;
+		  return ResolveState("Ability3");
+		}
+		else
+		  return ResolveState("Missile");
+	  }
+	  Goto See;
+	Teleport:
+	  SKSM R 2;
+	  SKSM Q 2 A_SpawnItemEx("TeleportSigil");
+	  ZM4C A 0
+	  {
+	    if(target)
+		{
+	      tp_start = pos;
+	      tp_end.xy = GMVectorUtil.LerpVec2(pos.xy, target.pos.xy, 0.8);
+		  tp_end.z = pos.z;
+		}
+		else
+		{
+		  tp_start = pos;
+	      tp_end = pos;
+		}
+	  }
+	  SKSM P 12
+	  {
+	    Spawn("TeleportSigil2", tp_end);
+		if(phase2)
+		  A_SetTics(6);
+	  }
+	  SKSM P 0 A_StartSound("Teleport", CHAN_AUTO);
+	  SKSM P 1 SetOrigin(tp_end, false);
+	  SKSM P 1 SetOrigin(tp_start, false);
+	  SKSM P 1 SetOrigin(tp_end, false);
+	  SKSM P 1 SetOrigin(tp_start, false);
+	  SKSM P 1 SetOrigin(tp_end, false);
+	  SKSM PQR 3 A_FaceTarget();
+	  Goto Ability6to1;
+	/////-ABILITY 1- LEAP ATTACK/////
+	/////////////////////
+	Ability1:
+	  SKGP ABCD 1 A_FaceTarget();
+	  SKGP EF 2 A_FaceTarget();
+	  TNT1 A 0
+	  {
+	    if(target)
+		{
+	      Vector3 target_future_pos = target.pos + (target.vel * 28.0); //28 = t
+		  Vector2 dir = target_future_pos.xy - pos.xy;
+		  double dist = dir.Length();
+		  CalculateLeap(abs(dist));
+		}
+		A_FaceTarget();
+	    A_StartSound("MA_Leap1", CHAN_AUTO, volume: 0.55, attenuation: 0.5);
+		Thrust(leap_xy, angle);
+		vel.z = leap_z;
+	  }
+	  SKGP GH 3;
+	  SKGP I 3;
+	  SKGP J 2;
+	  SKGP J 1
+	  {
+	    if(!phase2)
+		{
+		  SetParryTime(9);
+		  ParryFlash(4, -20, 164, 9);
+		}
+	  }
+	  SKGP KLMN 1;
+	  SKGP O 2;
+	  SKGP P 2
+	  {
+	    if(!phase2)
+		  ParryFlashPosition(4, -20, 164);
+	  }
+	  SKGP Q 2
+	  {
+	    vel.z -= 4.0;
+	  }
+	  SKGP Q 2
+	  {
+	    vel.z -= 4.0;
+		return A_CheckFloor("Ability1Land");
+	  }
+	  Wait;
+	Ability1Land:
+	  SKGP R 1
+	  {
+	    debug_time = 0;
+	    vel *= 0.1;
+		disrespect = 0;
+		A_Explode(40, 160, XF_NOTMISSILE, 0, 90, damageType: "Physical");
+	    A_StartSound("MA_Imp1", CHAN_AUTO, attenuation: 0.36);
+		A_QuakeEx(1, 1, 4, 31, 0, 1024, "dsempty", QF_SCALEDOWN);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPRK1_01"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 14, size: random(350,376), xoff: 88, startalphaf: 2.0, sizestep: 20);
+		for(int i = 0; i < 12; i++)
+		{
+		  //Smokez
+		  bool left = random(0,1);
+		  A_SpawnParticleEx("A0A0A0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 25, random(128,278), 0,
+		  36, left ? random(-88,-32) : random(32,88), random(0,16), frandom(4.0,6.0),
+		  left ? frandom(-3.0,-2.0) : frandom(2.0,3.0), frandom(-1.0,2.0),
+		  startalphaf: frandom(0.6,0.7), sizestep: -0.5, startroll: random(0,359), rollvel: Left ? -0.5 : 0.5, rollacc: Left ? 0.02 : -0.02);
+		  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, random(128,278), 0,
+		  random(24,64), random(-64,64), 0,
+		  frandom(-1.0,1.0), frandom(-1.0,1.0), frandom(-1.0,1.0),
+		  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+		  //Tiny Flares
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 32, 10, random(-45,45),
+		  random(24,64), 0, 48, frandom(18.0,24.0), 0, frandom(0.0, 10.0), startalphaf: 2.0);
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 32, 10, random(-45,45),
+		  random(24,64), 0, 48, frandom(18.0,24.0), 0, frandom(0.0, 10.0), startalphaf: 2.0);
+		  //Sparks
+		  int pitch = random(2,32);
+		  int ang = angle + random(-45,45);
+		  Vector3 newPos = random(64,128) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch));
+		  Vector3 basePos = Vec3Offset(64 * cos(ang), 64 * sin(ang), 0);
+		  Vector3 newVel = 0.2 * newPos;
+		  Actor puff = Spawn("CrabSpark",  basePos + (random(24,32) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch))));
+	      if(puff)
+		  {
+			puff.scale = (1.0,1.0);
+			puff.vel = newVel;
+		  }
+	    }
+	  }
+	  SKGP R 3 { parry_time = 0; }
+	  SKGP S 20
+	  {
+	    if(phase2)
+		{
+		  A_SetTics(4);
+		}
+		else
+		{
+	      A_SetTics(20 - spd_gp);
+		  if(spd_gp < 5)
+		    spd_gp++;
+		}
+	  }
+	  SKR1 ABC 3;
+	  TNT1 A 0
+	  {
+	    if(phase2)
+		  return A_Jump(256, "Ability1to2", "Ability4Faster", "Ability5", "Ability6", "Ability7");
+		  
+	    if(!combo_stop)
+		{
+		  if(combo_limit) //Do not go back to the other moves
+		  {
+		    combo_limit = false;
+			return A_Jump(128, "Ability1to4"); //128 default
+		  }
+		  else
+		  {
+		    combo_limit = true; //Limit these move from chaining back to this one
+	        return A_Jump(256, "Ability1to2", "Ability1to4");
+		  }
+		}
+		  
+		return ResolveState(null);
+	  }
+	  TNT1 A 0 { combo_stop = false; } //Reset - Allow combo chain again
+	  Goto See;
+	Ability1to2:
+	  TNT1 A 0 A_StartSound("MA_Tk1", CHAN_AUTO, volume: 0.7, attenuation: 0.6, startTime: 0.14);
+	  SKTK DEF 3;
+	  Goto Ability2+7; 
+	Ability1to4:
+	  SKR1 D 3
+	  {
+	    if(phase2)
+		  return ResolveState("Ability4Faster");
+		  
+		return ResolveState(null);
+	  }
+	  Goto Ability4;
+	/////-ABILITY 2- SHOULDER SHOVE/////
+	/////////////////////
+	Ability2Faster:
+	  TNT1 A 0;
+	  Goto Ability2+2;
+	Ability2:
+	  TNT1 A 0 A_StartSound("MA_Tk1", CHAN_AUTO, volume: 0.7, attenuation: 0.6);
+	  SKTK ABC 1;
+	  SKTK DEF 3;
+	  SKTK G 17
+	  {
+	    if(phase2)
+		  A_SetTics(3);
+	  }
+	  TNT1 A 0 A_StartSound("MA_Sw2", CHAN_AUTO, volume: 0.7, attenuation: 0.8);
+	  SKTK HI 3;
+	  SKTK J 3 { stun_left = true; }
+	  SKTK K 2;
+	  SKTK K 2
+	  {
+	    if(!phase2)
+		{
+		  SetParryTime(10);
+		  ParryFlash(4, -8, 140, 10);
+		}
+	  }
+	  TNT1 A 0
+	  {
+	    A_StartSound("MA_Sw3", CHAN_AUTO, volume: 0.65, attenuation: 0.5);
+		if(!phase2)
+	      ParryFlashPosition(4, -8, 142);
+	  }
+	  SKTK LMN 1;
+	  TNT1 A 0
+	  {
+	    A_FaceTarget();
+		A_SetScale(1.1, 0.92);
+	    Thrust(150, angle);
+	  }
+	  SKTK OPQ 1
+	  {
+	    if(target && Distance2D(target) <= 136)
+	      return ResolveState("Ability2Hit");
+		  
+		return ResolveState(null);
+	  }
+	  SKTK RSTUUUUUUUUUUUUUUUUUUUUUU 1
+	  {
+	    if(target && Distance2D(target) <= 136)
+	      return ResolveState("Ability2Hit");
+		  
+		return ResolveState(null);
+	  }
+	  TNT1 A 0
+	  {
+	    A_SetScale(1.0, 0.83);
+		stun_left = false;
+	  }
+	  SKR2 ABCDE 3;
+	  Goto See;
+	Ability2Hit:
+	  SKTK U 0
+	  {
+	    A_Stop();
+		parry_time = 0;
+		disrespect = 0;
+		stun_left = false;
+	    if(target)
+		{
+		  A_StartSound("MA_Imp2", CHAN_AUTO, volume: 0.65, attenuation: 0.5);
+	      target.DamageMobj(self, self, 15, "Physical");
+		  target.A_QuakeEx(3, 3, 3, 14, 0, 128, "DSEMPTY", QF_SCALEDOWN);
+		  target.Thrust(50, target.angle + 180);
+		  if(target is "DFPlayer")
+		   {
+		     if(!DFPlayer(target).bAdvanced_Str && !DFPlayer(target).bRecoilPower)
+		       SetDrunk(0.5, 0.1, 24);
+		   }
+		}
+	  }
+	  SKTK UU 2 A_FaceTarget();
+	  TNT1 A 0
+	  {
+	    if(phase2)
+		  return A_Jump(256, "Ability2to1", "Ability4Faster", "Ability5Fire", "Ability6", "Ability3");
+		  
+	    if(!combo_stop)
+		{
+		  if(combo_limit) //Do not go back to the other moves
+		  {
+		    combo_limit = false;
+			return A_Jump(128, "Ability2to4");
+		  }
+		  else
+		  {
+		    combo_limit = true; //Limit these move from chaining back to this one
+	        return A_Jump(256, "Ability2to1", "Ability2to4");
+		  }
+		}
+		  
+		return ResolveState(null);
+	  }
+	  SKTK UU 2 A_FaceTarget();
+	  TNT1 A 0 { combo_stop = false; } //Reset - Allow combo chain again
+	  TNT1 A 0 A_SetScale(1.0, 0.83);
+	  SKR2 ABCDE 3;
+	  Goto Walk3;
+	Ability2to1:
+	  SKTK P 3;
+	  TNT1 A 0 A_SetScale(1.0, 0.83);
+	  SKTK OH 3;
+	  Goto Ability1+3;
+	Ability2to4:
+	  TNT1 A 0 A_SetScale(1.0, 0.83);
+	  SKR2 ABCD 2;
+	  SKR2 E 2
+	  {
+	    if(phase2)
+		  return ResolveState("Ability4Faster");
+		  
+		return ResolveState(null);
+	  }
+	  Goto Ability4;
+	/////-ABILITY 3- FIREBALL/////
+	/////////////////////
+    Ability3:
+	  SKPT ABC 2;
+	  TNT1 A 0 A_StartSound("Cul_FB3", CHAN_AUTO, volume: 0.3, attenuation: 0.5);
+	  SKPT D 2;
+	  TNT1 A 0 A_FaceTarget();
+	  TNT1 A 0 A_SpawnItemEx("MA_FireBuild", flags: SXF_SETMASTER);
+	  SKTS ABCDEFG 3 A_FaceTarget();
+	  TNT1 A 0
+	  {
+		stun_right = false;
+	  }
+	  SKTS H 3 A_FaceTarget();
+	  SKTS I 2 A_FaceTarget();
+	  SKTS I 1
+	  {
+	    if(!phase2)
+		{
+		  SetParryTime(8);
+		  ParryFlash(4, 12, 160, 8);
+		}
+	  }
+	  SKTS J 2
+	  {
+	    A_FaceTarget();
+	    fireball_ptr = A_SpawnProjectile("MA_FB", 180, 64);
+		if(fireball_ptr)
+		{
+		  double spd = 30.0 + (Distance2D(target) * 0.01);
+		  fireball_ptr.VelIntercept(target, clamp(spd, 0.0, 100.0));
+		}
+	  }
+	  SKTS K 2;
+	  SKTS L 2
+	  {
+	    if(!phase2)
+		  ParryFlashPosition(4, 12, 150);
+	  }
+	  TNT1 A 0 { disrespect = 0; }
+	  SKTS MNO 1;
+	  SKTS P 5;
+	  TNT1 A 0
+	  {
+	    combo_stop = true; //Chain into these moves, but they may not have follow up
+		stun_right = false;
+	    return A_Jump(256, "Ability3to1");
+	  }
+	  SKTS QRS 3;
+	  Goto See;
+	Ability3to1:
+	  TNT1 A 0;
+	  Goto Ability1+4;
+	/////-ABILITY 4- ROUNDHOUSE KICK/////
+	/////////////////////
+	Ability4:
+	  SKKK AAAA 1
+	  {
+	    if(target)
+		  angle = AngleTo(target);
+		  
+	    A_SpawnItemEx("MonsterFade", 4, xvel: -2.0, yvel: 2.0, zvel: 1.0, flags: SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE);
+	  }
+	  SKKK BBBB 1
+	  {
+	    if(target)
+		  angle = AngleTo(target);
+		  
+	    A_SpawnItemEx("MonsterFade", 4, xvel: -2.0, yvel: 2.0, zvel: 1.0, flags: SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE);
+	  }
+	Ability4Faster:
+	  SKKK C 1
+	  {
+	    A_StartSound("MA_Sw1", CHAN_AUTO, volume: 0.5, attenuation: 0.7);
+		A_SpawnItemEx("MonsterFade", 4, xvel: -2.0, yvel: 2.0, zvel: 1.0, flags: SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE);
+	  }
+	  SKKK C 1
+	  {
+	    if(target)
+		  angle = AngleTo(target);
+		  
+		A_SpawnItemEx("RageFade", 4, xvel: -2.0, yvel: 2.0, zvel: 1.0, flags: SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE);
+	  }
+	  SKKK DDEE 1
+	 {
+	    if(target)
+		  angle = AngleTo(target);
+		  
+		A_SpawnItemEx("RageFade", 4, xvel: -2.0, yvel: 2.0, zvel: 1.0, flags: SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE);
+	  }
+	  TNT1 A 0
+	  {
+	    A_SetScale(0.85, 0.7);
+	    if(!phase2)
+		{
+		  SetParryTime(8);
+		  ParryFlash(4, 0, 168, 8);
+		}
+	  }
+	  SKKK FFHH 1
+	 {
+	    if(target)
+		  angle = AngleTo(target);
+		
+		Thrust(8, angle);
+	    A_SpawnItemEx("RageFade", 4, xvel: -2.0, yvel: 2.0, zvel: 1.0, flags: SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE);
+	  }
+	  SKKK IIJJ 1
+	  {
+	    MovementHandler mv = MovementHandler(EventHandler.Find("MovementHandler"));
+	    if(mv && mv.dodgeCD < 18)
+	      A_FaceTarget();
+		   
+	    Thrust(16, angle);
+		A_SpawnItemEx("RageFade", 4, xvel: -2.0, yvel: 2.0, zvel: 1.0, flags: SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE);
+		
+	    if(target && Distance2D(target) <= 136)
+	      return ResolveState("Ability4Hit");
+		  
+		return ResolveState(null);
+	  }
+	  SKKK KKKLL 1
+	  {
+	    MovementHandler mv = MovementHandler(EventHandler.Find("MovementHandler"));
+	    if(mv && mv.dodgeCD < 18)
+	      A_FaceTarget();
+		  
+	    vel *= 0.8;
+	    Thrust(8, angle);
+		A_SpawnItemEx("RageFade", 4, xvel: -2.0, yvel: 2.0, zvel: 1.0, flags: SXF_TRANSFERSPRITEFRAME|SXF_TRANSFERSCALE);
+		
+	    if(target && Distance2D(target) <= 136)
+	      return ResolveState("Ability4Hit");
+		  
+		return ResolveState(null);
+	  }
+	  SKKK LLL 1 { vel *= 0.8; }
+	  TNT1 A 0 A_SetScale(1.0, 0.83);
+	  SKKK AAA 1 { vel *= 0.5; }
+	  Goto See;
+	Ability4Hit:
+	  TNT1 A 0
+	  {
+	    disrespect = 0;
+	    if(target)
+		{
+		  A_Stop();
+		  A_StartSound("MA_Imp9", CHAN_AUTO, volume: 0.7, attenuation: 0.5);
+	      target.DamageMobj(self, self, 15, "Physical");
+		  target.A_QuakeEx(3, 3, 3, 14, 0, 128, "DSEMPTY", QF_SCALEDOWN);
+		  target.Thrust(40, angle - 90);
+		}
+	  }
+	  SKKK KL 3;
+	  TNT1 A 0 A_SetScale(1.0, 0.83);
+	  SKKK AA 3;
+	  TNT1 A 0 A_Jump(88, "Dab");
+	  TNT1 A 0 A_Jump(256, "Walk1", "Walk3");
+	  Goto See;
+	/////-ABILITY 5- HOLK SMESH/////
+	/////////////////////
+	Ability5:
+	  TNT1 A 0
+	  {
+	    if(!phase2_ab5)
+		{
+		  phase2_ab5 = true;
+		  return ResolveState(null);
+		}
+		else
+		  return ResolveState("Ability5Fire");
+	  }
+	  SKCB AB 3;
+	  SKCB C 3
+	  {
+	    A_StartSound("MA_Beat", CHAN_AUTO, volume: 0.7, attenuation: 0.5);
+		A_FaceTarget();
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BWAVB0"), STYLE_Translucent, SPF_FULLBRIGHT|SPF_RELATIVE, 5, 120, 0,
+	    32, 0, 135, velx: 10, sizestep: 40);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_Shaded, SPF_FULLBRIGHT|SPF_RELATIVE, 5, 120, 0,
+	    8, 0, 132, startalphaf: 0.55, sizestep: -20);
+		A_QuakeEx(2, 2, 2, 5, 0, 1024, "dsempty", 0, rollintensity: 0.2);
+	  }
+	  SKCB DE 2;
+	  SKCB F 2
+	  {
+	    A_FaceTarget();
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BWAVB0"), STYLE_Translucent, SPF_FULLBRIGHT|SPF_RELATIVE, 5, 120, 0,
+	    32, 0, 135, velx: 10, sizestep: 40);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_Shaded, SPF_FULLBRIGHT|SPF_RELATIVE, 5, 120, 0,
+	    8, 0, 132, startalphaf: 0.55, sizestep: -20);
+		A_QuakeEx(2, 2, 2, 5, 0, 1024, "dsempty", 0, rollintensity: 0.2);
+	  }
+	  SKCB GH 2;
+	  SKCB I 2
+	  {
+	    A_FaceTarget();
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BWAVB0"), STYLE_Translucent, SPF_FULLBRIGHT|SPF_RELATIVE, 5, 120, 0,
+	    32, 0, 135, velx: 10, sizestep: 40);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_Shaded, SPF_FULLBRIGHT|SPF_RELATIVE, 5, 120, 0,
+	    8, 0, 132, startalphaf: 0.55, sizestep: -20);
+		A_QuakeEx(2, 2, 2, 5, 0, 1024, "dsempty", 0, rollintensity: 0.2);
+	  }
+	  SKCB JK 2;
+	  SKCB L 2
+	  {
+	    A_FaceTarget();
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BWAVB0"), STYLE_Translucent, SPF_FULLBRIGHT|SPF_RELATIVE, 5, 120, 0,
+	    32, 0, 135, velx: 10, sizestep: 40);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_Shaded, SPF_FULLBRIGHT|SPF_RELATIVE, 5, 120, 0,
+	    8, 0, 132, startalphaf: 0.55, sizestep: -20);
+		A_QuakeEx(2, 2, 2, 5, 0, 1024, "dsempty", 0, rollintensity: 0.2);
+	  }
+	  SKCB M 2;
+	Ability5Fire:
+	  //Slam
+	  SKHM B 2 A_StartSound("GiSwing1", CHAN_AUTO, volume: 0.9, attenuation: 0.4, startTime: 0.15);
+	  SKHM CD 3;
+	  SKHM E 8;
+	  SKHM F 2;
+	  SKHM G 2 A_StartSound("MA_Imp11", CHAN_AUTO, volume: 1.0, attenuation: 0.2);
+	  SKHM HI 1;
+	  SKHM J 2;
+	  SKHM J 7
+	  {
+	    if(!phase2_intro)
+		{
+		  aura = true;
+		  phase2_intro = true;
+		  ACS_NamedExecute("ChangeSky");
+		}
+	    A_FaceTarget();
+	    A_QuakeEx(1, 1, 2, 7, 0, 4096, "dsempty");
+		A_Explode(10, 256, XF_NOTMISSILE, damageType: "Physical");
+		//Glowing crack
+		let crack = Spawn("CrackDecal8", pos + (0,0,6));
+		if(crack)
+		  crack.scale = (1.5,1.5);
+		  
+		let crack_bg2 = Spawn("CrackDecal5", pos + (0,0,2));
+		if(crack_bg2)
+		  crack_bg2.scale = (2.5,2.5);
+		
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPRK1_01"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 14, size: random(350,376), xoff: 88, startalphaf: 2.0, sizestep: 20);
+		for(int i = 0; i < 12; i++)
+		{
+		  //Smokez
+		  bool left = random(0,1);
+		  A_SpawnParticleEx("A0A0A0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 25, random(128,278), 0,
+		  36, left ? random(-88,-32) : random(32,88), random(0,16), frandom(4.0,6.0),
+		  left ? frandom(-3.0,-2.0) : frandom(2.0,3.0), frandom(-1.0,2.0),
+		  startalphaf: frandom(0.6,0.7), sizestep: -0.5, startroll: random(0,359), rollvel: Left ? -0.5 : 0.5, rollacc: Left ? 0.02 : -0.02);
+		  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, random(128,278), 0,
+		  random(24,64), random(-64,64), 0,
+		  frandom(-1.0,1.0), frandom(-1.0,1.0), frandom(-1.0,1.0),
+		  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+		  //Tiny Flares
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 32, 10, random(-45,45),
+		  random(24,64), 0, 48, frandom(18.0,24.0), 0, frandom(0.0, 10.0), startalphaf: 2.0);
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 32, 10, random(-45,45),
+		  random(24,64), 0, 48, frandom(18.0,24.0), 0, frandom(0.0, 10.0), startalphaf: 2.0);
+		  //Sparks
+		  int pitch = random(2,32);
+		  int ang = angle + random(-45,45);
+		  Vector3 newPos = random(64,128) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch));
+		  Vector3 basePos = Vec3Offset(64 * cos(ang), 64 * sin(ang), 0);
+		  Vector3 newVel = 0.2 * newPos;
+		  Actor puff = Spawn("CrabSpark",  basePos + (random(24,32) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch))));
+	      if(puff)
+		  {
+			puff.scale = (1.0,1.0);
+			puff.vel = newVel;
+		  }
+	    }
+	  }
+	  SKHM J 1
+	  {
+	    A_QuakeEx(0, 0, 9, 45, 0, 4096, "dsempty", QF_SCALEDOWN);
+		//Blast wave
+		let actr = Spawn("BlastDecal", pos + (0,0,20));
+		if(actr)
+		{
+		  actr.scale = (2.0,2.0);
+		  BlastDecal(actr).fade = 0.05;
+		  BlastDecal(actr).sc_mult = 1.3;
+		}
+		//More visual effects
+		for(int i = 0; i < 30; i++)
+		{
+		  //Smokez
+		  bool left = random(0,1);
+		  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, 450, random(0,359),
+		  512, 0, 0, 25.0, frandom(-1.0,1.0), -5.0,
+		  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+		}
+	  }
+	  SKHM J 7
+	  {
+	    for(int i = 0; i < 30; i++)
+		{
+		  bool left = random(0,1);
+		  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, 450, random(0,359),
+		  512, 0, 0, 25.0, frandom(-1.0,1.0), -5.0,
+		  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+		}
+		A_SpawnProjectile("MA_HomingObj");
+		A_Explode(20, 256, XF_NOTMISSILE, damageType: "Physical");
+	  }
+	  SKHM J 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(0,90));
+	  SKHM J 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(90,180));
+	  SKHM J 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(180,270));
+	  SKHM J 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(270,360));
+	  SKHM J 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(0,360));
+	  TNT1 A 0 
+	  {
+	    if(!p2_opening)
+		  return ResolveState("Ability5to6");
+
+		return ResolveState(null);
+	  }
+	  TNT1 A 0 A_Jump(256, "Ability3to1", "Teleport", "Ability6", "Ability7");
+	  Goto See;
+	Ability5to6:
+	  TNT1 A 0;
+	  Goto Ability6+2;
+	/////-ABILITY 6- FAR LEAP /////
+	/////////////////////
+	Ability6:
+	  SKSP A 1;
+	  SKSP B 2;
+	  SKSP C 3 //32
+	  {
+		vel.z = 25.0;
+		A_StartSound("MA_Leap1", CHAN_AUTO, volume: 0.8, attenuation: 0.35);
+	  }
+	  SKSP D 4;
+	  SKSP E 8;
+	  SKSP G 3;
+	  TNT1 A 0 A_Jump(192, "Ability6Cycle2");
+	  SKSP HI 2;
+	  SKSP JKL 3;
+	  TNT1 A 0
+	  {
+	    spin_empower = true;
+		if(target)
+		{
+		  Vector3 tgt_vel = target.vel;
+		  MovementHandler mv = MovementHandler(EventHandler.Find("MovementHandler"));
+		  if(mv && mv.dodgeCD > 16)
+		  {
+		    tgt_vel.x = clamp(tgt_vel.x, -11, 11);
+			tgt_vel.y = clamp(tgt_vel.y, -11, 11);
+		  }
+			
+		  Vector3 target_future_pos = target.pos + (tgt_vel * 44.0); //44 = eta
+		  Vector2 dir = target_future_pos.xy - pos.xy;
+		  double dist = dir.Length();
+		  double thr_vel = 65.0 * (dist / 1000.0);
+		  angle = VectorAngle(dir.x, dir.y);
+	      Thrust(thr_vel, angle);
+		}
+		A_StartSound("MA_Imp10", CHAN_AUTO, volume: 1.0, attenuation: 0.2);
+	  }
+	Ability6Cycle:
+	  SKSP MNOPQKL 1
+	  {
+	    vel.z -= 4.0;
+		return A_CheckFloor("Ability6Land");
+	  }
+	  Loop;
+	Ability6Cycle2:
+	  SKSP G 6;
+	  SKS2 CD 1;
+	  TNT1 A 0
+	  {
+		if(target)
+		{
+		  Vector3 tgt_vel = target.vel;
+		  MovementHandler mv = MovementHandler(EventHandler.Find("MovementHandler"));
+		  if(mv && mv.dodgeCD > 16)
+		  {
+		    tgt_vel.x = clamp(tgt_vel.x, -11, 11);
+			tgt_vel.y = clamp(tgt_vel.y, -11, 11);
+		  }
+			
+		  Vector3 target_future_pos = target.pos + (tgt_vel * 44.0); //44 = eta
+		  Vector2 dir = target_future_pos.xy - pos.xy;
+		  double dist = dir.Length();
+		  double thr_vel = 65.0 * (dist / 1000.0);
+		  angle = VectorAngle(dir.x, dir.y);
+	      Thrust(thr_vel, angle);
+		}
+		A_StartSound("MA_Imp10", CHAN_AUTO, volume: 1.0, attenuation: 0.2);
+	  }
+	  SKS2 EEFFGHIJKLM 1
+	  {
+	    vel.z -= 4.0;
+		return A_CheckFloor("Ability6Land");
+	  }
+	  Wait;
+	Ability6Land:
+	  "####" "#" 1
+	  {
+	    if(spin_empower)
+		{
+		  sprite = GetSpriteIndex("SKSP");
+		  frame = 17;
+		}
+	    LeapSpike();
+		A_Explode(40, 256, XF_NOTMISSILE, damageType: "Physical");
+	    A_FaceTarget();
+	    A_QuakeEx(0, 0, 9, 45, 0, 4096, "dsempty", QF_SCALEDOWN);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPRK1_01"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 14, size: random(350,376), xoff: 88, startalphaf: 2.0, sizestep: 20);
+		A_Stop();
+		//Glowing center
+		let crack_bg2 = Spawn("CrackDecal5", pos + (0,0,2));
+		if(crack_bg2)
+		{
+		  crack_bg2.angle = random(0,359);
+		  crack_bg2.scale = (2.0,2.0);
+		}
+		//Glowing cracks
+		let crack = Spawn("CrackDecal6", pos + (0,0,6));
+		if(crack)
+		{
+		  crack.angle = random(0,359);
+		  crack.scale = (3.67, 3.67);
+		  CrackDecal6(crack).grow_mult = 0.055;
+		}
+		for(int i = 0; i < 12; i++)
+		{
+		  //Smokez
+		  bool left = random(0,1);
+		  A_SpawnParticleEx("A0A0A0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 25, random(128,278), 0,
+		  36, left ? random(-88,-32) : random(32,88), random(0,16), frandom(4.0,6.0),
+		  left ? frandom(-3.0,-2.0) : frandom(2.0,3.0), frandom(-1.0,2.0),
+		  startalphaf: frandom(0.6,0.7), sizestep: -0.5, startroll: random(0,359), rollvel: Left ? -0.5 : 0.5, rollacc: Left ? 0.02 : -0.02);
+		  A_SpawnParticleEx("C0C0C0",TexMan.CheckForTexture(String.Format("SMOKE0%d", random(1,5))),
+		  STYLE_Normal, SPF_RELATIVE|SPF_ROLL, 32, random(128,278), 0,
+		  random(24,64), random(-64,64), 0,
+		  frandom(-1.0,1.0), frandom(-1.0,1.0), frandom(-1.0,1.0),
+		  startalphaf: frandom(0.5,0.6), sizestep: -0.5, startroll: random(0,359));
+		  //Tiny Flares
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 32, 10, random(-45,45),
+		  random(24,64), 0, 48, frandom(18.0,24.0), 0, frandom(0.0, 10.0), startalphaf: 2.0);
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_Add, SPF_RELATIVE, 32, 10, random(-45,45),
+		  random(24,64), 0, 48, frandom(18.0,24.0), 0, frandom(0.0, 10.0), startalphaf: 2.0);
+		  //Sparks
+		  int pitch = random(2,32);
+		  int ang = angle + random(-45,45);
+		  Vector3 newPos = random(64,128) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch));
+		  Vector3 basePos = Vec3Offset(64 * cos(ang), 64 * sin(ang), 0);
+		  Vector3 newVel = 0.2 * newPos;
+		  Actor puff = Spawn("CrabSpark",  basePos + (random(24,32) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch))));
+	      if(puff)
+		  {
+			puff.scale = (1.0,1.0);
+			puff.vel = newVel;
+		  }
+	    }
+	  }
+	  "####" "#" 35
+	  {
+		let actr = Spawn("BlastDecal", pos + (0,0,20));
+		if(actr)
+		{
+		  actr.scale = (2.0,2.0);
+		  BlastDecal(actr).fade = 0.05;
+		  BlastDecal(actr).sc_mult = 1.3;
+		}
+		
+		if(spin_empower)
+		{
+		  spin_empower = false;
+		  return ResolveState("Ability6Empower");
+		}
+		
+		return ResolveState(null);
+	  }
+	  TNT1 A 0 A_Jump(256, "Ability6to1", "Ability2Faster", "Ability5", "Ability7");
+	  Goto See;
+	Ability6Empower:
+	  SKSP R 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(0,90));
+	  SKSP R 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(90,180));
+	  SKSP R 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(180,270));
+	  SKSP R 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(270,360));
+	  SKSP R 4 A_SpawnItemEx("MA_Mine", 512, 0, 1, angle: random(0,360));
+	  SKSP R 15;
+	  TNT1 A 0
+	  {
+	    if(!p2_opening)
+		{
+		  p2_opening = true;
+		  return ResolveState("Ability8");
+		}
+		
+		return ResolveState(null);
+	  }
+	  TNT1 A 0 A_Jump(256, "Ability1", "Ability2Faster", "Ability5", "Ability7");
+	  Goto See;
+	Ability6to1:
+	  Goto Ability1+6;
+	/////-ABILITY 7- BALLS!!!!! /////
+	/////////////////////
+	Ability7:
+	  TNT1 A 0
+	  {
+	    if(a7_cd <= 0)
+		{
+		  a7_cd = 35*15;
+		  return ResolveState(null);
+		}
+		else
+		  return ResolveState("Ability8");
+	  }
+	  //First Ball
+	  SKPT ABC 2;
+	  TNT1 A 0 A_StartSound("Cul_FB3", CHAN_AUTO, volume: 0.3, attenuation: 0.5);
+	  SKPT D 2;
+	  TNT1 A 0 A_FaceTarget();
+	  TNT1 A 0 A_SpawnItemEx("MA_FireBuild", flags: SXF_SETMASTER);
+	  SKTS ABCDEFGHI 3 A_FaceTarget();
+	  SKTS J 2
+	  {
+	    A_FaceTarget();
+	    MovementHandler mv = MovementHandler(EventHandler.Find("MovementHandler"));
+	    if(mv)
+	    {
+	      let actr = A_SpawnProjectile("MA_FB", 180, 64);
+		  if(actr)
+		  {
+		    double spd = 30.0 + (Distance2D(target) * 0.01);
+			
+		    if(mv.dodgeCD < 11)
+			  actr.VelIntercept(target, clamp(spd, 0.0, 100.0));
+			else
+			  actr.vel = actr.vel.Unit() * spd;
+		  }
+		}
+	  }
+	  SKTS KKLLMNO 1;
+	  SKTS P 3;
+	  ///////////////////
+	  //Second Ball
+	  TNT1 A 0 { bSpriteFlip = true; }
+	  SKTS GHI 1 A_FaceTarget();
+	  SKTS J 2
+	  {
+	    A_FaceTarget();
+		MovementHandler mv = MovementHandler(EventHandler.Find("MovementHandler"));
+	    if(mv)
+	    {
+	      let actr = A_SpawnProjectile("MA_FB", 180, -64);
+		  if(actr)
+		  {
+		    double spd = 30.0 + (Distance2D(target) * 0.01);
+			
+		    if(mv.dodgeCD < 11)
+			  actr.VelIntercept(target, clamp(spd, 0.0, 100.0));
+			else
+			  actr.vel = actr.vel.Unit() * spd;
+		  }
+		}
+	  }
+	  SKTS KKLMNO 1;
+	  SKTS PQ 2;
+	  TNT1 A 0 { bSpriteFlip = false; }
+	  ////////////////////////////
+	  //Big Leap
+	  SKSM C 3 A_StartSound("MA_Fire2", CHAN_AUTO, attenuation: 0.1);
+	  SKSM D 30
+	  {
+		vel.z = 32.0;
+		bigball = Spawn("MA_FB2_Decoy", pos + (0,0,325));
+		if(bigball)
+		  bigball.master = self;
+	  }
+	  SKSM EF 3;
+	  SKSM G 3
+	  {
+	    if(bigball)
+		{
+		  let actr = A_SpawnProjectile("MA_FB2", 325);
+		  if(actr)
+		  {
+		    actr.roll = bigball.roll;
+			actr.frame = bigball.frame;
+			MA_FB2(actr).frame_index = MA_FB2_Decoy(bigball).frame_index;
+		  }
+			
+		  bigball.master = null;
+		  bigball = null;
+		}
+	  }
+	  SKSM HIJKLMN 3;
+	  SKSM O 4;
+	  SKSM C 2;
+	  SKSM BA 1;
+	  SKSM P 12;
+	  SKSM QR 3;
+	  Goto See;
+	/////-ABILITY 8- 3 PIECE AND SODA!!!!! /////
+	/////////////////////
+	Ability8:
+	  SKRX ABC 1;
+	  SKRX D 1 A_SetScale(1.1, 0.913);
+	  TNT1 A 0 A_StartSound("MA_Imp5", 99, attenuation: 0.3);
+	  SKRN ABCD 2
+	  {
+	    A_FaceTarget();
+		Thrust(8, angle);
+		A_QuakeEx(3,3,3,8,0,1024,"dsempty");
+		if(target && Distance2D(target) <= 256)
+		  return ResolveState("Ability8Unleash");
+		  
+		return ResolveState(null);
+	  }
+	  SKRN EFFGHIJKLABCDE 2
+	  {
+	    A_FaceTarget();
+		Thrust(12, angle);
+		A_QuakeEx(3,3,3,8,0,1024,"dsempty");
+		if(target && Distance2D(target) <= 256)
+		  return ResolveState("Ability8Unleash");
+		  
+		return ResolveState(null);
+	  }
+	  SKRN FGHIJKL 2
+	  {
+	    A_FaceTarget();
+		Thrust(16, angle);
+		A_QuakeEx(3,3,3,8,0,1024,"dsempty");
+		if(target && Distance2D(target) <= 256)
+		  return ResolveState("Ability8Unleash");
+		  
+		return ResolveState(null);
+	  }
+	Ability8Unleash: //Fast Hands
+	  TNT1 A 0 { vel *= 0.5; }  
+	  SKC3 C 2 A_SetScale(0.95, 0.78);
+	  SKC3 D 2 A_StartSound("MA_Sw4", CHAN_AUTO);
+	  TNT1 A 0 A_StopSound(99);
+	  SKC3 E 2;
+	  SKC3 FGHI 1
+	  { 
+	    A_FaceTarget();
+	    Thrust(16, angle);
+	  }
+	  SKC3 JKL 1
+	  { 
+	    vel *= 0.2;
+	    if(target && Distance2D(target) <= 136)
+	      return ResolveState("Ability8Hit1");
+		  
+		return ResolveState(null);
+	  }
+	  Goto Ability8End1;
+	Ability8Hit1:
+	  SKC3 L 2
+	  {
+	    if(target)
+		{
+		  A_Stop();
+		  A_StartSound("MA_Imp14", CHAN_AUTO, volume: 0.9, attenuation: 0.5);
+	      target.DamageMobj(self, self, 15, "Physical");
+		  target.A_QuakeEx(3, 3, 3, 14, 0, 128, "DSEMPTY", QF_SCALEDOWN);
+		  target.Thrust(10, angle + 30);
+		}
+	  }
+	Ability8End1:
+	  SKCX DE 1;
+	  SKCX FG 2;
+	  TNT1 A 0
+	  {
+	    A_StartSound("MA_Sw4", CHAN_AUTO, volume: 0.58);
+		A_StartSound("Fist_Ctr", CHAN_AUTO, volume: 0.6);
+	  }
+	  SKC2 B 2 A_SetScale(0.88, 0.73);
+	  SKC2 CDEF 1
+	  { 
+	    A_FaceTarget();
+	    Thrust(24, angle);
+	  }
+	  SKC2 GHH 1
+	  { 
+	    vel *= 0.5;
+	    if(target && Distance2D(target) <= 136)
+	      return ResolveState("Ability8Hit2");
+		  
+		return ResolveState(null);
+	  }
+	  SKC2 H 2;
+	  Goto Ability8End2;
+	Ability8Hit2:
+	  SKC2 H 1
+	  {
+	    if(target)
+		{
+		  A_FaceTarget();
+		  A_Stop();
+		  A_StartSound("MA_Imp13", CHAN_AUTO, volume: 0.9, attenuation: 0.5);
+	      target.DamageMobj(self, self, 15, "Physical");
+		  target.A_QuakeEx(3, 3, 3, 14, 0, 128, "DSEMPTY", QF_SCALEDOWN);
+		  target.Thrust(10, angle - 80);
+		}
+	  }
+	Ability8End2:
+	  SKC2 IJ 3;
+	  Goto Ability4Faster;
+	Dab: //Dab
+	  SKDB ABC 2;
+	  SKDB D 10;
+	  SKDB CB 3;
+	  TNT1 A 0 A_Jump(128, "Ability1");
+	  SKDB A 3;
+	  Goto See;
+	TBag: //T-Bag
+	  TNT1 A 0
+	  {
+	    tp_start = pos;
+	    let pmo = players[consoleplayer].mo;
+		if(pmo && Distance2D(pmo) < 256) //Too close
+		  return ResolveState("TBag_Back");
+		else if(pmo && Distance2D(pmo) > 320) //Too Far 
+		  return ResolveState("TBag_Forward");
+		  
+		return ResolveState(null);
+	  }
+	  Goto TBagContinue;
+	TBag_Back:
+	  SKW1 ABCDEFGHIJKLM 4
+	  {
+	    let pmo = players[consoleplayer].mo;
+		if(pmo && Distance2D(pmo) > 140)
+		{
+		  return ResolveState("TBagContinue");
+		}
+		else
+		{
+		  angle = AngleTo(pmo);
+		  Thrust(-3, angle);
+		}
+		
+		return ResolveState(null);
+	  }
+	  Loop;
+	TBag_Forward:
+	  SKW1 ABCDEFGHIJKLM 4
+	  {
+	    let pmo = players[consoleplayer].mo;
+		if(pmo && Distance2D(pmo) < 220)
+		{
+		  return ResolveState("TBagContinue");
+		}
+		else
+		{
+		  angle = AngleTo(pmo);
+		  Thrust(3.0, angle);
+		}
+		
+		return ResolveState(null);
+	  }
+	  Loop;
+	TBagContinue:
+	  SKTB ACE 1;
+	  SKTB G 3;
+	  SKTB DB 2;
+	  //MM
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  SKTB ACE 1;
+	  SKTB G random(2,3);
+	  SKTB DB random(0,2);
+	  Goto See;
+	Slip:
+	  TNT1 A 0
+	  {
+	    A_Fall();
+		A_StartSound("BossSlip", CHAN_AUTO, volume: 0.7, attenuation: 0.4);
+	    Thrust(8, players[consoleplayer].mo.angle);
+		S_ChangeMusic("D_NULL");
+	    vel.z = 8;
+		banana_deth = true;
+		
+		if(players[consoleplayer].mo)
+		{
+		  players[consoleplayer].mo.ACS_NamedTerminate("Rule_Change");
+		  players[consoleplayer].mo.ACS_NamedTerminate("RoundTwo");
+		  players[consoleplayer].mo.TakeInventory("Skill_Exit", 1);
+		  let inv = players[consoleplayer].mo.FindInventory("Hands");
+		  if(inv)
+			Hands(inv).restrict_ = false;
+		}
+	  }
+	  Goto Death+1;
+	Death:
+	  TNT1 A 0
+	  {
+	    vel.z = 10.0;
+		ParryImpact(0);
+		StaggerFatal();
+		A_StartSound("MA_Parry", CHAN_AUTO, volume: 0.52, attenuation: 0.15);
+		S_ChangeMusic("D_NULL");
+		if(players[consoleplayer].mo)
+		{
+		  players[consoleplayer].mo.A_SetBlend("Orange", 0.3, 17);
+		  players[consoleplayer].mo.TakeInventory("Skill_Exit", 1);
+		  Thrust(24, players[consoleplayer].mo.angle);
+		}
+	  }
+	  SKDI BDFGHI 1;
+	  SKDI JK 2;
+	  SKDI LMNO 2;
+	  SKDI PQRS 1;
+	  SKDI T 1 A_CheckFloor("FloorLand");
+	  Wait;
+	FloorLand:
+	  TNT1 A 0 { bFORCEXYBILLBOARD = true; }
+	  TNT1 A 0
+	  {
+	    bFORCEXYBILLBOARD = true;
+		vel.x *= 0.2;
+		vel.y *= 0.2;
+	    vel.z = 6.0;
+		if(banana_deth)
+		  A_StartSound("BossKO", CHAN_AUTO, volume: 0.9, attenuation: 0.2);
+	  }
+	  SKDI UUVVWWXX 1 { vel.z -= 0.5; }
+	  SKD2 A 70;
+	  TNT1 A 0 { bNOGRAVITY = true; }
+	  SKD2 B 6 { vel.z = 2.0; }
+	  SKD2 C 6;
+	  SKD2 D 140;
+	  TNT1 A 0 HideBossHP();
+	  TNT1 A 2 A_StartSound("MA_Die", attenuation: 0.5);
+	  SKD2 D 3;
+	  TNT1 A 2 A_SpawnItemEx("SSGPickup", flags: SXF_NOCHECKPOSITION);
+	  Stop;
+	Dummy:
+	  SKW2 A -1;
+	  SKW3 A -1;
+	  SKW4 A -1;
+	  Stop;
+  }
+}
+
+Class MA_Fade : Actor
+{
+  Default
+  {
+    //Alpha 0.78;
+	+BRIGHT
+    +NOINTERACTION
+	RenderStyle "Shaded";
+	StencilColor "Red";
+  }
+  States
+  {
+    Spawn:
+	  "####" "#" 1 A_FadeOut(0.07);
+	  Wait;
+  } 
+}
+
+Class FistSpike : Actor
+{
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+	
+	pitch = 50;
+  }
+  Default
+  {
+    RenderStyle "Translucent";
+    +NOINTERACTION
+	YScale 0.5;
+  }
+  States
+  {
+    Spawn:
+	  0000 A 4;
+	  0000 AAAA 1
+	  {
+	    scale.y += 0.25;
+	  }
+	  0000 A 35;
+	  0000 A 1 A_FadeOut(0.1);
+	  Wait;
+  }
+}
+
+Class FistSpike2 : FistSpike
+{
+  States
+  {
+    Spawn:
+	  0000 A 7;
+	  0000 AAAA 1
+	  {
+	    scale.y += 0.3125;
+	  }
+	  0000 A 35;
+	  0000 A 1 A_FadeOut(0.1);
+	  Wait;
+  }
+}
+
+Class FistSpike3 : FistSpike
+{
+  States
+  {
+    Spawn:
+	  0000 A 10;
+	  0000 AAAA 1
+	  {
+	    scale.y += 0.375;
+	  }
+	  0000 A 35;
+	  0000 A 1 A_FadeOut(0.1);
+	  Wait;
+  }
+}
+
+Class MA_FB : Actor
+{
+  Actor light;
+  bool trail_fx;
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+    trail_fx = true;
+    light = Spawn("MA_FB_Flare", pos);
+	if(light)
+	{
+	  light.scale.x = 0.13;
+	  light.scale.y = light.scale.x * 0.83;
+	  light.vel = vel;
+	  light.master = self;
+	}
+  }
+  override void Tick()
+  {
+    if(trail_fx)
+	{
+	  for(int i = 0; i < 4; i++)
+	  {
+	    A_SpawnItemEx("MA_FB_Fire", random(0,32), random(-40,40), random(-40,40),
+	    -8.0, frandom(-3.0,3.0), frandom(0.4,3.0));
+	    A_SpawnItemEx("MA_FB_Fire2", random(0,32), random(-40,40), random(-40,40),
+	    -8.0, frandom(-3.0,3.0), frandom(0.4,3.0), failchance: 128);
+	  }
+	  
+	  bool left = random(0,1);
+	  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SMMMA0"), STYLE_Translucent, SPF_RELATIVE|SPF_ROLL,
+	  45, random(80,96), 0, frandom(-12.0,0.0), frandom(-4.0,4.0), frandom(-4.0,4.0), frandom(-1.5,1.5), frandom(-1.5,1.5), frandom(0.4,3.0),
+	  accelz: -0.001, sizestep: -4.0, startroll: random(0,359), rollvel: Left ? 0.5 : -0.5, rollacc: Left ? 0.02 : -0.02);
+	  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("FTH2A0"), STYLE_ADD, SPF_FULLBRIGHT|SPF_RELATIVE|SPF_ROLL,
+	  35, random(80,96), 0, frandom(-12.0,0.0), frandom(-4.0,4.0), frandom(-4.0,4.0), frandom(-1.5,1.5), frandom(-1.5,1.5), frandom(0.4,3.0),
+	  accelz: -0.001, sizestep: -4.0, startroll: random(0,359), rollvel: Left ? 0.5 : -0.5, rollacc: Left ? 0.02 : -0.02);
+	}
+	
+    Super.Tick();
+	
+	if(GetAge() < 4 && light)
+	{
+	  scale.x += 0.15;
+	  scale.y += 0.15;
+	  light.scale.x += 0.1;
+	  light.scale.y = light.scale.x * 0.83;
+	}
+	
+	if(light)
+	  light.vel = vel;
+  }
+  Default
+  {
+    Scale 0.1;
+	Radius 31;
+	Height 62;
+	Speed 20;
+	Projectile;
+	SeeSound "MA_Fire1";
+	+BRIGHT
+    +FORCEXYBILLBOARD
+	+HITTRACER
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  CFB1 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1 { roll += 0.4; }
+	  Loop;
+	Death:
+	  TNT1 A 1
+	  {
+	    if(target && tracer)
+		  tracer.DamageMobj(target, target, 30, "Energy");
+		  
+	    trail_fx = false;
+		A_QuakeEx(2, 2, 10, 10, 0, 2048, "dsempty");
+		A_StartSound("MA_Imp3", CHAN_AUTO, volume: 0.67, attenuation: 0.4);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_ADD, SPF_FULLBRIGHT, 15, 75,
+	    startalphaf: 2.0, sizestep: 20);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPRK1_01"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 14, size: 250, startalphaf: 1.0, sizestep: 20);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BWAVA0"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 8, size: 100, sizestep: 40);
+	    if(light)
+		  light.Destroy();
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MineExplosion2", zofs: 2);
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  Actor puff = Spawn("ExplosionTracer2", pos + newPos);
+		  if(puff)
+		    puff.vel = newVel * frandom(0.5, 0.8);
+			
+		  pitch = random(2,90);
+		  angle = random(0,359);
+		  newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  newVel = 0.8 * newPos;
+		  Actor puff2 = Spawn("MA_FB_Fire", pos + newPos);
+		  if(puff2)
+		    puff2.vel = newVel;
+	    }
+	  }
+	  TNT1 A 70
+	  {
+	    A_StopSound(CHAN_VOICE);
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  Actor puff = Spawn("ESpark",  pos + (random(24,32) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch))));
+		  if(puff)
+		    puff.vel = newVel;
+			
+		  pitch = random(2,90);
+		  angle = random(0,359);
+		  newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  newVel = 0.8 * newPos;
+		  Actor puff2 = Spawn("MA_FB_Fire2", pos + newPos);
+		  if(puff2)
+		    puff2.vel = newVel;
+	    }
+	  }
+	  Stop;
+  }
+}
+
+Class MA_HomingObj : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	A_SeekerMissile(1, 2);
+  }
+  Default
+  {
+    +FLOORHUGGER
+    +MISSILE
+    +THRUACTORS
+	+SEEKERMISSILE
+	Projectile;
+	Speed 37;
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 1;
+	  TNT1 AAAAAA 8 A_SpawnItemEx("MA_Mine");
+	  Stop;
+  }
+}
+
+Class MA_Mine : Actor
+{
+  override void BeginPlay()
+  {
+    roll = random(0,359);
+  }
+  Default
+  {
+    XScale 1.3;
+	YScale 1.08;
+    RenderStyle "Add";
+    +BRIGHT
+    +NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  MAXP A 1 NoDelay
+	  {
+	    let crack = Spawn("CrackDecal9", pos + (0,0,6));
+		if(crack)
+		  crack.scale = (0.8,0.8);
+		  
+		let crack_bg2 = Spawn("CrackDecal5", pos + (0,0,2));
+		if(crack_bg2)
+		{
+		  crack_bg2.A_SetRenderStyle(1.0, STYLE_Add);
+		  crack_bg2.scale = (1.5,1.5);
+		}
+		
+		A_Explode(20, 200, XF_NOTMISSILE, 0, 48, damageType: "Energy");
+	    A_SpriteOffset(0.0, -64.0);
+		A_QuakeEx(2, 2, 10, 10, 0, 2048, "dsempty");
+	    A_StartSound("MA_Imp6", CHAN_AUTO, attenuation: 0.5);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_ADD, SPF_FULLBRIGHT, 15, 250,
+	    startalphaf: 2.0, sizestep: 50);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPRK1_01"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 14, size: 250, startalphaf: 1.0, sizestep: 20);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BWAVA0"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 8, size: 250, sizestep: 100);
+	  }
+	  MAXP C 1
+	  {
+	    A_SpawnItemEx("MineExplosion2", zofs: 2);
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  Actor puff = Spawn("ExplosionTracer2", pos + newPos);
+		  if(puff)
+		    puff.vel = newVel * frandom(0.5, 0.8);
+			
+		  pitch = random(2,90);
+		  angle = random(0,359);
+		  newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  newVel = 0.8 * newPos;
+		  Actor puff2 = Spawn("MA_FB_Fire", pos + newPos);
+		  if(puff2)
+		    puff2.vel = newVel;
+	    }
+	  }
+	  MAXP E 1
+	  {
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  Actor puff = Spawn("ESpark",  pos + (random(24,32) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch))));
+		  if(puff)
+		    puff.vel = newVel;
+			
+		  pitch = random(2,90);
+		  angle = random(0,359);
+		  newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  newVel = 0.8 * newPos;
+		  Actor puff2 = Spawn("MA_FB_Fire2", pos + newPos);
+		  if(puff2)
+		    puff2.vel = newVel;
+	    }
+	  }
+	  MAXP GIKMOQSU 1;
+	  MAXP WWXXYYZZ 1 A_FadeOut(0.1);
+	  Stop;
+  }
+}
+
+Class MA_FB_Flare : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(!master)
+	  Destroy();
+  }
+  Default
+  {
+	Alpha 0.4;
+	RenderStyle "Add";
+	+BRIGHT
+    +FORCEXYBILLBOARD
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  EXPF A -1;
+	  Stop;
+  }
+}
+
+Class MA_FB_Fire : Actor
+{
+  double roll_rate;
+  override void PostBeginPlay()
+  {
+    roll_rate = frandompick(-1.0,1.0) * frandom(0.1,3.0);
+  }
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() > 15)
+	  A_FadeOut(0.1);
+	else if(GetAge() < 10)
+	  A_FadeIn(0.1);
+	
+	roll += roll_rate;
+  }
+  Default
+  {
+    RenderStyle "Add";
+	Alpha 0.0;
+	XScale 1.0;
+	YScale 0.83;
+	+BRIGHT
+    +FORCEXYBILLBOARD
+	+NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  TNT1 A 0 A_Jump(256, "Var1", "Var2");
+	Var1:
+	  FTR1 ABCDEFGH 2;
+	  Loop;
+	Var2:
+	  FTR2 ABCDEFGH 2;
+	  Loop;
+  }
+}
+
+Class MA_FB_Fire2 : Actor
+{
+  double roll_rate;
+  override void PostBeginPlay()
+  {
+    roll_rate = frandompick(-1.0,1.0) * frandom(0.1,3.0);
+  }
+  override void Tick()
+  {
+    Super.Tick();
+	
+	roll += roll_rate;
+	
+	if(GetAge() > 15)
+	  A_FadeOut(0.05);
+	else if(GetAge() < 10)
+	  A_FadeIn(0.05);
+  }
+  Default
+  {
+    RenderStyle "Add";
+	XScale 0.1;
+	YScale 0.083;
+	Alpha 0.0;
+	+BRIGHT
+    +FORCEXYBILLBOARD
+	+NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  FRB1 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  Loop;
+  }
+}
+
+Class MA_FB2 : Actor
+{
+  Actor light;
+  bool trail_fx;
+  int frame_index;
+  override void PostBeginPlay()
+  {
+    trail_fx = true;
+    light = Spawn("MA_FB_Flare", pos);
+	if(light)
+	{
+	  light.scale.x = 3.0;
+	  light.scale.y = light.scale.x * 0.83;
+	  light.vel = vel;
+	}
+  }
+  override void Tick()
+  {
+    Super.Tick();
+	if(light)
+	  light.vel = vel;
+	
+	if(trail_fx)
+	{
+	  if(GetAge() % 4 == 0)
+	  {
+	    A_SpawnParticleEx(Color(255, 127, 0), TexMan.CheckForTexture(String.Format("SPARK%d", random(2,4))), STYLE_AddShaded, SPF_FULLBRIGHT|SPF_ROLL|SPF_RELATIVE|SPF_LOCAL_ANIM,
+	    22, 700, 0, fadestepf: 0.0, startroll: random(0,359), rollvel: frandom(-0.5,0.5));
+	  }
+	  for(int i = 0; i < 4; i++)
+	  {
+	    A_SpawnItemEx("MA_FB_Fire", random(0,88), random(-112,112), random(-112,112),
+	    -16.0, frandom(-8.0,8.0), frandom(-8.0,8.0));
+	    A_SpawnItemEx("MA_FB_Fire2", random(0,88), random(-112,112), random(-112,112),
+	    -16.0, frandom(-8.0,8.0), frandom(-8.0,8.0), failchance: 128);
+	  }
+	}
+  }
+  Default
+  {
+    Scale 2.5;
+	Radius 80;
+	Height 160;
+	Speed 100;
+	Projectile;
+	SeeSound "MA_Fire3";
+	+BRIGHT
+    +FORCEXYBILLBOARD
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  CFB1 A 1
+	  {
+	    roll += 0.4;
+		frame = frame_index;
+		if(frame_index < 25)
+		  frame_index++;
+		else
+		  frame_index = 0;
+	  }
+	  Wait;
+	Death:
+	  TNT1 A 1
+	  {
+	    if(pos.z - floorz == 0)
+		{
+		  let crack = Spawn("CrackDecal9", pos + (0,0,6));
+		  if(crack)
+		    crack.scale = (1.5,1.5);
+		  
+		  let crack_bg2 = Spawn("CrackDecal5", pos + (0,0,2));
+		  if(crack_bg2)
+		    crack_bg2.scale = (2.5,2.5);
+		}  
+		  
+	    trail_fx = false;
+		A_Explode(40, 320, XF_NOTMISSILE, 0, 192, damageType: "Energy");
+		A_QuakeEx(2, 2, 10, 10, 0, 2048, "dsempty");
+	    A_StartSound("MA_Imp12", CHAN_AUTO, attenuation: 0.3);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_ADD, SPF_FULLBRIGHT, 15, 250,
+	    startalphaf: 2.0, sizestep: 50);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPRK1_01"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 14, size: 250, startalphaf: 1.0, sizestep: 20);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BWAVA0"), style: STYLE_ADD, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 8, size: 250, sizestep: 100);
+	    if(light)
+		  light.Destroy();
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MineExplosion2", zofs: 2);
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  Actor puff = Spawn("ExplosionTracer2", pos + newPos);
+		  if(puff)
+		    puff.vel = newVel * frandom(0.5, 0.8);
+			
+		  pitch = random(2,90);
+		  angle = random(0,359);
+		  newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  newVel = 0.8 * newPos;
+		  Actor puff2 = Spawn("MA_FB_Fire", pos + newPos);
+		  if(puff2)
+		    puff2.vel = newVel;
+	    }
+	  }
+	  TNT1 A 70
+	  {
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  Actor puff = Spawn("ESpark",  pos + (random(24,32) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch))));
+		  if(puff)
+		    puff.vel = newVel;
+			
+		  pitch = random(2,90);
+		  angle = random(0,359);
+		  newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  newVel = 0.8 * newPos;
+		  Actor puff2 = Spawn("MA_FB_Fire2", pos + newPos);
+		  if(puff2)
+		    puff2.vel = newVel;
+	    }
+	  }
+	  Stop;
+  }
+}
+
+Class MA_FB2_Decoy : Actor
+{
+  Actor light;
+  int frame_index;
+  override void PostBeginPlay()
+  {
+    light = Spawn("MA_FB_Flare", pos);
+	if(light)
+	{
+	  light.scale.x = 3.0;
+	  light.scale.y = light.scale.x * 0.83;
+	  light.vel = vel;
+	}
+  }
+  override void Tick()
+  {
+    Super.Tick();
+
+	if(light)
+	  light.vel = vel;
+	
+	if(GetAge() % 4 == 0)
+	{
+	  A_SpawnParticleEx(Color(255, 127, 0), TexMan.CheckForTexture(String.Format("SPARK%d", random(2,4))), STYLE_AddShaded, SPF_FULLBRIGHT|SPF_ROLL|SPF_RELATIVE|SPF_LOCAL_ANIM,
+	  22, 700, 0, fadestepf: 0.0, startroll: random(0,359), rollvel: frandom(-0.5,0.5));
+	}
+	for(int i = 0; i < 4; i++)
+	{
+	  A_SpawnItemEx("MA_FB_Fire", random(0,88), random(-112,112), random(-112,112),
+	  -16.0, frandom(-8.0,8.0), frandom(-8.0,8.0));
+	  A_SpawnItemEx("MA_FB_Fire2", random(0,88), random(-112,112), random(-112,112),
+	  -16.0, frandom(-8.0,8.0), frandom(-8.0,8.0), failchance: 128);
+	}
+	
+	if(master)
+	{
+	  vel = master.vel;
+	  angle = master.angle;
+	}
+	else
+	{
+	  if(light)
+	    light.Destroy();
+		
+	  Destroy();
+	}
+  }
+  Default
+  {
+    Scale 2.5;
+	+BRIGHT
+    +FORCEXYBILLBOARD
+	+NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  CFB1 A 1
+	  {
+	    roll += 0.4;
+		frame = frame_index;
+		if(frame_index < 25)
+		  frame_index++;
+		else
+		  frame_index = 0;
+	  }
+	  Wait;
+  }
+}
+
+Class MA_FireBuild : Actor
+{
+  double ang_step, z_step, density_step;
+  
+  override void BeginPlay()
+  {
+    density_step = 1;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	A_Warp(AAPTR_MASTER, 104, 0, 92 + z_step, 25 - ang_step, WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE);
+	ang_step += 8;
+	z_step += 3;
+	
+	if(density_step < 3 && GetAge() % 3 == 0)
+	  density_step++;
+	
+	for(int i = 0; i < density_step; i++)
+	{
+	  A_SpawnItemEx("FireTrail", 0, random(-8,8), random(-8,8), random(3,4), frandom(-1.0,1.0), frandom(-1.0,1.0), angle);
+	  A_SpawnItemEx("MA_FB_Fire", 0, random(-8,8), random(-8,8), random(3,4), frandom(-1.0,1.0), frandom(-1.0,1.0), angle);
+	  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_ADD, SPF_RELATIVE|SPF_FULLBRIGHT, 35, 10, angle,
+	  0, random(-8,8), random(-8,8), random(3,4), frandom(-2.0,2.0), frandom(-2.0,2.0));
+	}
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 25;
+	  Stop;
+  }
+}
+
+Class MA_FireBuild2 : Actor
+{
+  double ang_step, z_step, density_step;
+  
+  override void BeginPlay()
+  {
+    density_step = 1;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	A_Warp(AAPTR_MASTER, 48, 0, 110 + z_step, -10 - ang_step, WARPF_NOCHECKPOSITION|WARPF_INTERPOLATE);
+	ang_step += 10;
+	z_step += 20; 
+	
+	if(density_step < 3 && GetAge() % 3 == 0)
+	  density_step++;
+	
+	for(int i = 0; i < density_step; i++) //MA_FB_Fire
+	{
+	  A_SpawnItemEx("FireTrail", 0, random(-8,8), random(-8,8), random(3,4), frandom(-1.0,1.0), frandom(-1.0,1.0), angle);
+	  A_SpawnItemEx("MA_FB_Fire", 0, random(-8,8), random(-8,8), random(3,4), frandom(-1.0,1.0), frandom(-1.0,1.0), angle);
+	  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_ADD, SPF_RELATIVE|SPF_FULLBRIGHT, 35, 10, angle,
+	  0, random(-8,8), random(-8,8), random(3,4), frandom(-2.0,2.0), frandom(-2.0,2.0));
+	  //A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLC0"), STYLE_ADD, SPF_RELATIVE|SPF_FULLBRIGHT, 35, 10, angle,
+	  //random(-16,16), random(-16,16), random(-16,16), random(1,2), frandom(-2.0,2.0), frandom(-2.0,2.0));
+	}
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 15;
+	  Stop;
+  }
+}
+
+Class BlastDecal : Actor
+{
+  double fade, sc_mult;
+  Default
+  {
+    RenderStyle "Add";
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  0000 A 1
+	  {
+	    A_FadeOut(fade);
+		scale.x *= sc_mult;
+		scale.y = scale.x;
+	  } 
+	  Wait;
+  }
+}
+
+Class CrackDecal : Actor
+{
+  double grow_mult;
+  Default
+  {
+    RenderStyle "Translucent";
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  0000 A 0;
+	  0000 AAA 1 
+	  {
+	    scale.x += grow_mult;
+		scale.y = scale.x;
+	  }
+	  TNT1 A 1
+	  {
+	    let actr = Spawn("CrackDecal2", pos);
+		if(actr)
+		{
+		  actr.scale = scale;
+		  CrackDecal(actr).grow_mult = grow_mult;
+		}
+	  } 
+	  Stop;
+  }
+}
+
+Class CrackDecal2 : CrackDecal
+{
+  override void Tick()
+  {
+    Super.Tick();
+  }
+  States
+  {
+    Spawn:
+	  0000 A 0;
+	  0000 AAA 1 
+	  {
+	    scale.x += grow_mult;
+		scale.y = scale.x;
+	  }
+	  TNT1 A 1
+	  {
+	    let actr = Spawn("CrackDecal3", pos);
+		if(actr)
+		{
+		  actr.scale = scale;
+		  CrackDecal(actr).grow_mult = grow_mult;
+		}
+	  } 
+	  Stop;
+  }
+}
+
+Class CrackDecal3 : CrackDecal
+{
+  States
+  {
+    Spawn:
+	  0000 A 35;
+	  0000 A 1 A_FadeOut(0.05);
+	  Wait;
+  }
+}
+
+Class CrackDecal4 : Actor
+{
+  Default
+  {
+    Scale 4.5;
+    RenderStyle "Normal";
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  0000 A 35;
+	  0000 A 1 A_FadeOut(0.05);
+	  Wait;
+  }
+}
+
+Class CrackDecal5 : Actor
+{
+  Default
+  {
+    RenderStyle "Normal";
+	+BRIGHT
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  0000 A 41;
+	  0000 A 1 A_FadeOut(0.05);
+	  Wait;
+  }
+}
+
+Class CrackDecal6 : Actor
+{
+  double grow_mult;
+  Default
+  {
+    RenderStyle "Normal";
+	+BRIGHT
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  0000 A 0;
+	  0000 AAA 1 
+	  {
+	    scale.x += grow_mult;
+		scale.y = scale.x;
+	  }
+	  TNT1 A 1
+	  {
+	    let actr = Spawn("CrackDecal7", pos);
+		if(actr)
+		{
+		  actr.scale = scale;
+		  CrackDecal6(actr).grow_mult = grow_mult;
+		}
+	  } 
+	  Stop;
+  }
+}
+
+Class CrackDecal7 : CrackDecal6
+{
+  override void Tick()
+  {
+    Super.Tick();
+  }
+  States
+  {
+    Spawn:
+	  0000 A 0;
+	  0000 AAA 1 
+	  {
+	    scale.x += grow_mult;
+		scale.y = scale.x;
+	  }
+	  TNT1 A 1
+	  {
+	    let actr = Spawn("CrackDecal8", pos);
+		if(actr)
+		{
+		  actr.scale = scale;
+		  CrackDecal6(actr).grow_mult = grow_mult;
+		}
+	  } 
+	  Stop;
+  }
+}
+
+Class CrackDecal8 : CrackDecal6
+{
+  States
+  {
+    Spawn:
+	  0000 A 35;
+	  0000 A 1 A_FadeOut(0.05);
+	  Wait;
+  }
+}
+
+Class CrackDecal9 : CrackDecal8 {}
+
+Class TeleportSigil : Actor
+{
+  Default
+  {
+    Scale 1.3;
+	Alpha 0.0;
+    RenderStyle "Add";
+    +NOINTERACTION
+    +FLATSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  TLSG AAAAA 1 Bright
+	  {
+	    A_FadeIn(0.2);
+	    A_SetRoll(roll+1, SPF_INTERPOLATE);
+	  }
+	  TLSG AAAAAAAAAA 1 Bright A_SetRoll(roll+1, SPF_INTERPOLATE);
+	  TLSG AAAAAAAAAA 1 Bright A_SetScale(scale.x - 0.13, scale.y - 0.13);
+	  Stop;
+  }
+}
+
+Class TeleportSigil2 : Actor
+{
+  int lifeTime;
+  
+  override void   postBeginPlay()
+  {
+    lifeTime = 0;
+  }
+  
+  Default
+  {
+    Scale 0.0;
+    RenderStyle "Add";
+    +NOINTERACTION
+    +FLATSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  TLSG AAAAAAAAAA 1 Bright
+	  {
+	    A_SetScale(scale.x + 0.13, scale.y + 0.13);
+	    A_SetRoll(roll+1, SPF_INTERPOLATE);
+	  }
+    See:
+	  TLSG A 1 Bright 
+	  {
+		A_SetRoll(roll+1, SPF_INTERPOLATE);
+		if(lifeTime == 35)
+		{
+		  return ResolveState("Death");
+		} else {
+		  lifeTime++;
+		  return ResolveState(null);
+		}
+	  }
+	  Loop;
+	Death:
+	  TLSG A 1
+	  {
+	    A_FadeOut(0.07);
+	    A_SetRoll(roll+1, SPF_INTERPOLATE);
+	  }
+	  Wait;
+  }
+}
+
+Class DeathAnnouncer : Actor
+{
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 45;
+	  TNT1 A 18
+	  {
+	    if(players[consoleplayer].mo)
+	      players[consoleplayer].mo.ACS_NamedExecute("End_Fight");
+		  
+	    A_StartSound("MA_Fite4", CHAN_AUTO, volume: 1.0, attenuation: 0.0);
+	  }
+	  TNT1 A 37 A_StartSound("MA_End", CHAN_AUTO, volume: 1.0, attenuation: 0.0);
+	  TNT1 A 0
+	  {
+	    let handler = DuelDefeat(EventHandler.Find("DuelDefeat"));
+	    if(handler)
+		  handler.Run("BDIcon2", "BDSym03");
+	  }
+	  TNT1 A 15;
+	  TNT1 A 455 A_StartSound("Boss02", CHAN_AUTO, volume: 1.0, attenuation: 0.0);
+	  Stop;
+  }
+}

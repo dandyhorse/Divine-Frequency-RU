@@ -1,0 +1,90 @@
+ Class Skill_IronWill : Skill
+{
+  override void AttachToOwner(Actor other)
+  {
+    if(other)
+	  DFPlayer(other).buff_withstand = true;
+	
+    Super.AttachToOwner(other);
+  }
+  override void BeginPlay()
+  {
+    invName = "Passive| Withstand";
+	invIcon = "Graphics/Inventory Icon/Skill_IronWill.png";
+	invText = "$S_IronWill";
+	invLore = "$S_IronWillLore";
+	
+	Super.BeginPlay();
+  }
+}
+
+/*if(heal_time == 350)
+	{
+	  heal_time = 0;
+	  if(owner && !DFPlayer(owner).fist_fighting)
+	  {
+	    owner.GiveBody(DFPlayer(owner).Str);
+		DFPlayer(owner).ChatMessage(String.Format("· %s \cJregenerates \cDHealth (%d).", owner.GetTag(), DFPlayer(owner).Str));
+	  }
+	}
+	
+	heal_time++;*/
+
+ Class Skill_Undying : Skill
+{
+  bool save;
+  int cd;
+  override void BeginPlay()
+  {
+    invName = "Path of Burial| Liberation";
+	invIcon = "Graphics/Inventory Icon/Skill_Undying.png";
+	invText = "$S_IronWill";
+	invLore = "$S_IronWillLore";
+	invSnd = "ATD_Use";
+	invLog = "";
+	save = true;
+	
+	Super.BeginPlay();
+  }
+  
+  override void ModifyDamage (int damage, Name damageType, out int newdamage, bool passive, Actor inflictor, Actor source, int flags)
+  {
+    if(passive && damage > 0 && damageType != "InstantDeath")
+      if(owner)
+	    if(save && damage >= owner.health)
+		{
+		  newdamage = 0;
+		  owner.A_SetHealth(1);
+		  owner.GiveInventory("Invulnerability", 1);
+		  save = false;
+		  cd = 10500;
+		}
+  }
+  
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(cd > 0)
+	  cd--;
+	
+	if(cd == 1)
+	{
+	  save = true;
+	  cd--;
+	}
+  }
+  
+  override bool Use(bool pickup)
+  {
+	return false;
+  }
+}
+
+Class Invulnerability : InvulnerabilitySphere
+{
+  Default
+  {
+    Powerup.Duration -10;
+  }
+}

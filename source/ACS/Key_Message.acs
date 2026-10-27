@@ -1,0 +1,50 @@
+#library "Key_Message"
+#include "zcommon.acs"
+
+Script "Map01Key1" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"--\cDMain Corridor Key\cJ--"; HUDMSG_LOG, 2, CR_WHITE, 1.5, 0.05, 3.0);
+}
+
+Script "Map01Key2" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"--\cFTrain Ticket\cJ--"; HUDMSG_LOG, 2, CR_WHITE, 1.5, 0.05, 1.0);
+}
+
+Script "Map01Key3" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"--\cDPrivate Exit Key\cJ--"; HUDMSG_LOG, 2, CR_WHITE, 1.5, 0.05, 3.0);
+}
+
+Script "Map02AKey1" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"--\cDSection C Access Key\cJ--"; HUDMSG_LOG, 2, CR_WHITE, 1.5, 0.05, 3.0);
+}
+
+Script "Map02AKey2" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"--\cDWeapon Locker Keycard\cJ--"; HUDMSG_LOG, 2, CR_WHITE, 1.5, 0.05, 3.0);
+}
+
+Script "Map02AKey3" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"--\cDUtility Storage Key\cJ--"; HUDMSG_LOG, 2, CR_WHITE, 1.5, 0.05, 3.0);
+}
+
+Script "Map02BKey1" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"--\cDEast Wing Access Key\cJ--"; HUDMSG_LOG, 2, CR_WHITE, 1.5, 0.05, 3.0);
+}
+
+Script "Map02BKey2" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"--\cDBasement Key\cJ--"; HUDMSG_LOG, 2, CR_WHITE, 1.5, 0.05, 3.0);
+}

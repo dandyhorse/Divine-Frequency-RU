@@ -1,0 +1,45 @@
+void LotusSpike()
+  {
+    for(int i = 0; i < 360; i += 45)
+	{
+	  Vector3 sPos = Vec3Offset(88 * cos(i), 88 * sin(i), -14);
+	  let actr = Spawn("StarSpike", sPos);
+	  if(actr)
+	  {
+		actr.angle = i;
+		actr.pitch = 50;
+	  }
+		  
+	  sPos = Vec3Offset(132 * cos(i - 22.5), 132 * sin(i - 22.5), -18);
+	  actr = Spawn("StarSpike", sPos);
+	  if(actr)
+	  {
+		actr.angle = i - 22.5;
+	    actr.pitch = 50;
+	  }
+		  
+	  sPos = Vec3Offset(176 * cos(i), 176 * sin(i), -14);
+	  actr = Spawn("StarSpike2", sPos);
+	  if(actr)
+	  {
+		actr.angle = i;
+		actr.pitch = 50;
+	  }
+		  
+	  sPos = Vec3Offset(220 * cos(i - 22.5), 220 * sin(i - 22.5), -24);
+	  actr = Spawn("StarSpike", sPos);
+	  if(actr)
+	  {
+		actr.angle = i - 22.5;
+		actr.pitch = 50;
+	  }
+		  
+	  sPos = Vec3Offset(264 * cos(i), 264 * sin(i), -14);
+	  actr = Spawn("StarSpike3", sPos);
+	  if(actr)
+	  {
+		actr.angle = i;
+		actr.pitch = 50;
+	  }
+	}
+  }

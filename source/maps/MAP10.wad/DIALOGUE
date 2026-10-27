@@ -1,0 +1,556 @@
+namespace = "GZDoom";
+
+Conversation
+{
+    ID = 1;
+    page // Page 1
+    {
+		Name = "THRESHOLD";
+        Dialog = "$Bed_01a";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Bed_01a_1";
+			NextPage = 2;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 3;
+    page // Page 1
+    {
+		Name = "Bed";
+        Dialog = "$Bed_01a";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Bed_01a_1";
+			NextPage = 2;
+		}
+	}
+	page // Page 1
+    {
+		Name = "Bed";
+        Dialog = "$Bed_02a";
+		Choice
+		{
+			text = "$Bed_01a_1";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = True;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 4;
+	page // Page 1
+    {
+		Name = "Table";
+        Dialog = "$Tome02_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Tome02_1a";
+			NextPage = 2;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 0;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Vase";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2a";
+			NextPage = 1;
+			Exclude
+			{
+				Item = "Key_Vase";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_1b";
+			NextPage = 3;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 1;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Candle";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2b";
+			NextPage = 1;
+			Exclude
+			{
+				Item = "Key_Candle";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_1c";
+			NextPage = 4;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 2;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Rose";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2c";
+			NextPage = 1;
+			Exclude
+			{
+				Item = "Key_Rose";
+				Amount = 1;
+			}
+		}
+	}
+	page // Page 2
+    {
+		Name = "Table";
+        Dialog = "$Tome02_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Tome02_1b";
+			NextPage = 7;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 1;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Candle";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2b";
+			NextPage = 2;
+			Exclude
+			{
+				Item = "Key_Candle";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_1c";
+			NextPage = 6;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 2;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Rose";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2c";
+			NextPage = 2;
+			Exclude
+			{
+				Item = "Key_Rose";
+				Amount = 1;
+			}
+		}
+	}
+	page // Page 3
+    {
+		Name = "Table";
+        Dialog = "$Tome02_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Tome02_1a";
+			NextPage = 7;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 0;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Vase";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2a";
+			NextPage = 3;
+			Exclude
+			{
+				Item = "Key_Vase";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_1c";
+			NextPage = 5;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 2;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Rose";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2c";
+			NextPage = 3;
+			Exclude
+			{
+				Item = "Key_Rose";
+				Amount = 1;
+			}
+		}
+	}
+	page // Page 4
+    {
+		Name = "Table";
+        Dialog = "$Tome02_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Tome02_1a";
+			NextPage = 6;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 0;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Vase";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2a";
+			NextPage = 4;
+			Exclude
+			{
+				Item = "Key_Vase";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_1b";
+			NextPage = 5;
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 1;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Candle";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2b";
+			NextPage = 4;
+			Exclude
+			{
+				Item = "Key_Candle";
+				Amount = 1;
+			}
+		}
+	}
+	page // Page 5
+    {
+		Name = "Table";
+        Dialog = "$Tome02_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Tome02_1a";
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 0;
+			Require
+			{
+				Item = "Key_Vase";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2a";
+			NextPage = 5;
+			Exclude
+			{
+				Item = "Key_Vase";
+				Amount = 1;
+			}
+		}
+	}
+	page // Page 6
+    {
+		Name = "Table";
+        Dialog = "$Tome02_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Tome02_1b";
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 1;
+			Require
+			{
+				Item = "Key_Candle";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2b";
+			NextPage = 6;
+			Exclude
+			{
+				Item = "Key_Candle";
+				Amount = 1;
+			}
+		}
+	}
+	page // Page 7
+    {
+		Name = "Table";
+        Dialog = "$Tome02_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Tome02_1c";
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 2;
+			Require
+			{
+				Item = "Key_Rose";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2c";
+			NextPage = 7;
+			Exclude
+			{
+				Item = "Key_Rose";
+				Amount = 1;
+			}
+		}
+	}
+}
+
+Conversation
+{
+    ID = 5;
+	page // Page 1
+    {
+		Name = "Table";
+        Dialog = "$Tome02_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Tome02_1d";
+			Special = 80;
+			Arg0 = 100;
+			Arg2 = 3;
+			Require
+			{
+				Item = "Key_Tome";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$Tome02_2d";
+			NextPage = 1;
+			Exclude
+			{
+				Item = "Key_Tome";
+				Amount = 1;
+			}
+		}
+	}
+}
+
+
+Conversation
+{
+    ID = 6;
+    page // Page 1
+    {
+		Name = "$Water";
+        Dialog = "$Water_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Water_1a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 11;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation //Trash Can
+{
+    ID = 7;
+    page // Page 1
+    {
+		Name = "$TrashCan";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$TrashCan_01a";
+			NextPage = 2;
+			GiveItem = "key_Vase";
+		}
+	}
+	page // Page 2
+    {
+		Name = "$TrashCan";
+        Dialog = "$TrashCan_02";
+		Voice = "Trash_01";
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 20;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation //Trash Chute
+{
+    ID = 8;
+    page // Page 1
+    {
+		Name = "$TrashChute";
+        Dialog = " ";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$TrashChute_01a";
+			NextPage = 2;
+			Require
+			{
+				Item = "SuperSoda";
+				Amount = 1;
+			}
+		}
+	}
+	page // Page 2
+    {
+		Name = "$TrashChute";
+        Dialog = "$TrashChute_02";
+		Voice = "Trash_01";
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 21;
+			CloseDialog = true;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 9;
+	page // Page 1
+    {
+		Name = "Door";
+        Dialog = "$WeakDoor_02";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$WeakDoor_03b";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 10;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Basement";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$WeakDoor_02a";
+			NextPage = 2;
+		}
+	}
+	page // Page 2
+    {
+		Name = "Door";
+        Dialog = "$WeakDoor_03a_1";
+		Voice = "WoodBar2";
+		Choice
+		{
+			text = "$WeakDoor_03b";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 10;
+			CloseDialog = TRUE;
+			Require
+			{
+				Item = "Key_Basement";
+				Amount = 1;
+			}
+		}
+		Choice
+		{
+			text = "$WeakDoor_02a";
+			NextPage = 2;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			CloseDialog = true;
+		}
+	}
+}

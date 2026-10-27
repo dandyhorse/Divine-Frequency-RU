@@ -1,0 +1,178 @@
+class BossDefeat : EventHandler 
+{
+  bool active;
+  int masterTime;
+  double masterAlpha, masterBG;
+  double word_alpha, wordFX1_alpha, wordFX1_scale, wordFX2_alpha, wordFX2_scale;
+  double image_glitch, icon_alpha, icon2_alpha, icon_scale;
+  string img_up, img_up1;
+	
+  override void OnRegister()
+  {
+    icon_alpha = 0.0;
+	icon_scale = 0.0;
+	word_alpha = 1.0;
+    wordFX1_alpha = 1.0;
+    wordFX1_scale = 0.2;
+	wordFX2_alpha = 0.0;
+  }
+  
+  void Run(string pic)
+  {
+    active = true;
+	masterTime = 0;
+    icon_alpha = 0.0;
+	icon2_alpha = 0.0;
+	icon_scale = 0.0;
+	word_alpha = 1.0;
+    wordFX1_alpha = 1.0;
+    wordFX1_scale = 0.2;
+	wordFX2_alpha = 0.0;
+	wordFX2_scale = 0.0;
+	
+	img_up = pic;
+	img_up1 = String.Format("%sa", pic);
+  }
+	
+  override void WorldTick()
+  {
+    if(!active)
+	  return;
+	
+    Super.WorldTick();
+	
+	if(masterTime < 220 && masterBG < 0.72)
+	  masterBG += 0.02;
+	
+	if(masterTime > 200)
+	{
+	  if(masterBG <= 0.0)
+	  {
+	    active = false;
+		masterTime = 0;
+		masterBG = 0;
+	  }
+	  else if(masterBG > 0.0)
+	    masterBG -= 0.03;
+	  
+	  if(word_alpha > 0.0)
+	    word_alpha -= 0.05;
+	  
+	  if(wordFX1_alpha > 0.0)
+	    wordFX1_alpha -= 0.05;
+		
+	  if(wordFX2_alpha > 0.0)
+	    wordFX2_alpha -= 0.05;
+		
+	  if(icon_alpha > 0.0)
+	    icon_alpha -= 0.05;
+		
+	  if(icon2_alpha > 0.0)
+		icon2_alpha -= 0.05;
+	}
+	else if(masterTime > 15)
+	{
+	  if(wordFX1_scale > 0.05)
+	  {
+	    wordFX1_scale -= 0.005;
+		wordFX1_alpha = frandom(0.6, 1.0);
+	  }
+	  else //Should last for 46 tics once done
+	  {
+	    if(wordFX1_alpha > 0.0)
+	      wordFX1_alpha -= 0.05;
+	  }
+	  
+	  if(icon_alpha < 1.0)
+	    icon_alpha += 0.05;
+	  
+	  if(icon2_alpha < 0.7)
+	    icon2_alpha += 0.01;
+		
+	  icon_scale += 0.0001;
+	}
+	
+	if(masterTime > 72 && masterTime < 96)
+	  image_glitch = frandom(-0.3, 0.0);
+	else
+	  image_glitch = 0.0;
+	
+	if(masterTime > 170)
+	{
+	  if(wordFX2_alpha > 0.0)
+	  {
+	    wordFX2_alpha -= 0.02;
+		wordFX2_scale += 0.0001;
+	  }
+	}
+	else if(masterTime > 101)
+	{
+	  wordFX2_scale += 0.0001;
+	}
+	else if(masterTime > 61)
+	{
+	  if(wordFX2_alpha < 1.0)
+	    wordFX2_alpha += 0.02;
+	}
+	
+	masterTime++;
+  }
+
+  override void renderOverlay(RenderEvent e)
+  {
+    if(active)
+	  Screen.Dim(Color(0, 0, 0), masterBG, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+	  
+	if(masterTime > 15)
+	{
+	  Screen.DrawTexture(TexMan.CheckForTexture("BDMsg01"), false, 160, 100,
+	  DTA_ScaleX, 0.2,
+	  DTA_ScaleY, 0.2, 
+	  DTA_KeepRatio, true,
+	  DTA_320x200, true,
+	  DTA_CenterOffset, true,
+	  DTA_Alpha, word_alpha);
+	  
+	  if(wordFX1_alpha > 0.0)
+	  {
+	    Screen.DrawTexture(TexMan.CheckForTexture("BDMsg01a"), false, 160, 100,
+	    DTA_ScaleX, 0.2,
+	    DTA_ScaleY, wordFX1_scale, 
+	    DTA_KeepRatio, true,
+	    DTA_320x200, true,
+	    DTA_CenterOffset, true,
+	    DTA_Alpha, wordFX1_alpha);
+	  }
+	  
+	  if(wordFX2_alpha > 0.0)
+	  {
+	    Screen.DrawTexture(TexMan.CheckForTexture("BDMsg01b"), false, 160, 101,
+	    DTA_ScaleX, 0.2 + wordFX2_scale,
+	    DTA_ScaleY, 0.2 + wordFX2_scale, 
+	    DTA_KeepRatio, true,
+	    DTA_320x200, true,
+	    DTA_CenterOffset, true,
+	    DTA_Alpha, wordFX2_alpha + image_glitch);
+	  }
+	  
+	  if(icon_alpha > 0.0)
+	  {
+	    Screen.DrawTexture(TexMan.CheckForTexture(img_up), false, 160, 56,
+	    DTA_ScaleX, 0.167 + icon_scale,
+	    DTA_ScaleY, 0.2 + icon_scale, 
+	    DTA_KeepRatio, true,
+	    DTA_320x200, true,
+	    DTA_CenterOffset, true,
+	    DTA_Alpha, icon_alpha);
+		
+		Screen.DrawTexture(TexMan.CheckForTexture(img_up1), false, 160, 56,
+	    DTA_ScaleX, 0.167 + icon_scale,
+	    DTA_ScaleY, 0.2 + icon_scale, 
+	    DTA_KeepRatio, true,
+	    DTA_320x200, true,
+	    DTA_CenterOffset, true,
+	    DTA_Alpha, icon2_alpha + frandom(0.0, 0.3));
+	  }
+	}
+  }
+}

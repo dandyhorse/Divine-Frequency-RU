@@ -1,0 +1,126 @@
+[enu default]
+M01_DREAM_01 =
+"\cDAs you move closer, you feel your consciousness swaying with the motion of every flickering frame. Each moment you spend near this thing claims a "
+"tiny fragment of your mind, seemingly absorbing it into the ominous darkness.";
+M01_DREAM_01a = "\cD[Reach out to the entity]";
+M01_DREAM_02 =
+"\cDYour mind dissolves into the gargantuan presence before you. Moments later, it goes completely dark.\n\n"
+"\cFYou sensed dogs searching for you, they follow your trail. You are dead, but only in the material sense. The world around you comes to life.";
+M01_DREAM_03 =
+"\cFYou are nothing. A mere drop of rain within a storm. Let go of reason and awareness. Exist in the complete emptiness and awaken to your new state.\n\n"
+"Inhale. Then exhale the rich air. Inhale. Then exhale. Inhale... Exhale...\n\n"
+"\cDAfter a brief moment, the trance ends.";
+
+STUDENT_00 = "Egnimatic Figure";
+STUDENT = "Disciple of Sarmipadhva";
+STUDENT_01 =
+"\cDThe large figure before you appears to be in a trance-like state. It does not acknowledge your presence. There is a possibility it doesn't even know you're here.";
+STUDENT_01a = "\cD[Reach out to the entity]";
+STUDENT_01a_1 =
+"\cDYour mind dissolves into the gargantuan presence before you. Moments later, it goes completely dark.\n\n"
+"\cFThe eye that sees the truth now closes. The anchor is lost to time, you will drown in the turbulent black water. But somewhere within the depths, you and forty-nine "
+"other souls upheaved in desperate anger.";
+STUDENT_01a_2 =
+"\cFAn entire sector devastated. Minds wandered adrift this plane and the ones far away. Today marked the moment where man becomes dog. "
+"They search for your dead body, and returned it here.\n\n"
+"Now you see yourself through another's eyes, a light show of infinite fractals and energy expressed by the constants of the universe. "
+"But this is merely premonition, it must be experienced to be true.\n\n"
+"\cDAfter a brief moment, the trance ends.";
+STUDENT_02 =
+"\cDA slow, deafening voice reverberates in your mind, as if a thousand thunderbolts ignited simultaneously -- and sounds even louder still.\n\n"
+"\cFO, HONORED - CHILD - OF - HARMONY.  WHAT - YOU - SEEK - LIES - IN - THE - WIND - AND - STORM.\n\n"
+"\RETURN - FROM - THE - PATH - YOU'VE - WALKED.";
+STUDENT_02a = "\cQ[Instinct] \cDBegin the ceremony.";
+
+/*
+M01_DREAM_01a = "\cQ[Strength] \cDExamine the Honored One.";
+M01_DREAM_01b = "\cQ[Wits] \cDExamine the entity.";
+M01_DREAM_01c = "\cQ[Physique] \cDExamine its flesh.";
+
+M01_DREAM_02a =
+"\cDThe Regal Explorers of the Stars... They haven't changed at all since you first encountered them.\n\n"
+
+"Brimming with an unshakable resolve, these brave explorers were the first to bid farewell to their tribe and seek a new home. "
+"This led them across all corners of the world, and when they eventually failed, they sought guidance from the universe.\n\n"
+
+"Dying was not a concern, for some of them actively seek death in a meditative state. As a result, The Song bestowed God's mind upon them, "
+"allowing them to roam the planes beyond as hunters.";
+
+M01_DREAM_02b =
+"\cDYour memory recalls that of the Exalted Dreamers, an urban legend about people who have achieved transcendence through extreme and lateral means. "
+"A conviction based on the belief that the heights to which they may soar will only be equal to the depths to which they descend. "
+"Meditating in such hazardous circumstances has granted them an edge to expand their horizons; it has unshackled their bodies from the burden of life.\n\n"
+
+"Their physical body is said to be indestructible, and their mind roams the universe and its many dimensions as a Class 9 meta-lifeform. "
+"You also recall that such an entity is described as having a cold and relentless existence, traversing the starless cosmic web and "
+"preying on others during their psychic astral projection.";
+
+M01_DREAM_02c =
+"\cDOn closer inspection, it appears that you have some of this thing in you, or that this thing has some of you in it. "
+"The line gets blurry more often than not. But still, you can see similar yet-not-quite the same mutations in the body in front of you. "
+"Its flesh crawls and slithers, hastily filling the holes and structural decay within its tissue's rapid decomposition.\n\n"
+
+"But beneath the ever-shifting flesh, there is a wealth of life. A strange, yet familiar alien life.\n\n"
+
+"There's no place in the universe more dangerous than the Perimeter. This thing seems to have been the only one to succeed at transcending under "
+"such duress. Its physicality inherits some of the transcendent traits, ever-renovating to withstand the conditions harboring their expanded minds.";
+
+M01_DREAM_021 = "\cQ[Memory Reflex] \cDPerform the ceremonial hail. Pay your respects.";
+M01_DREAM_022 = "\cDFollow the trail of psychic emanation left behind by this entity.";
+
+M01_DREAM_03a =
+"\cDYou have the impression that your actions are being noticed. There is an undeniable feeling that you have been understood and your intentions acknowledged. You are granted an audience.\n\n"
+"Slowly, visions and ghostly abstractions begin to gently pass through your psyche. Most of it is incomprehensible, although there is an unmistakable "
+"familiarity to it that you've long forgotten.";
+
+M01_DREAM_031 = "\cDManifest your gratitude and ask for safe passage.";
+
+M01_DREAM_03b =
+"\cDYou are immediately plunged into a world that you don't see, but can only witness in your memory. Your senses are useless here, since you are no "
+"longer in a world of things, but in a world of dreams. Foreign emotions and sensations wash over you, pulling your psyche in a million different ways. "
+"None of them ring true; however, they could never be your emotions or sensations, since these are not your dreams.\n\n"
+
+"But there, on the edge of your oneiric eye, you see a pair of searing dots locked onto you. Everything grinds to a halt, allowing you to "
+"somewhat retain your bearings. You realize you're now moving through this entity's memories; much of it is unfathomable, as they fold inward and "
+"blossom through in such a natural yet perplexing motion.\n\n"
+
+"Sensing your intrusion, the psychic link is immediately cut off and you are banished from this domain. But one thing remains clear, the device you're "
+"searching for is not here at this coordinate. There is only one location left to check.";
+
+M01_DREAM_04 =
+"\cDYour request for safe passage is granted. There will be no aggression primed to hinder your journey.\n\n"
+"As your meeting comes to an end. You are also blessed with a parting gift from the ones beyond.";
+
+STUDENT_00 = "Egnimatic Figure";
+STUDENT = "Disciple of Sarmipadhva";
+STUDENT_01 = "\cDSimilar to the being you've encountered a while ago. This formidable individual also remains unmoved in his meditative state.";
+STUDENT_01a = "\cQ[Memory Reflex] \cDRecollect your memory of who this is.";
+STUDENT_01b = "\cD[Request a way forward]";
+STUDENT_01a_1 =
+"\cDThis is a disciple of The Great Sage.\n\n"
+"His body, though frail and desiccated, appears strong and defies even death. Each of his many arms reflects "
+"the progress of his cultivation of mind. His eyes are blessed with a luminous orange glow, representing the enlightened "
+"clarity to the cosmic truth. He exists in a state of complete stillness, unmoving and as solid as the earth."; 
+STUDENT_01a_1a = "\cQ[Memory Reflex] \cDReflect further on the history of the disciples.";
+STUDENT_01a_2 =
+"\cDThey are the ones closest to understanding the clear light of reality. Only Sarmipadhva himself possesses this knowledge. A knowledge that "
+"he gave to the Enlightened in the forms of sacred texts.\n\n"
+"The texts explain the circumstances one must undergo in order to truly experience the inner richness of "
+"one's own mind. Should one's own mind exist in a state of impurity, the teachings offers the mean on how one may "
+"reconcile this instinctual disagreement.";
+STUDENT_01b_1 =
+"\cDThe disciple already knows why you are here, and where you must go. But first, customs are in order. A mental image starts to form in your head. "
+"It is rather vast and difficult to grasp, like a crude shape struggling to form in a sea of static white noise. Yet one thing managed to stand out "
+"perfectly clear: \cRyou must survive the next minutes.";
+STUDENT_01b_2 =
+"\cDThe disciple do not see this as a grueling struggle to the death. Rather, from his perspective, it is a light show of infinite fractals "
+"and energy expressed by the constants of the universe.\n\n"
+"The one that seeks the path forward must demonstrate not to the disciple, but rather to themselves that they are worthy of crossing beyond.";
+STUDENT_01b_1a = "\cD[Fight]";
+STUDENT_02 =
+"\cDA slow, deafening voice reverberates in your mind, as if a thousand thunderbolts ignited simultaneously, and sounds even louder still.\n\n"
+"\cFO, CHILD-OF-NOBLE-FAMILY. THE-ENERGY-DISPLAYED-HERE-IS-TRULY-INSPIRATIONAL. IT-IS-ENOUGH-TO-AWAKEN-EVEN-THE-GIANTS-BENEATH.\n\n"
+"TO-GO-FORWARD. RETURN-THE-WAY-YOU'VE-ARRIVED.\n\n"
+"WALK-NOW-IN-THE-PATH-OF-THE-ENLIGHTENED-TRADITION.";
+STUDENT_02a = "\cD[Begin the ceremony]";
+*/

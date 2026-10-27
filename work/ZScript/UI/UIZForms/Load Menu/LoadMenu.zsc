@@ -1,0 +1,155 @@
+Class DFLoadMenu : LoadSaveBase
+{
+    override void init(Menu parent)
+	{
+		Super.init(parent);
+		
+		//We setup the Command Handler for the Load Menu here
+		cmdHandler = new("LoadMenuHandler");
+
+		//We will need a referance to this menu in the handler so we set that up here
+		LoadMenuHandler(cmdHandler).menu = self;
+
+		//The actual menu itself!
+		LoadMenu(BaseRes);
+		
+		//This converts virtual screen position and size to the real screens position and size
+		//Resolution is what the resolution of the image was
+		[RealPos, RealSize] = screen.VirtualToRealCoords((685, 112), (500, 200), (1920, 1080), false, true);
+		
+		//get all of the Save Game Data
+		Manager.ReadSaveStrings();
+	}
+
+	void LoadMenu(Vector2 Resolution)
+	{
+		//This loads the data for the save games so we can use it later
+		Manager.ReadSaveStrings();
+		
+		//Create a frame to stick all of our menu stuff into
+		let LoadMenu_Frame = UIFrame.create((0,0), Resolution);
+		LoadMenu_Frame.pack(mainFrame);
+		
+		//Title text
+		let TitleLabel = UILabel.create((0,20), (1920,150), "Загрузить игру", "BIGFONT", 2, true, true, textscale: 4.0);
+		TitleLabel.pack(LoadMenu_Frame);
+
+		//Save Slot Frame
+		//im going to build the contents into this frame 
+		//and then use that info to create a scrollable area
+		let SaveFrame = UIFrame.create((0,0), (1440,864));
+
+		//This will fetch each save and put that info into a bunch of arrays
+
+		//SaveSlotButton - Holds all of the buttons
+		//SaveSlotTitle - Holds all of the Text
+		//DeleteSaveSlot - Holds all of the delete buttons
+		//SaveSlotMapNumber - Not used, but it could hold the Map number as "MapXX"
+		//SaveSlotMapName - Holds all of the Map Names
+		//SaveSlotSaveAge - Holds all of the Play times 
+		//SaveSlotTimeSaved - Holds all of The dates the saves were created
+
+		for(int i = 0; i < manager.SavegameCount(); i++)
+		{
+			//This loads a specific save to extract its data
+			manager.ExtractSaveData(i);
+
+			//We create a Button and a Label for the Save slot itself
+			//The title and button are seperate because of customization limitations in zforms for button text
+			SaveSlotButton.push(UIButton.create((120,(SlotSize*i)), (1200,SlotSize), "", cmdHandler, 'SaveSlot:'..i, SaveDefaultNormal, SaveSlotHover, SaveDefaultNormal, SaveDefaultNormal));
+			SaveSlotTitle.push(UILabel.create((145,(SlotSize*i)+15), (1200,50), Manager.GetSaveGame(i).SaveTitle , "BIGFONT", textscale: 3.0));
+			//This is so we can have a cool label without blocking the button behind it
+			SaveSlotTitle[i].SetDontBlockMouse(true);
+
+			//This is the button the controls if we delete the specific save or not
+			DeleteSaveSlot.push(UIButton.create((SaveSlotButton[i].getwidth()+88,(SlotSize*i)+5), (32,32), "", cmdHandler, 'ConfirmMenu'..i, DeleteSaveNormal, DeleteSaveHover, DeleteSaveNormal, DeleteSaveNormal));
+
+			//I take the Saves description and cut it up into pieces to rearange the data on the Save Slot later
+			string SaveCommentString = ""..manager.SaveCommentString;
+			string TimeSaved = SaveCommentString.mid(0,10);
+			//string MapNumber = SaveCommentString.mid(SaveCommentString.indexof("MAP"), 6);
+			string MapName = SaveCommentString.mid(SaveCommentString.indexof("MAP")+8, SaveCommentString.indexof("Time")-(SaveCommentString.indexof("MAP")+8));
+			string SaveAge = SaveCommentString.mid(11,9);
+
+			// SaveSlotMapNumber.push(UILabel.create((25,(SlotSize*i)+70), (100,400), MapNumber , "SMALLFONT", textscale: 3.0));
+			// SaveSlotMapNumber[i].SetDontBlockMouse(true);
+
+			SaveSlotMapName.push(UILabel.create((155,(SlotSize*i)+70), (1440,400), MapName , "SMALLFONT", textscale: 3.0));
+			SaveSlotMapName[i].SetDontBlockMouse(true);
+
+			SaveSlotSaveAge.push(UILabel.create((560,(SlotSize*i)+110), (400,400), "Время: "..SaveAge , "SMALLFONT", textscale: 3.0));
+			SaveSlotSaveAge[i].SetDontBlockMouse(true);
+
+			SaveSlotTimeSaved.push(UILabel.create((155,(SlotSize*i)+110), (600,500), "Дата: "..TimeSaved , "SMALLFONT", textscale: 3.0));
+			SaveSlotTimeSaved[i].SetDontBlockMouse(true);
+
+			//Pack everything into our saveFrame for use in the Scroll Area later
+			SaveSlotButton[i].pack(SaveFrame);
+			SaveSlotTitle[i].pack(SaveFrame);
+			SaveSlotTimeSaved[i].pack(SaveFrame);
+			//SaveSlotMapNumber[i].pack(SaveFrame);
+			SaveSlotMapName[i].pack(SaveFrame);
+			SaveSlotSaveAge[i].pack(SaveFrame);
+			DeleteSaveSlot[i].pack(SaveFrame);
+		}
+
+		//Scroll area for the Save Games
+		SaveFrameScrollArea = UIScrollContainer.create((225,326), (1350,646), 15, manager.SavegameCount()*SlotSize, SlotSize, ScrollNormal, ScrollHover, ScrollHover, null, SaveFrame);
+		
+		//Save Frame Background
+		let SaveFrameBackgroundImage = UIImage.create((225,108) - (8,7),(1448,876), "Graphics/LoadSave Menu/LoadFrameBackground.png");
+		
+		//Pack order is the display order
+		SaveFrameBackgroundImage.pack(LoadMenu_Frame);
+		SaveFrameScrollArea.pack(LoadMenu_Frame);
+	}
+	
+	override void Drawer()
+    {
+	    Screen.Dim(Color(0, 0, 0), 1.0, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+		
+	    Super.Drawer();
+		
+		//Get the specific save game data for Slot X
+		Manager.ExtractSaveData(save_pic_index);
+
+		//Draw the save game image using the converted position and size above
+		Manager.DrawSavePic(RealPos.x, RealPos.y, RealSize.x, RealSize.y);
+    }
+	
+	override bool OnUIEvent(UIEvent ev)
+    {
+		if(Manager.SavegameCount() > 0)
+		{
+			if(!del_wait)
+			{
+				if(ev.Type == UIEvent.Type_KeyDown && ev.KeyChar == 26)
+				{
+					if(save_pic_index >= Manager.SavegameCount())
+						save_pic_index--;
+					  
+					del_wait = true;
+					SaveFrameScrollArea.Disable();
+					save_title = Manager.GetSaveGame(save_pic_index).SaveTitle;
+					ConfirmDelete(BaseRes, save_pic_index);
+				}
+			}
+			else
+			{
+				if(ev.Type == UIEvent.Type_KeyDown && ev.KeyChar == 89) //Confirm
+				{
+					del_wait = false;
+					LoadMenuHandler(cmdHandler).DeleteSave(save_pic_index);
+					MenuSound("menu/prompt");
+				}
+				else if(ev.Type == UIEvent.Type_KeyDown && ev.KeyChar == 78) //Cancel
+				{
+					del_wait = false;
+					Delete_Frame.unpack();
+					SaveFrameScrollArea.Enable();
+				}
+			}
+		}
+		return Super.OnUIEvent(ev);
+	}
+}

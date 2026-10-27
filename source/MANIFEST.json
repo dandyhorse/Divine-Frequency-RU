@@ -1,0 +1,1117 @@
+[
+  {
+    "path": "CvarInfo.txt",
+    "out": "CvarInfo.txt",
+    "bytes": 1409
+  },
+  {
+    "path": "defbinds.txt",
+    "out": "defbinds.txt",
+    "bytes": 1293
+  },
+  {
+    "path": "defcvars.txt",
+    "out": "defcvars.txt",
+    "bytes": 947
+  },
+  {
+    "path": "FontDefs.txt",
+    "out": "FontDefs.txt",
+    "bytes": 517
+  },
+  {
+    "path": "KeyConf.txt",
+    "out": "KeyConf.txt",
+    "bytes": 584
+  },
+  {
+    "path": "Language.Artistical",
+    "out": "Language.Artistical",
+    "bytes": 5610
+  },
+  {
+    "path": "Language.Bestiary.txt",
+    "out": "Language.Bestiary.txt",
+    "bytes": 17472
+  },
+  {
+    "path": "Language.Duel",
+    "out": "Language.Duel",
+    "bytes": 6735
+  },
+  {
+    "path": "Language.Items.txt",
+    "out": "Language.Items.txt",
+    "bytes": 19465
+  },
+  {
+    "path": "Language.Map",
+    "out": "Language.Map",
+    "bytes": 46115
+  },
+  {
+    "path": "Language.Note.txt",
+    "out": "Language.Note.txt",
+    "bytes": 16545
+  },
+  {
+    "path": "Language.NPC",
+    "out": "Language.NPC",
+    "bytes": 11212
+  },
+  {
+    "path": "Language.NPCADB",
+    "out": "Language.NPCADB",
+    "bytes": 12646
+  },
+  {
+    "path": "Language.NPCAstronaut",
+    "out": "Language.NPCAstronaut",
+    "bytes": 40734
+  },
+  {
+    "path": "Language.NPCBox",
+    "out": "Language.NPCBox",
+    "bytes": 5314
+  },
+  {
+    "path": "Language.NPCDisciples",
+    "out": "Language.NPCDisciples",
+    "bytes": 8386
+  },
+  {
+    "path": "Language.NPCDreamer",
+    "out": "Language.NPCDreamer",
+    "bytes": 9290
+  },
+  {
+    "path": "Language.NPCEgg",
+    "out": "Language.NPCEgg",
+    "bytes": 6821
+  },
+  {
+    "path": "Language.NPCLantern",
+    "out": "Language.NPCLantern",
+    "bytes": 2866
+  },
+  {
+    "path": "Language.NPCMISC",
+    "out": "Language.NPCMISC",
+    "bytes": 4206
+  },
+  {
+    "path": "Language.NPCMonastery",
+    "out": "Language.NPCMonastery",
+    "bytes": 3554
+  },
+  {
+    "path": "Language.NPCPrism",
+    "out": "Language.NPCPrism",
+    "bytes": 6673
+  },
+  {
+    "path": "Language.Objective",
+    "out": "Language.Objective",
+    "bytes": 742
+  },
+  {
+    "path": "Language.Tutorial",
+    "out": "Language.Tutorial",
+    "bytes": 1597
+  },
+  {
+    "path": "Language.txt",
+    "out": "Language.txt",
+    "bytes": 4116
+  },
+  {
+    "path": "Language.Upgrade.txt",
+    "out": "Language.Upgrade.txt",
+    "bytes": 25504
+  },
+  {
+    "path": "Language.Weapon.txt",
+    "out": "Language.Weapon.txt",
+    "bytes": 7525
+  },
+  {
+    "path": "LoadACS",
+    "out": "LoadACS",
+    "bytes": 38
+  },
+  {
+    "path": "MapInfo",
+    "out": "MapInfo",
+    "bytes": 4382
+  },
+  {
+    "path": "MapInfo.Enemies",
+    "out": "MapInfo.Enemies",
+    "bytes": 2530
+  },
+  {
+    "path": "MapInfo.Items",
+    "out": "MapInfo.Items",
+    "bytes": 2983
+  },
+  {
+    "path": "Mapinfo.MISC",
+    "out": "Mapinfo.MISC",
+    "bytes": 16155
+  },
+  {
+    "path": "MenuDef",
+    "out": "MenuDef",
+    "bytes": 12655
+  },
+  {
+    "path": "ZScript.txt",
+    "out": "ZScript.txt",
+    "bytes": 26129
+  },
+  {
+    "path": "Fonts/ACS_FONT/font.inf",
+    "out": "Fonts\\ACS_FONT\\font.inf",
+    "bytes": 23
+  },
+  {
+    "path": "Fonts/bigfont/font.inf",
+    "out": "Fonts\\bigfont\\font.inf",
+    "bytes": 77
+  },
+  {
+    "path": "Fonts/smallfont/font.inf",
+    "out": "Fonts\\smallfont\\font.inf",
+    "bytes": 77
+  },
+  {
+    "path": "Fonts/dialoguefont/font.inf",
+    "out": "Fonts\\dialoguefont\\font.inf",
+    "bytes": 77
+  },
+  {
+    "path": "Fonts/npcfont/font.inf",
+    "out": "Fonts\\npcfont\\font.inf",
+    "bytes": 78
+  },
+  {
+    "path": "Menu/tabmenu.zs",
+    "out": "Menu\\tabmenu.zs",
+    "bytes": 16324
+  },
+  {
+    "path": "Menu/highlight.zs",
+    "out": "Menu\\highlight.zs",
+    "bytes": 3558
+  },
+  {
+    "path": "Menu/descriptormenu.zs",
+    "out": "Menu\\descriptormenu.zs",
+    "bytes": 9699
+  },
+  {
+    "path": "Menu/handler.zs",
+    "out": "Menu\\handler.zs",
+    "bytes": 3465
+  },
+  {
+    "path": "Menu/fademenu.zs",
+    "out": "Menu\\fademenu.zs",
+    "bytes": 2858
+  },
+  {
+    "path": "ZScript/Special/Flares.txt",
+    "out": "ZScript\\Special\\Flares.txt",
+    "bytes": 6562
+  },
+  {
+    "path": "ZScript/Special/StepEventHandler.zc",
+    "out": "ZScript\\Special\\StepEventHandler.zc",
+    "bytes": 3719
+  },
+  {
+    "path": "ZScript/ConversationMenu/ConversationMenuBase.txt",
+    "out": "ZScript\\ConversationMenu\\ConversationMenuBase.txt",
+    "bytes": 9846
+  },
+  {
+    "path": "ZScript/ConversationMenu/ConversationMenuComponents.txt",
+    "out": "ZScript\\ConversationMenu\\ConversationMenuComponents.txt",
+    "bytes": 26945
+  },
+  {
+    "path": "ZScript/ConversationMenu/Sample.txt",
+    "out": "ZScript\\ConversationMenu\\Sample.txt",
+    "bytes": 4671
+  },
+  {
+    "path": "ZScript/Game/Enemies/Enemies.txt",
+    "out": "ZScript\\Game\\Enemies\\Enemies.txt",
+    "bytes": 23500
+  },
+  {
+    "path": "ZScript/Game/Enemies/Blood.txt",
+    "out": "ZScript\\Game\\Enemies\\Blood.txt",
+    "bytes": 13525
+  },
+  {
+    "path": "ZScript/Game/Enemies/BloodFlat.txt",
+    "out": "ZScript\\Game\\Enemies\\BloodFlat.txt",
+    "bytes": 2128
+  },
+  {
+    "path": "ZScript/Game/Enemies/BurnBase.txt",
+    "out": "ZScript\\Game\\Enemies\\BurnBase.txt",
+    "bytes": 5259
+  },
+  {
+    "path": "ZScript/Game/Enemies/BurnDeath.txt",
+    "out": "ZScript\\Game\\Enemies\\BurnDeath.txt",
+    "bytes": 2692
+  },
+  {
+    "path": "ZScript/Game/Enemies/Gib.txt",
+    "out": "ZScript\\Game\\Enemies\\Gib.txt",
+    "bytes": 19493
+  },
+  {
+    "path": "ZScript/Game/Enemies/Normal/Cultist.txt",
+    "out": "ZScript\\Game\\Enemies\\Normal\\Cultist.txt",
+    "bytes": 24273
+  },
+  {
+    "path": "ZScript/Game/Enemies/Normal/Proxy.txt",
+    "out": "ZScript\\Game\\Enemies\\Normal\\Proxy.txt",
+    "bytes": 34576
+  },
+  {
+    "path": "ZScript/Game/Enemies/Normal/Enlightened.txt",
+    "out": "ZScript\\Game\\Enemies\\Normal\\Enlightened.txt",
+    "bytes": 99323
+  },
+  {
+    "path": "ZScript/Game/Enemies/Normal/Fly.txt",
+    "out": "ZScript\\Game\\Enemies\\Normal\\Fly.txt",
+    "bytes": 35145
+  },
+  {
+    "path": "ZScript/Game/Enemies/Normal/Kinsman.txt",
+    "out": "ZScript\\Game\\Enemies\\Normal\\Kinsman.txt",
+    "bytes": 30606
+  },
+  {
+    "path": "ZScript/Game/Enemies/Normal/Pod.txt",
+    "out": "ZScript\\Game\\Enemies\\Normal\\Pod.txt",
+    "bytes": 4386
+  },
+  {
+    "path": "ZScript/Game/Enemies/Normal/Rotten.txt",
+    "out": "ZScript\\Game\\Enemies\\Normal\\Rotten.txt",
+    "bytes": 31195
+  },
+  {
+    "path": "ZScript/Game/Enemies/Normal/Spider.txt",
+    "out": "ZScript\\Game\\Enemies\\Normal\\Spider.txt",
+    "bytes": 13067
+  },
+  {
+    "path": "ZScript/Game/Enemies/Heavy/Crab.txt",
+    "out": "ZScript\\Game\\Enemies\\Heavy\\Crab.txt",
+    "bytes": 53129
+  },
+  {
+    "path": "ZScript/Game/Enemies/Heavy/Giant.txt",
+    "out": "ZScript\\Game\\Enemies\\Heavy\\Giant.txt",
+    "bytes": 32237
+  },
+  {
+    "path": "ZScript/Game/Enemies/Heavy/Necrophagy.txt",
+    "out": "ZScript\\Game\\Enemies\\Heavy\\Necrophagy.txt",
+    "bytes": 12010
+  },
+  {
+    "path": "ZScript/Game/Enemies/Heavy/Shaman.txt",
+    "out": "ZScript\\Game\\Enemies\\Heavy\\Shaman.txt",
+    "bytes": 14759
+  },
+  {
+    "path": "ZScript/Game/Enemies/Boss/Gary.txt",
+    "out": "ZScript\\Game\\Enemies\\Boss\\Gary.txt",
+    "bytes": 22266
+  },
+  {
+    "path": "ZScript/Game/Enemies/Boss/Champion.txt",
+    "out": "ZScript\\Game\\Enemies\\Boss\\Champion.txt",
+    "bytes": 48567
+  },
+  {
+    "path": "ZScript/Game/Enemies/Boss/MA.txt",
+    "out": "ZScript\\Game\\Enemies\\Boss\\MA.txt",
+    "bytes": 80798
+  },
+  {
+    "path": "ZScript/Game/Enemies/Boss/Echo.txt",
+    "out": "ZScript\\Game\\Enemies\\Boss\\Echo.txt",
+    "bytes": 146289
+  },
+  {
+    "path": "ZScript/Game/Enemies/Boss/Six.txt",
+    "out": "ZScript\\Game\\Enemies\\Boss\\Six.txt",
+    "bytes": 115975
+  },
+  {
+    "path": "ZScript/Game/Enemies/Boss/Storm.txt",
+    "out": "ZScript\\Game\\Enemies\\Boss\\Storm.txt",
+    "bytes": 939
+  },
+  {
+    "path": "ZScript/Game/Enemies/Psionic/Antibody.txt",
+    "out": "ZScript\\Game\\Enemies\\Psionic\\Antibody.txt",
+    "bytes": 6014
+  },
+  {
+    "path": "ZScript/Game/Enemies/Psionic/Corvid.txt",
+    "out": "ZScript\\Game\\Enemies\\Psionic\\Corvid.txt",
+    "bytes": 37167
+  },
+  {
+    "path": "ZScript/Game/Enemies/Psionic/GKCell.txt",
+    "out": "ZScript\\Game\\Enemies\\Psionic\\GKCell.txt",
+    "bytes": 15105
+  },
+  {
+    "path": "ZScript/Game/Enemies/Psionic/Parasite.txt",
+    "out": "ZScript\\Game\\Enemies\\Psionic\\Parasite.txt",
+    "bytes": 15045
+  },
+  {
+    "path": "ZScript/Game/Enemies/NPC/Static.txt",
+    "out": "ZScript\\Game\\Enemies\\NPC\\Static.txt",
+    "bytes": 10409
+  },
+  {
+    "path": "ZScript/Game/Enemies/NPC/Visitor.txt",
+    "out": "ZScript\\Game\\Enemies\\NPC\\Visitor.txt",
+    "bytes": 897
+  },
+  {
+    "path": "ZScript/Game/Inventory/Ammo.txt",
+    "out": "ZScript\\Game\\Inventory\\Ammo.txt",
+    "bytes": 14648
+  },
+  {
+    "path": "ZScript/Game/Inventory/Consumable.txt",
+    "out": "ZScript\\Game\\Inventory\\Consumable.txt",
+    "bytes": 41159
+  },
+  {
+    "path": "ZScript/Game/Inventory/Key.txt",
+    "out": "ZScript\\Game\\Inventory\\Key.txt",
+    "bytes": 14037
+  },
+  {
+    "path": "ZScript/Game/Inventory/Lights.txt",
+    "out": "ZScript\\Game\\Inventory\\Lights.txt",
+    "bytes": 9687
+  },
+  {
+    "path": "ZScript/Game/Inventory/NPC_QUEST.txt",
+    "out": "ZScript\\Game\\Inventory\\NPC_QUEST.txt",
+    "bytes": 4852
+  },
+  {
+    "path": "ZScript/Game/Inventory/Stim.txt",
+    "out": "ZScript\\Game\\Inventory\\Stim.txt",
+    "bytes": 9674
+  },
+  {
+    "path": "ZScript/Game/Inventory/Tool.txt",
+    "out": "ZScript\\Game\\Inventory\\Tool.txt",
+    "bytes": 1204
+  },
+  {
+    "path": "ZScript/Game/Inventory/Traps.txt",
+    "out": "ZScript\\Game\\Inventory\\Traps.txt",
+    "bytes": 16873
+  },
+  {
+    "path": "ZScript/Game/Inventory/TrapsFX.txt",
+    "out": "ZScript\\Game\\Inventory\\TrapsFX.txt",
+    "bytes": 16089
+  },
+  {
+    "path": "ZScript/Game/Player/Debug.txt",
+    "out": "ZScript\\Game\\Player\\Debug.txt",
+    "bytes": 671
+  },
+  {
+    "path": "ZScript/Game/Player/Player.txt",
+    "out": "ZScript\\Game\\Player\\Player.txt",
+    "bytes": 61389
+  },
+  {
+    "path": "ZScript/Game/Player/Movement.txt",
+    "out": "ZScript\\Game\\Player\\Movement.txt",
+    "bytes": 9263
+  },
+  {
+    "path": "ZScript/Game/Player/ShaderHandler.txt",
+    "out": "ZScript\\Game\\Player\\ShaderHandler.txt",
+    "bytes": 26026
+  },
+  {
+    "path": "ZScript/Game/Player/Skill.txt",
+    "out": "ZScript\\Game\\Player\\Skill.txt",
+    "bytes": 498
+  },
+  {
+    "path": "ZScript/Game/Player/Upgrade_Str.txt",
+    "out": "ZScript\\Game\\Player\\Upgrade_Str.txt",
+    "bytes": 1758
+  },
+  {
+    "path": "ZScript/Game/Player/Upgrade_Wit.txt",
+    "out": "ZScript\\Game\\Player\\Upgrade_Wit.txt",
+    "bytes": 3425
+  },
+  {
+    "path": "ZScript/Game/Player/Upgrade_Phy.txt",
+    "out": "ZScript\\Game\\Player\\Upgrade_Phy.txt",
+    "bytes": 35248
+  },
+  {
+    "path": "ZScript/Game/Weapons/Base.txt",
+    "out": "ZScript\\Game\\Weapons\\Base.txt",
+    "bytes": 21425
+  },
+  {
+    "path": "ZScript/Game/Weapons/Hands_Base.txt",
+    "out": "ZScript\\Game\\Weapons\\Hands_Base.txt",
+    "bytes": 6332
+  },
+  {
+    "path": "ZScript/Game/Weapons/Hands.txt",
+    "out": "ZScript\\Game\\Weapons\\Hands.txt",
+    "bytes": 42846
+  },
+  {
+    "path": "ZScript/Game/Weapons/Pistol2.txt",
+    "out": "ZScript\\Game\\Weapons\\Pistol2.txt",
+    "bytes": 42328
+  },
+  {
+    "path": "ZScript/Game/Weapons/Shotgun2.txt",
+    "out": "ZScript\\Game\\Weapons\\Shotgun2.txt",
+    "bytes": 42888
+  },
+  {
+    "path": "ZScript/Game/Weapons/SSG.txt",
+    "out": "ZScript\\Game\\Weapons\\SSG.txt",
+    "bytes": 15884
+  },
+  {
+    "path": "ZScript/Game/Weapons/SprayCan.txt",
+    "out": "ZScript\\Game\\Weapons\\SprayCan.txt",
+    "bytes": 34683
+  },
+  {
+    "path": "ZScript/Game/Weapons/AR.txt",
+    "out": "ZScript\\Game\\Weapons\\AR.txt",
+    "bytes": 19220
+  },
+  {
+    "path": "ZScript/Game/Weapons/Puffs.txt",
+    "out": "ZScript\\Game\\Weapons\\Puffs.txt",
+    "bytes": 9318
+  },
+  {
+    "path": "ZScript/UI/BossDefeat.txt",
+    "out": "ZScript\\UI\\BossDefeat.txt",
+    "bytes": 3863
+  },
+  {
+    "path": "ZScript/UI/Calibration.txt",
+    "out": "ZScript\\UI\\Calibration.txt",
+    "bytes": 15745
+  },
+  {
+    "path": "ZScript/UI/DuelDefeat.txt",
+    "out": "ZScript\\UI\\DuelDefeat.txt",
+    "bytes": 4862
+  },
+  {
+    "path": "ZScript/UI/DamageNumber.txt",
+    "out": "ZScript\\UI\\DamageNumber.txt",
+    "bytes": 2595
+  },
+  {
+    "path": "ZScript/UI/GenericScreenStuff.txt",
+    "out": "ZScript\\UI\\GenericScreenStuff.txt",
+    "bytes": 25750
+  },
+  {
+    "path": "ZScript/UI/GenericUpgrade.txt",
+    "out": "ZScript\\UI\\GenericUpgrade.txt",
+    "bytes": 13609
+  },
+  {
+    "path": "ZScript/UI/Hud.txt",
+    "out": "ZScript\\UI\\Hud.txt",
+    "bytes": 47158
+  },
+  {
+    "path": "ZScript/UI/ItemHighlight.txt",
+    "out": "ZScript\\UI\\ItemHighlight.txt",
+    "bytes": 3607
+  },
+  {
+    "path": "ZScript/UI/Note.txt",
+    "out": "ZScript\\UI\\Note.txt",
+    "bytes": 13903
+  },
+  {
+    "path": "ZScript/UI/pickup.zsc",
+    "out": "ZScript\\UI\\pickup.zsc",
+    "bytes": 3008
+  },
+  {
+    "path": "ZScript/UI/Radar.txt",
+    "out": "ZScript\\UI\\Radar.txt",
+    "bytes": 4282
+  },
+  {
+    "path": "ZScript/UI/SaveGame.txt",
+    "out": "ZScript\\UI\\SaveGame.txt",
+    "bytes": 2469
+  },
+  {
+    "path": "ZScript/UI/Scanner.txt",
+    "out": "ZScript\\UI\\Scanner.txt",
+    "bytes": 5366
+  },
+  {
+    "path": "ZScript/UI/ZFMenus.txt",
+    "out": "ZScript\\UI\\ZFMenus.txt",
+    "bytes": 14081
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Include.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Include.zsc",
+    "bytes": 1837
+  },
+  {
+    "path": "ZScript/UI/UIZForms/LoadSaveBase.zsc",
+    "out": "ZScript\\UI\\UIZForms\\LoadSaveBase.zsc",
+    "bytes": 8993
+  },
+  {
+    "path": "ZScript/UI/UIZForms/BaseMenu.zsc",
+    "out": "ZScript\\UI\\UIZForms\\BaseMenu.zsc",
+    "bytes": 14118
+  },
+  {
+    "path": "ZScript/UI/UIZForms/BoundingBox.zsc",
+    "out": "ZScript\\UI\\UIZForms\\BoundingBox.zsc",
+    "bytes": 3638
+  },
+  {
+    "path": "ZScript/UI/UIZForms/BoxDrawer.zsc",
+    "out": "ZScript\\UI\\UIZForms\\BoxDrawer.zsc",
+    "bytes": 9788
+  },
+  {
+    "path": "ZScript/UI/UIZForms/BoxImage.zsc",
+    "out": "ZScript\\UI\\UIZForms\\BoxImage.zsc",
+    "bytes": 2299
+  },
+  {
+    "path": "ZScript/UI/UIZForms/BoxTextures.zsc",
+    "out": "ZScript\\UI\\UIZForms\\BoxTextures.zsc",
+    "bytes": 4315
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Button.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Button.zsc",
+    "bytes": 5803
+  },
+  {
+    "path": "ZScript/UI/UIZForms/ButtonBase.zsc",
+    "out": "ZScript\\UI\\UIZForms\\ButtonBase.zsc",
+    "bytes": 5383
+  },
+  {
+    "path": "ZScript/UI/UIZForms/DropdownList.zsc",
+    "out": "ZScript\\UI\\UIZForms\\DropdownList.zsc",
+    "bytes": 14394
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Element.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Element.zsc",
+    "bytes": 31401
+  },
+  {
+    "path": "ZScript/UI/UIZForms/ElementContainer.zsc",
+    "out": "ZScript\\UI\\UIZForms\\ElementContainer.zsc",
+    "bytes": 4876
+  },
+  {
+    "path": "ZScript/UI/UIZForms/FocusLinkHelper.zsc",
+    "out": "ZScript\\UI\\UIZForms\\FocusLinkHelper.zsc",
+    "bytes": 2823
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Frame.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Frame.zsc",
+    "bytes": 3455
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Handler.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Handler.zsc",
+    "bytes": 2312
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Image.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Image.zsc",
+    "bytes": 2874
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Label.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Label.zsc",
+    "bytes": 7784
+  },
+  {
+    "path": "ZScript/UI/UIZForms/LICENSE.md",
+    "out": "ZScript\\UI\\UIZForms\\LICENSE.md",
+    "bytes": 1112
+  },
+  {
+    "path": "ZScript/UI/UIZForms/ListFrame.zsc",
+    "out": "ZScript\\UI\\UIZForms\\ListFrame.zsc",
+    "bytes": 1233
+  },
+  {
+    "path": "ZScript/UI/UIZForms/RadioButton.zsc",
+    "out": "ZScript\\UI\\UIZForms\\RadioButton.zsc",
+    "bytes": 7243
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Scrollbar.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Scrollbar.zsc",
+    "bytes": 4850
+  },
+  {
+    "path": "ZScript/UI/UIZForms/ScrollContainer.zsc",
+    "out": "ZScript\\UI\\UIZForms\\ScrollContainer.zsc",
+    "bytes": 4672
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Slider.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Slider.zsc",
+    "bytes": 9489
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Tabs.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Tabs.zsc",
+    "bytes": 7060
+  },
+  {
+    "path": "ZScript/UI/UIZForms/TextInput.zsc",
+    "out": "ZScript\\UI\\UIZForms\\TextInput.zsc",
+    "bytes": 29281
+  },
+  {
+    "path": "ZScript/UI/UIZForms/ToggleButton.zsc",
+    "out": "ZScript\\UI\\UIZForms\\ToggleButton.zsc",
+    "bytes": 4409
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UiEvent.zsc",
+    "out": "ZScript\\UI\\UIZForms\\UiEvent.zsc",
+    "bytes": 718
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UICodex/Bestiary.txt",
+    "out": "ZScript\\UI\\UIZForms\\UICodex\\Bestiary.txt",
+    "bytes": 10084
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UICodex/BestiaryInfo.txt",
+    "out": "ZScript\\UI\\UIZForms\\UICodex\\BestiaryInfo.txt",
+    "bytes": 4647
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UICodex/Codex.txt",
+    "out": "ZScript\\UI\\UIZForms\\UICodex\\Codex.txt",
+    "bytes": 13559
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UICodex/HUDinfo.txt",
+    "out": "ZScript\\UI\\UIZForms\\UICodex\\HUDinfo.txt",
+    "bytes": 2988
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UICodex/Map.txt",
+    "out": "ZScript\\UI\\UIZForms\\UICodex\\Map.txt",
+    "bytes": 3807
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UIInventory/InventoryMenu.zc",
+    "out": "ZScript\\UI\\UIZForms\\UIInventory\\InventoryMenu.zc",
+    "bytes": 30541
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UIInventory/InventoryMenuHandler.zc",
+    "out": "ZScript\\UI\\UIZForms\\UIInventory\\InventoryMenuHandler.zc",
+    "bytes": 7579
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UIInventory/NewItemMenu.zc",
+    "out": "ZScript\\UI\\UIZForms\\UIInventory\\NewItemMenu.zc",
+    "bytes": 3411
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UIUpgrades/CreationMenu.zc",
+    "out": "ZScript\\UI\\UIZForms\\UIUpgrades\\CreationMenu.zc",
+    "bytes": 2600
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UIUpgrades/GunUpgrade.zc",
+    "out": "ZScript\\UI\\UIZForms\\UIUpgrades\\GunUpgrade.zc",
+    "bytes": 16570
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UIUpgrades/LevelUpMenu.zc",
+    "out": "ZScript\\UI\\UIZForms\\UIUpgrades\\LevelUpMenu.zc",
+    "bytes": 20045
+  },
+  {
+    "path": "ZScript/UI/UIZForms/UIUpgrades/ShopMenu.zc",
+    "out": "ZScript\\UI\\UIZForms\\UIUpgrades\\ShopMenu.zc",
+    "bytes": 12772
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Load Menu/LoadHandler.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Load Menu\\LoadHandler.zsc",
+    "bytes": 4425
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Load Menu/LoadMenu.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Load Menu\\LoadMenu.zsc",
+    "bytes": 6243
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Save Menu/SaveHandler.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Save Menu\\SaveHandler.zsc",
+    "bytes": 5762
+  },
+  {
+    "path": "ZScript/UI/UIZForms/Save Menu/SaveMenu.zsc",
+    "out": "ZScript\\UI\\UIZForms\\Save Menu\\SaveMenu.zsc",
+    "bytes": 7859
+  },
+  {
+    "path": "ACS/map_func.acs",
+    "out": "ACS\\map_func.acs",
+    "bytes": 4971
+  },
+  {
+    "path": "ACS/Upgrade_Message.acs",
+    "out": "ACS\\Upgrade_Message.acs",
+    "bytes": 11023
+  },
+  {
+    "path": "ACS/Key_Message.acs",
+    "out": "ACS\\Key_Message.acs",
+    "bytes": 1278
+  },
+  {
+    "path": "Maps/MAP01.wad:BEHAVIOR",
+    "out": "maps\\MAP01.wad\\BEHAVIOR.strings.txt",
+    "bytes": 2422
+  },
+  {
+    "path": "Maps/MAP01.wad:DIALOGUE",
+    "out": "maps\\MAP01.wad\\DIALOGUE",
+    "bytes": 10851
+  },
+  {
+    "path": "Maps/MAP01.wad:SCRIPTS",
+    "out": "maps\\MAP01.wad\\SCRIPTS",
+    "bytes": 30508
+  },
+  {
+    "path": "Maps/MAP02.wad:BEHAVIOR",
+    "out": "maps\\MAP02.wad\\BEHAVIOR.strings.txt",
+    "bytes": 2688
+  },
+  {
+    "path": "Maps/MAP02.wad:DIALOGUE",
+    "out": "maps\\MAP02.wad\\DIALOGUE",
+    "bytes": 22894
+  },
+  {
+    "path": "Maps/MAP02.wad:SCRIPTS",
+    "out": "maps\\MAP02.wad\\SCRIPTS",
+    "bytes": 28008
+  },
+  {
+    "path": "Maps/MAP03.wad:BEHAVIOR",
+    "out": "maps\\MAP03.wad\\BEHAVIOR.strings.txt",
+    "bytes": 1008
+  },
+  {
+    "path": "Maps/MAP03.wad:SCRIPTS",
+    "out": "maps\\MAP03.wad\\SCRIPTS",
+    "bytes": 11475
+  },
+  {
+    "path": "Maps/MAP04.wad:BEHAVIOR",
+    "out": "maps\\MAP04.wad\\BEHAVIOR.strings.txt",
+    "bytes": 1374
+  },
+  {
+    "path": "Maps/MAP04.wad:DIALOGUE",
+    "out": "maps\\MAP04.wad\\DIALOGUE",
+    "bytes": 9527
+  },
+  {
+    "path": "Maps/MAP04.wad:SCRIPTS",
+    "out": "maps\\MAP04.wad\\SCRIPTS",
+    "bytes": 15226
+  },
+  {
+    "path": "Maps/MAP05.wad:BEHAVIOR",
+    "out": "maps\\MAP05.wad\\BEHAVIOR.strings.txt",
+    "bytes": 1500
+  },
+  {
+    "path": "Maps/MAP05.wad:DIALOGUE",
+    "out": "maps\\MAP05.wad\\DIALOGUE",
+    "bytes": 10396
+  },
+  {
+    "path": "Maps/MAP05.wad:SCRIPTS",
+    "out": "maps\\MAP05.wad\\SCRIPTS",
+    "bytes": 15927
+  },
+  {
+    "path": "Maps/MAP06.wad:BEHAVIOR",
+    "out": "maps\\MAP06.wad\\BEHAVIOR.strings.txt",
+    "bytes": 3127
+  },
+  {
+    "path": "Maps/MAP06.wad:DIALOGUE",
+    "out": "maps\\MAP06.wad\\DIALOGUE",
+    "bytes": 47515
+  },
+  {
+    "path": "Maps/MAP06.wad:SCRIPTS",
+    "out": "maps\\MAP06.wad\\SCRIPTS",
+    "bytes": 48363
+  },
+  {
+    "path": "Maps/MAP07.wad:BEHAVIOR",
+    "out": "maps\\MAP07.wad\\BEHAVIOR.strings.txt",
+    "bytes": 648
+  },
+  {
+    "path": "Maps/MAP07.wad:DIALOGUE",
+    "out": "maps\\MAP07.wad\\DIALOGUE",
+    "bytes": 4981
+  },
+  {
+    "path": "Maps/MAP07.wad:SCRIPTS",
+    "out": "maps\\MAP07.wad\\SCRIPTS",
+    "bytes": 6677
+  },
+  {
+    "path": "Maps/MAP08.wad:BEHAVIOR",
+    "out": "maps\\MAP08.wad\\BEHAVIOR.strings.txt",
+    "bytes": 995
+  },
+  {
+    "path": "Maps/MAP08.wad:DIALOGUE",
+    "out": "maps\\MAP08.wad\\DIALOGUE",
+    "bytes": 4204
+  },
+  {
+    "path": "Maps/MAP08.wad:SCRIPTS",
+    "out": "maps\\MAP08.wad\\SCRIPTS",
+    "bytes": 10504
+  },
+  {
+    "path": "Maps/MAP09.wad:BEHAVIOR",
+    "out": "maps\\MAP09.wad\\BEHAVIOR.strings.txt",
+    "bytes": 402
+  },
+  {
+    "path": "Maps/MAP09.wad:DIALOGUE",
+    "out": "maps\\MAP09.wad\\DIALOGUE",
+    "bytes": 6330
+  },
+  {
+    "path": "Maps/MAP09.wad:SCRIPTS",
+    "out": "maps\\MAP09.wad\\SCRIPTS",
+    "bytes": 6924
+  },
+  {
+    "path": "Maps/MAP10.wad:BEHAVIOR",
+    "out": "maps\\MAP10.wad\\BEHAVIOR.strings.txt",
+    "bytes": 1299
+  },
+  {
+    "path": "Maps/MAP10.wad:DIALOGUE",
+    "out": "maps\\MAP10.wad\\DIALOGUE",
+    "bytes": 7161
+  },
+  {
+    "path": "Maps/MAP10.wad:SCRIPTS",
+    "out": "maps\\MAP10.wad\\SCRIPTS",
+    "bytes": 15245
+  },
+  {
+    "path": "Maps/MAP11.wad:BEHAVIOR",
+    "out": "maps\\MAP11.wad\\BEHAVIOR.strings.txt",
+    "bytes": 1241
+  },
+  {
+    "path": "Maps/MAP11.wad:SCRIPTS",
+    "out": "maps\\MAP11.wad\\SCRIPTS",
+    "bytes": 10656
+  },
+  {
+    "path": "Maps/MAP12.wad:BEHAVIOR",
+    "out": "maps\\MAP12.wad\\BEHAVIOR.strings.txt",
+    "bytes": 1618
+  },
+  {
+    "path": "Maps/MAP12.wad:DIALOGUE",
+    "out": "maps\\MAP12.wad\\DIALOGUE",
+    "bytes": 2217
+  },
+  {
+    "path": "Maps/MAP12.wad:SCRIPTS",
+    "out": "maps\\MAP12.wad\\SCRIPTS",
+    "bytes": 18025
+  },
+  {
+    "path": "Maps/MAP13.wad:BEHAVIOR",
+    "out": "maps\\MAP13.wad\\BEHAVIOR.strings.txt",
+    "bytes": 275
+  },
+  {
+    "path": "Maps/MAP13.wad:DIALOGUE",
+    "out": "maps\\MAP13.wad\\DIALOGUE",
+    "bytes": 1504
+  },
+  {
+    "path": "Maps/MAP13.wad:SCRIPTS",
+    "out": "maps\\MAP13.wad\\SCRIPTS",
+    "bytes": 4506
+  },
+  {
+    "path": "Maps/MAP14.wad:BEHAVIOR",
+    "out": "maps\\MAP14.wad\\BEHAVIOR.strings.txt",
+    "bytes": 1715
+  },
+  {
+    "path": "Maps/MAP14.wad:DIALOGUE",
+    "out": "maps\\MAP14.wad\\DIALOGUE",
+    "bytes": 4187
+  },
+  {
+    "path": "Maps/MAP14.wad:SCRIPTS",
+    "out": "maps\\MAP14.wad\\SCRIPTS",
+    "bytes": 27678
+  },
+  {
+    "path": "Maps/MAP15.wad:BEHAVIOR",
+    "out": "maps\\MAP15.wad\\BEHAVIOR.strings.txt",
+    "bytes": 779
+  },
+  {
+    "path": "Maps/MAP15.wad:DIALOGUE",
+    "out": "maps\\MAP15.wad\\DIALOGUE",
+    "bytes": 4361
+  },
+  {
+    "path": "Maps/MAP15.wad:SCRIPTS",
+    "out": "maps\\MAP15.wad\\SCRIPTS",
+    "bytes": 10637
+  },
+  {
+    "path": "Maps/MAP16.wad:BEHAVIOR",
+    "out": "maps\\MAP16.wad\\BEHAVIOR.strings.txt",
+    "bytes": 2736
+  },
+  {
+    "path": "Maps/MAP16.wad:DIALOGUE",
+    "out": "maps\\MAP16.wad\\DIALOGUE",
+    "bytes": 5066
+  },
+  {
+    "path": "Maps/MAP16.wad:SCRIPTS",
+    "out": "maps\\MAP16.wad\\SCRIPTS",
+    "bytes": 29471
+  },
+  {
+    "path": "Maps/MAP30.wad:BEHAVIOR",
+    "out": "maps\\MAP30.wad\\BEHAVIOR.strings.txt",
+    "bytes": 1481
+  },
+  {
+    "path": "Maps/MAP30.wad:DIALOGUE",
+    "out": "maps\\MAP30.wad\\DIALOGUE",
+    "bytes": 26735
+  },
+  {
+    "path": "Maps/MAP30.wad:SCRIPTS",
+    "out": "maps\\MAP30.wad\\SCRIPTS",
+    "bytes": 21080
+  },
+  {
+    "path": "Maps/MAP31.wad:BEHAVIOR",
+    "out": "maps\\MAP31.wad\\BEHAVIOR.strings.txt",
+    "bytes": 2237
+  },
+  {
+    "path": "Maps/MAP31.wad:DIALOGUE",
+    "out": "maps\\MAP31.wad\\DIALOGUE",
+    "bytes": 495
+  },
+  {
+    "path": "Maps/MAP31.wad:SCRIPTS",
+    "out": "maps\\MAP31.wad\\SCRIPTS",
+    "bytes": 18426
+  },
+  {
+    "path": "Maps/TITLEMAP.wad:BEHAVIOR",
+    "out": "maps\\TITLEMAP.wad\\BEHAVIOR.strings.txt",
+    "bytes": 137
+  },
+  {
+    "path": "Maps/TITLEMAP.wad:SCRIPTS",
+    "out": "maps\\TITLEMAP.wad\\SCRIPTS",
+    "bytes": 788
+  },
+  {
+    "path": "DF.pk3:language.csv",
+    "out": "engine\\language.csv",
+    "bytes": 1743400
+  },
+  {
+    "path": "DF.pk3:language.def",
+    "out": "engine\\language.def",
+    "bytes": 9876
+  },
+  {
+    "path": "DF.pk3:ui/noto/noto-sans.ttf",
+    "out": "engine\\ui\\noto\\noto-sans.ttf",
+    "bytes": 556328
+  },
+  {
+    "path": "DF.pk3:ui/noto/OFL.txt",
+    "out": "engine\\ui\\noto\\OFL.txt",
+    "bytes": 4715
+  }
+]

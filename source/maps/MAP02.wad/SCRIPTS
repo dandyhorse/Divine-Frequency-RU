@@ -1,0 +1,1275 @@
+#include "zcommon.acs"
+bool FirstContact = FALSE;
+
+Script "Init" ENTER
+{
+	if(GetUserCVar(0, "dev_debug") == 0)
+	{
+		ACS_NamedExecute("Autosave", 0);
+		SetActorFlag(110, "SOLID", FALSE);
+		ChangeCamera(311,1,0);
+		fadeto(0, 0, 0, 1.0, 0.0);
+		Delay(1);
+		ChangeCamera(0,1,0);
+		Delay(10);
+		LocalAmbientSound("Elev_TP",127);
+		Thing_Activate(66);
+		Thing_Activate(181);
+		//PlaySound(87, "Ritual01", CHAN_BODY, 1.0, TRUE, 0.4);
+		//PlaySound(88, "Ritual02", CHAN_BODY, 1.0, TRUE, 0.4);
+		Delay(35*3);
+		Teleport_NoFog(37, 1, 37);
+		ScriptCall("DFPlayer", "SetLocation", "Abandoned Complex");
+		SetMusic("D_NULL");
+		Delay(35);
+		fadeto(0, 0, 0, 0.0, 0.5);
+		Delay(35*2);
+		Polyobj_Move(39, 10, 64, 60);
+		SetLineSpecial(583, 18, 579, 1);
+		LocalAmbientSound("Elev_03", 127);
+		ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+		ScriptCall("GenericScreenStuff", "Clean");
+	}
+	Delay(1);
+	if(CheckInventory("Trenchgun") > 0)
+	{
+		SpawnSpot("Lube", 8, 0, 0);
+		Thing_Remove(8);
+	}
+	if(CheckInventory("WitToken") == 0)
+	{
+		Thing_Remove(259);
+	}
+}
+
+Script 1 (void)
+{
+	LocalAmbientSound("Unlock5",127);
+	SetPlayerProperty(0, 1, 4);
+	Delay(45);
+	LocalAmbientSound("Locked04",127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"The doors are firmly stuck.";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+	SetPlayerProperty(0, 0, 4);
+}
+
+Script 2 (void) //Weak Berserker Intro
+{
+	ScriptCall("Saver", "Autosave", TRUE);
+	Ceiling_RaiseByValue(82, 7, 208);
+	Delay(95);
+	SetActorState(6, "Map01Seq1", FALSE);
+	Delay(7);
+	PlaySound(6, "PB_Hit0", CHAN_AUTO, 0.8);
+	Delay(3);
+	PlaySound(6, "PB_Hit2", CHAN_AUTO, 0.8, FALSE, 0.6);
+	PlaySound(6, "PB_Hit3", CHAN_AUTO, 0.6, FALSE, 0.0);
+	Delay(2);
+	SetActorVelocity(10, 0, 100.0, 0, FALSE, FALSE);
+	Delay(2);
+	DamageActor(10, AAPTR_DEFAULT, 0, AAPTR_PLAYER1, 300, "ShotGib");
+	Delay(28);
+	SetActorState(6, "Map01Seq2", FALSE);
+	SetActorFlag(6, "FRIENDLY", FALSE);
+	while(TRUE)
+	{
+		if(ThingCountName("PsychoBerzerk", 6) <= 0)
+		{
+			Thing_Activate(261);
+			Thing_Activate(402);
+			SpawnSpot("EyeMarkDistance", 260, 402, 0);
+			break;
+		}
+		Delay(10);
+	}
+}
+
+Script 3 (void)
+{
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 100);
+	//scriptCall("GenericScreenStuff", "PromptTutorial", "Tip_Weapon");
+	SetMusic("MP1_B1a");
+}
+
+Script 4 (void)
+{
+	if(CheckInventory("WitToken") > 0)
+	{
+		ScriptCall("DFPlayer", "DetectAmbush");
+		ClearLineSpecial();
+	}
+}
+
+Script 5 (void) //Creepy Bow Scratch
+{
+	PlaySound(125, "PipeDrop", CHAN_AUTO, 0.4, FALSE, 0.3);
+	/*if(CheckInventory("StrToken") > 0)
+	{
+		ScriptCall("GenericScreenStuff", "PromptTutorial", "Combo");
+	}*/
+}
+
+Script 6 (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Further ahead, there might not be a way back...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+}
+
+Script 7 (void)
+{
+	SetLineSpecial(34, 0);
+}
+
+Script 8 (void)
+{
+	ScriptCall("GenericScreenStuff", "PromptTutorial", "Sprint");
+}
+
+script 9 (void)
+{
+	Thing_SetConversation(83, 0);
+	PlaySound(83, "Box01", CHAN_AUTO);
+	Floor_RaiseByValue(166, 236, 236);
+	Delay(35*2);
+	QuakeEx(0, 1, 1, 1, 35*9, 0, 1024, "DSEMPTY", QF_SCALEDOWN);
+	SetFont(const:"ACS_FONT");
+	HudMessage(l:"M01_BoxScript01";
+	0, 1, CR_WHITE, 1.5, 0.05, 4.0);
+	GiveInventory("MidZone", 1);
+	Delay(35*6);
+	GiveInventory("HighZone", 1);
+	FadeTo(255, 255, 255, 1.0, 2.0);
+	Delay(35*2);
+	Thing_Remove(83);
+	Thing_Remove(133);
+	GiveInventory("LowZone", 1);
+	FadeTo(255, 255, 255, 0.0, 0.5);
+	Floor_LowerByValue(166, 236, 236);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"\cFBox \cJhas been deleted from the Universe.";
+	HUDMSG_PLAIN, 1, CR_WHITE, 1.5, 0.85, 6.0);
+	Line_SetBlocking(217, 0, 6);
+}
+
+Script 10 (void)
+{
+	if (CheckInventory("Key_AC2"))
+	{
+	  ClearLineSpecial();
+	  TakeInventory("Key_AC2", 1);
+	  LocalAmbientSound("Unlock5",127);
+	  SetPlayerProperty(0, 1, 4);
+	  SetFont (const:"ACS_FONT");
+      HudMessage(s:"Unlocked.";
+	  HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+	  Delay(35);
+	  Polyobj_RotateLeft(81, 16, 64);
+	  Delay(35);
+	  SetPlayerProperty(0, 0, 4);
+	}
+	else
+	{
+	  LocalAmbientSound("Locked01",127);
+	  SetFont (const:"ACS_FONT");
+      HudMessage(s:"The door is locked.";
+	  HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+	}
+}
+
+Script 11 (void)
+{
+	//Prepare the scene
+	Thing_Remove(133);
+	Thing_SetConversation(83, 0);
+	Floor_RaiseByValue(166, 236, 236);
+
+	//Something's wrong
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 100);
+	LocalAmbientSound("BoxDie", 127);
+	Delay(35*5);
+	SetActorState(83, "Panic", FALSE);
+	PlaySound(83, "BoxMove", CHAN_AUTO, 1.0, 0.0, 0.7);
+	GiveInventory("MidZone", 1);
+	Delay(35*6);
+	ACS_NamedExecute("Gary_Taunt", 0);
+	Delay(35*3);
+	Delay(12);
+
+	//Trip picking up
+	//233 total tics to work with
+	ScriptCall("ShaderHandler", "SetImageGlitcher", TRUE);
+	ChangeCamera(147, 0, 0);
+	Delay(1);
+	ChangeCamera(0, 0, 0);
+	Delay(2);
+	ChangeCamera(147, 0, 0);
+	Delay(1);
+	ChangeCamera(0, 0, 0);
+	Delay(3);
+	ChangeCamera(150, 0, 0);
+	Delay(13); //20 tics total
+	GiveInventory("HighZone", 1);
+	SetSkyScrollSpeed(1, 0.04);
+	ChangeCamera(287, 0, 0);
+	Delay(19);
+	GiveInventory("MidZone", 1);
+	Thing_Activate(122);
+	ChangeCamera(122,1,0);
+	ACS_NamedExecute("CandleFade", 0);
+	Delay(39); //58 tics total
+
+	//Chasing
+	Floor_LowerByValue(166, 236, 236);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+	SetActorState(83, "Spawn", FALSE);
+	ChangeCamera(180, 0, 0);
+	Delay(20);
+	ChangeCamera(184, 0, 0);
+	Delay(15);
+	ChangeCamera(186, 0, 0);
+	Delay(15);
+	ChangeCamera(151, 0, 0);
+	Delay(15);
+	ChangeCamera(158, 0, 0);
+	Delay(20);
+	ChangeCamera(159, 0, 0);
+	Delay(20);
+	ChangeCamera(161, 0, 0);
+	Delay(20);
+	ChangeCamera(164, 0, 0);
+	Delay(15);
+	ChangeCamera(170, 0, 0);
+	Delay(10);
+	ChangeCamera(178, 0, 0);
+	Delay(10);
+	ChangeCamera(0, 0, 0); //155 tics total
+
+	//Peak Trip
+	SetActorPitch(0, 0);
+	QuakeEx(0, 3, 3, 5, 35*5, 0, 1024, "DSEMPTY", QF_SCALEDOWN);
+	GiveInventory("HighZone", 1);
+	FadeTo(255, 255, 255, 1.0, 4.5);
+	SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN);
+	Delay(35*5);
+	Thing_Remove(83);
+	SetSkyScrollSpeed(1, 0.0);
+	GiveInventory("LowZone", 1);
+	ScriptCall("ShaderHandler", "SetImageGlitcher", FALSE);
+	FadeTo(255, 255, 255, 0.0, 0.1);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"\cIBox \cJhas been deleted from the Universe.";
+	HUDMSG_PLAIN, 1, CR_WHITE, 1.5, 0.85, 6.0);
+	Line_SetBlocking(217, 0, 6);
+	Delay(35*4);
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 100);
+}
+
+Script "CandleFade" (void)
+{
+	for(int i = 500; i < 513; i++)
+	{
+		Thing_Remove(i);
+		Delay(3);
+	}
+}
+
+Script "Gary_Taunt" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(l:"M01_BoxScript01";
+	0, 1, CR_WHITE, 1.5, 0.05, 1.0);
+	Delay(26);
+	HudMessage(l:"M01_BoxScript02";
+	0, 1, CR_WHITE, 1.5, 0.05, 1.0);
+	Delay(26);
+	HudMessage(l:"M01_BoxScript03";
+	0, 1, CR_WHITE, 1.5, 0.05, 2.0);
+	Delay(70);
+	HudMessage(l:"M01_BoxScript04";
+	0, 1, CR_WHITE, 1.5, 0.05, 2.0);
+	Delay(55);
+	HudMessage(l:"M01_BoxScript05";
+	0, 1, CR_WHITE, 1.5, 0.05, 2.0);
+	Delay(105);
+	HudMessage(l:"M01_BoxScript06";
+	0, 1, CR_WHITE, 1.5, 0.05, 2.0);
+	Delay(70);
+}
+
+Script 12 (void)
+{
+	ClearLineSpecial();
+	Polyobj_RotateLeft(81, 16, 64);
+}
+
+Script 13 (void) //Bang bang berzerker intro
+{
+	SetLineSpecial(198, 0, 0, 0, 0, 0, 0);
+	PlaySound(191, "Bang02", CHAN_AUTO, 1.0, 0, 0.6);
+	QuakeEx(191, 4, 5, 6, 30, 0, 767, "dsempty", QF_SCALEDOWN);
+	Delay(14);
+	PlaySound(192, "Fly_See1", CHAN_AUTO, 1.0, 0, 0.6);
+	Delay(12);
+	PlaySound(193, "Fly/Impact", CHAN_AUTO, 1.0, 0, 0.6);
+	Delay(6);
+	PlaySound(194, "BZ_Grunt", CHAN_AUTO, 1.0, 0, 0.6);
+	Delay(15);
+	PlaySound(195, "PB_Hit1", CHAN_AUTO, 1.0, 0, 0.6);
+	Delay(20);
+	PlaySound(199, "Bang03", CHAN_AUTO, 1.0, 0, 0.6);
+	Delay(40);
+	scriptCall("GenericScreenStuff", "PromptTutorial", "Dash");
+}
+
+Script 14 (void)
+{
+	scriptCall("GenericScreenStuff", "PromptTutorial", "Tip_Binding");
+	ClearLineSpecial();
+}
+
+Script 15 (int type)
+{
+	GiveInventory("BagRemove", 1);
+	switch(type)
+	{
+		case 0:
+		TakeInventory("Ration", 1);
+		break;
+		case 1:
+		TakeInventory("FruitCan", 1);
+		break;
+		case 2:
+		TakeInventory("MeatCan", 1);
+		break;
+		case 3:
+		TakeInventory("SmallMushroom", 1);
+		break;
+		case 4:
+		TakeInventory("Lube", 1);
+		break;
+	}
+}
+
+Script 16 (void)
+{
+	FadeRange(0, 0, 0, 1.0, 0, 0, 0, 0.0, 1.0);
+	Teleport_NoFog(263, 1, 263);
+}
+
+bool secretMsg = FALSE;
+Script 17 (void)
+{
+	if(!secretMsg)
+	{
+		Delay(35*10);
+		secretMsg = TRUE;
+		SetFont(const:"ACS_FONT");
+		HudMessage(s:"7 4 3 9";
+		HUDMSG_TYPEON, 1, CR_WHITE, 1.5, 0.05, 5.0, 1.0, 0.0);
+	}
+}
+
+Script 18 (void)
+{
+	Delay(5);
+	GiveInventory("Lore1", 1);
+	Thing_Activate(223);
+	SetLineSpecial(224, 0, 0, 0);
+	Thing_SetConversation(222, 0);
+	SetFont(const:"ACS_FONT");
+    HudMessage(l:"Link_01";
+	HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 6.0, 1.0);
+	Delay(10);
+	PlaySound(225, "Link01", CHAN_AUTO);
+}
+
+Script 19 (void)
+{
+	Delay(5);
+	GiveInventory("BestiaryPack02", 1);
+	SetFont (const:"ACS_FONT");
+    ScriptCall("GenericScreenStuff", "ACS_UpdateItem", "(4) Bestiary files added.");
+	SetActorState(202, "Off", FALSE);
+}
+
+Script 20 (void)
+{
+	Thing_Deactivate(255);
+	Thing_Activate(256);
+	Floor_LowerByValue(216, 8, 137);
+	Thing_Deactivate(165);
+	Delay(35);
+	for(int i = 0; i < 6; i++)
+	{
+		Thing_Activate(226);
+		Light_ChangeToValue(228, 128);
+		Delay(random(1,2));
+		Thing_Deactivate(226);
+		Light_ChangeToValue(228, 0);
+		Delay(random(1,2));
+	}
+	Thing_Activate(226);
+	Light_ChangeToValue(228, 128);
+}
+
+Script 21 (void)
+{
+	ClearLineSpecial();
+	Thing_SetGoal(666, 234, 0, 0);
+	PlaySound(666, "PsychoPipe/See");
+}
+
+Script 22 (void)
+{
+	SpawnSpot("Mine", 31, 1000, 0);
+	Delay(1);
+	SetActorState(1000, "Idle", 0);
+}
+
+bool have_map = FALSE;
+Script 23 (void)
+{
+	Thing_SetConversation(239, 0);
+	Thing_Remove(240);
+	ScriptCall("DFPlayer", "SetMapMenu", "Graphics/Maps/Map_01.png");
+	have_map = TRUE;
+	Delay(5);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"New map file added.";
+	HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+}
+
+Script 24 (int enable)
+{
+	if(enable)
+	{
+		SetActorState(1000, "Spawn", 0);
+	}
+	else
+	{
+		SetActorState(1000, "Idle", 0);
+	}
+}
+
+Script 32 (Void)
+{
+	Delay(1);
+	SpawnSpot("CeremonyVial_FX", 115, 0, 0);
+	//Remove specials
+	SetLineSpecial(114, 0, 0, 0);
+	Thing_SetConversation(115, 0);
+}
+
+script 33  (void)
+{
+	LocalAmbientSound("Locked01",127);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Broken handle...";
+                HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+}
+
+Script 35 (void) //Delete vial
+{
+	Thing_Remove(116);
+	Thing_Remove(248);
+}
+
+script 37 (int lineID, int GateID, int eyeID)
+{
+	if(CheckInventory("Key_AC1"))
+	{
+		ClearLineSpecial();
+		if(eyeID > 0)
+		{
+			Thing_Deactivate(eyeID);
+		}
+		LocalAmbientSound("Unlock5",127);
+		SetPlayerProperty(0, 1, 4);
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"Unlocked.";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+		Delay(35);
+		Line_SetBlocking(lineID, 0, 32);
+		SetActorState(GateID, "Spin", FALSE);
+		Delay(35);
+		SetPlayerProperty(0, 0, 4);
+	}
+	else
+	{
+	  LocalAmbientSound("Locked04",127);
+	  SetFont (const:"ACS_FONT");
+      HudMessage(s:"The door is locked.";
+	  HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+	}
+}
+
+Script 38 (void) //Begin dirty key invisible tutorial
+{
+	SetLineSpecial(52, 80, 40);
+	if(CheckInventory("WitOrigin"))
+	{
+		SpawnSpot("BagUpgrade", 200, 0, 0);
+		Delay(1);
+		Thing_Remove(200);
+	}
+}
+
+Script 39 (void)
+{
+	Line_SetBlocking(203, 0, BLOCKF_SIGHT);
+	Delay(12);
+	Thing_Deactivate(214);
+	LocalAmbientSound("PowerOn1", 64);
+	ChangeFloor(144, "DFCOMPC1");
+	SetLineTexture(153, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPE1");
+	SetLineTexture(154, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPF1");
+	SetLineTexture(188, SIDE_FRONT, TEXTURE_BOTTOM, "DFCOMPB1");
+	Thing_Activate(521);
+	Light_ChangeToValue(123, 256);
+	Delay(3);
+	ChangeFloor(148, "DFCOMPD1");
+	Thing_Deactivate(521);
+	Light_ChangeToValue(123, 0);
+	Delay(3);
+	Thing_Activate(522);
+	Light_ChangeToValue(124, 128);
+	Delay(3);
+	Thing_Deactivate(522);
+	Light_ChangeToValue(124, 0);
+	Delay(2);
+	Thing_Activate(520);
+	Thing_Activate(521);
+	Thing_Activate(522);
+	Light_ChangeToValue(122, 256);
+	Light_ChangeToValue(123, 256);
+	Light_ChangeToValue(124, 256);
+	Delay(2);
+	Thing_Deactivate(520);
+	Thing_Deactivate(521);
+	Thing_Deactivate(522);
+	Light_ChangeToValue(122, 0);
+	Light_ChangeToValue(123, 0);
+	Light_ChangeToValue(124, 0);
+	Delay(14);
+	ChangeFloor(149, "DFCOMPE1");
+	Thing_Activate(520);
+	Light_ChangeToValue(122, 256);
+	Delay(6);
+	Thing_Activate(230);
+	Thing_Activate(521);
+	Light_ChangeToValue(123, 256);
+	Thing_Activate(140);
+	Light_ChangeToValue(59, 88);
+	Delay(6);
+	Thing_Activate(522);
+	Light_ChangeToValue(124, 256);
+}
+
+Script 40 (void) //Force the player to use dirty key
+{
+	LocalAmbientSound("Locked02",127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Something is blocking the door from the other side...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+}
+
+bool power = FALSE;
+
+script 41 (void)
+{
+	if(power)
+	{
+		GiveInventory("LanternKill", 1);
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"Your lantern's light has gone off to explore on its own.";
+		HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.85, 6.5, 2.0);
+
+		Thing_Deactivate(7);
+		Delay(12);
+		SetActorState(15, "On", FALSE);
+		Thing_Activate(26);
+		Thing_Activate(326);
+		Thing_Activate(140);
+		Thing_Deactivate(377);
+		SetLineSpecial(327, 131, 326);
+		SetLineSpecial(328, 130, 326);
+		LocalAmbientSound("PowerOn1", 64);
+		Delay(35);
+		SetMusic("MP1_B1");
+		SpawnSpot("PsychoPipe", 385, 666, 0);
+		SpawnSpot("EyeMarkDistance", 103, 103, 0);
+		SetActorState(268, "Reset", FALSE);
+		SetThingSpecial(268, 80, 50);
+		SetLineSpecial(233, 80, 21);
+	}
+	else
+	{
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"No power...";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+	}
+}
+
+Script 42 (void)
+{
+	GiveInventory("LanternKill", 1);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Your lantern's light has gone off to explore on its own.";
+	HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.85, 8.5, 2.0);
+	SetLineSpecial(219, 80, 14);
+	Delay(12);
+	SetActorState(15, "On", FALSE);
+	Thing_Activate(26);
+	Thing_Activate(326);
+	Thing_Activate(140);
+	Thing_Deactivate(377);
+	SetLineSpecial(327, 131, 326);
+	SetLineSpecial(328, 130, 326);
+	LocalAmbientSound("PowerOn1", 64);
+	Delay(35);
+	SetMusic("MP1_B1");
+	SpawnSpot("PsychoPipe", 385, 0, 64);
+	SpawnSpot("EyeMark_Basic", 103, 103, 0);
+	SetActorState(268, "Reset", FALSE);
+	SetThingSpecial(268, 80, 50);
+}
+
+script 43 (void)
+{
+	ClearLineSpecial();
+	Thing_Deactivate(78);
+	Line_SetBlocking(331, 0, 2);
+	Line_SetBlocking(331, 0, 4);
+	SetActorState(77, "Spin", FALSE);
+}
+
+Script 44 (void)
+{
+	//Spawn the mapspot where player is standing
+	SpawnSpot("MapSpot", 0, 79);
+	TakeInventory("Key_AC1", 1);
+	ScriptCall("DFPlayer", "SetMapMenu", "Graphics/Maps/Map_00.png");
+	Delay(1);
+	PlaySound(79, "WoodFall", CHAN_AUTO, 1.0, 0, 0.5);
+	FloorAndCeiling_LowerByValue(135, 5400, 5400);
+	SpawnSpot("M1_BrokenWood", 27, 0, 0);
+	Delay(1);
+	SetMusic("D_NULL");
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 0);
+}
+
+Script 45 (void) //Battery
+{
+	if(CheckInventory("Key_Battery"))
+	{
+		power = TRUE;
+		SetActorState(92, "Reset", FALSE);
+		TakeInventory("Key_Battery", 1);
+		Thing_Deactivate(81);
+		ClearLineSpecial();
+		SetPlayerProperty(0, 1, 4);
+		FadeTo(0, 0, 0, 1.0, 0.5);
+		Delay(15);
+		PlaySound(241, "Bat_In", CHAN_AUTO, 0.5, FALSE, 0.5);
+		Delay(3);
+		SetActorState(91, "On", 0);
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"\cIBattery \cJinserted.";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 2.0, 1.0, 1.0);
+		Delay(17);
+		FadeTo(0, 0, 0, 0.0, 0.5);
+		SetPlayerProperty(0, 0, 4);
+	}
+	else
+	{
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"\cIBattery \cJmissing...";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+		Delay(170);
+	}
+}
+
+Script 46 (void) //Looparound door
+{
+	LocalAmbientSound("Locked01", 127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"The door is locked from the other side...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+}
+
+Script 47 (void)
+{
+	SetLineSpecial(101, 0);
+	SetLineSpecial(102, 80, 48);
+	SpawnSpot("EyeMark_Basic", 104, 104, 192);
+	SpawnSpot("EyeMark_Basic", 190, 190, 192);
+	SpawnSpot("EyeMark_Basic", 251, 251, 192);
+	SpawnSpot("EyeMark_Basic", 252, 252, 192);
+	FirstContact = random(0,1);
+	if(FirstContact)
+	{
+		SetActorProperty(110, APROP_Alpha, 1.0);
+		Thing_Activate(110);
+	}
+	LocalAmbientSound("Unlock1", 127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Unlocked.";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+}
+
+Script 48 (void)
+{
+	SetLineSpecial(102, 0);
+	ClearLineSpecial();
+	Polyobj_RotateLeft(5, 16, 72);
+}
+
+Script 49 (void) //Shadowy spooks
+{
+	if(FirstContact)
+	{
+		Thing_Remove(121);
+		Delay(35);
+		Thing_Remove(110);
+		LocalAmbientSound("Shadow01", 88);
+		GiveInventory("MidZone", 1);
+		Thing_Deactivate(26);
+		Thing_Activate(111);
+		SetActorProperty(400, APROP_Alpha, 1.0);
+		Thing_Activate(400);
+		QuakeEx(0, 1, 1, 1, 35*7, 0, 512, "DSEMPTY", QF_SCALEDOWN);
+		Delay(35*6);
+		Thing_Remove(400);
+		Thing_Activate(26);
+		Delay(3);
+		Thing_Deactivate(26);
+		Delay(3);
+		Thing_Activate(26);
+		Delay(3);
+		Thing_Deactivate(26);
+		Delay(3);
+		GiveInventory("LowZone", 1);
+		Thing_Remove(111);
+		Thing_Activate(26);
+	}
+}
+
+Script 50 (void)
+{
+	Ceiling_RaiseByValue(138, 8, 168);
+	Thing_Deactivate(103);
+}
+
+Script 51 (int secTag, int snd, int map) //To the lower section of Abandoned Complex
+{
+	CancelFade();
+	LocalAmbientSound("DoorTP1", 127); //Softer Transition
+	SetPlayerProperty(1,1,0);
+	fadeto(0, 0, 0, 1.0, 0.5);
+	Delay(32);
+	Teleport_NoFog(secTag, 1, secTag);
+	if(have_map)
+	{
+		if(secTag == 95)
+		{
+			ScriptCall("DFPlayer", "SetMapMenu", "Graphics/Maps/Map_01_Ew.png");
+		}
+		else
+		{
+			ScriptCall("DFPlayer", "SetMapMenu", "Graphics/Maps/Map_01.png");
+		}
+	}
+	Delay(24);
+	LocalAmbientSound("DoorTP2", 127); //Softer Transition
+	switch(snd)
+	{
+		case 0:
+		Thing_Deactivate(112);
+		break;
+
+		case 1:
+		Thing_Activate(112);
+		break;
+	}
+	ACS_NamedExecute("UpdateMap", 0, map);
+	fadeto(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+}
+
+Script 52 (void)
+{
+	SoundSequenceOnSector(142, "TeleportGate", SECSEQ_FULLHEIGHT);
+}
+
+Script 53 (void)
+{
+	if(CheckInventory("StrOrigin") > 0)
+	{
+		SpawnSpot("PistolPickup2", 9, 999, 0);
+		Thing_SetSpecial(999, 131, 242, 0, 0);
+		Delay(1);
+	}
+	else
+	{
+		Thing_Remove(242);
+	}
+}
+
+Script 54 (void)
+{
+	Thing_Deactivate(245);
+	Door_Raise(0, 24, 0, 0);
+}
+
+Script 55 (void) //Update main quest
+{
+	Delay(35*2);
+	ScriptCall("DFPlayer", "SetObjective", "$Obj_01");
+}
+
+Script 56 (void)
+{
+	LocalAmbientSound("Dive_01", 127);
+	Thing_Remove(253);
+}
+
+Script 59 (void)
+{
+	LocalAmbientSound("Anom_01", 127);
+	ScriptCall("DFPlayer", "SetMap", "Abandoned Complex");
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Abandoned Complex\nResonance Proximity: Safe"; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(2);
+	HudMessage(s:""; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(1);
+	HudMessage(s:"Abandoned Complex\nResonance Proximity: Safe"; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(2);
+	HudMessage(s:""; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(1);
+	HudMessage(s:"Abandoned Complex\nResonance Proximity: Safe"; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(2);
+	HudMessage(s:""; 0, 1, CR_WHITE, 1.5, 0.05, 5.0);
+	Delay(1);
+	HudMessageBold(s:"Abandoned Complex\nResonance Proximity: Safe"; HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 3.0, 1.0);
+}
+
+Script 60 (void)
+{
+	LocalAmbientSound("Switch05", 127);
+	Delay(16);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"No response...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+}
+
+Script 62 (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"No power...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+}
+
+Script 63 (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"No response...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+}
+
+Script 68 (void)
+{
+	Thing_Deactivate(42);
+	Thing_Deactivate(165);
+}
+
+Script 69 (void)
+{
+	SetLineSpecial(258, 0, 0, 0, 0, 0);
+}
+
+Script 70 (void)
+{
+	ACS_NamedExecute("TP_Door", 0, 155);
+	SetLineSpecial(157, 80, 33);
+	Delay(35);
+	Thing_Remove(66);
+	Thing_Remove(177);
+}
+
+
+Script 71 (void)
+{
+	Thing_Deactivate(234);
+	SetActorState(167, "Ready", FALSE);
+	PlaySound(174, "Ritual05", CHAN_BODY, 0.5, 0, 0.4);
+	Ceiling_RaiseByValue(90, 8, 176);
+	Thing_Activate(35);
+}
+
+Script 72 (int stag)
+{
+	CancelFade();
+	SetPlayerProperty(1,1,0);
+	fadeto(0, 0, 0, 1.0, 0.5);
+	Delay(17);
+	LocalAmbientSound("CLIMB",127);
+	Delay(35);
+	Teleport_NoFog(stag, 1, stag);
+	SetActorPitch(0, 0);
+	Delay(50);
+	LocalAmbientSound("pl_fall", 127);
+	Delay(14);
+	SetPlayerProperty(1,0,0);
+	fadeto(0, 0, 0, 0.0, 0.5);
+	Delay(14);
+}
+
+Script 73 (void)
+{
+	Thing_Deactivate(244);
+	Ceiling_RaiseByValue(90, 8, 224);
+	Delay(35);
+	PlaySound(168, "Ritual04", CHAN_BODY, 1.0, 0, 0.5);
+	Delay(35*2);
+	SetActorState(169, "See", FALSE);
+	Delay(20);
+	SetActorState(167, "Set", FALSE);
+	Delay(15);
+	SetActorState(172, "See", FALSE);
+	Delay(35);
+	SetActorState(173, "See", FALSE);
+	Delay(35);
+	SetActorState(167, "Go", FALSE);
+	GiveInventory("HighZone", 1);
+	For(int i = 600; i < 607; i++)
+	{
+		Thing_Activate(i);
+		Delay(6);
+	}
+	Delay(8);
+	StopSound(174, CHAN_BODY);
+	For(i = 600; i < 607; i++)
+	{
+		Thing_Deactivate(i);
+	}
+	Delay(20);
+	GiveInventory("LowZone", 1);
+	Thing_Deactivate(142);
+	Thing_Activate(55);
+	Line_SetBlocking(143, 0, BLOCKF_SIGHT);
+	SetActorAngle(35, 0.75);
+	while(TRUE)
+	{
+		if(ThingCountName("Crab", 167) <= 0)
+		{
+			GiveInventory("LanternLive", 1);
+			SetFont (const:"ACS_FONT");
+			HudMessage(s:"Your lantern's light returns to you!";
+			HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.85, 6.5, 2.0);
+
+			StopSound(87, CHAN_BODY);
+			StopSound(88, CHAN_BODY);
+			Delay(35);
+			Thing_Deactivate(55);
+			Delay(2);
+			Thing_Activate(55);
+			Thing_Activate(142);
+			Delay(2);
+			Thing_Deactivate(55);
+			Delay(2);
+			Thing_Activate(55);
+			Delay(2);
+			Thing_Deactivate(55);
+			Delay(2);
+			Thing_Activate(55);
+			Delay(2);
+			Thing_Remove(55);
+			Thing_Remove(142);
+			Break;
+		}
+		Delay(2);
+	}
+	Ceiling_RaiseByValue(213, 9, 216);
+}
+
+Script 74 (void)
+{
+	ScriptCall("GenericScreenStuff", "PromptTutorial", "Tip_Ammo");
+	Delay(14);
+	ScriptCall("Saver", "Autosave");
+}
+
+Script 98 (void)
+{
+	SetLineSpecial(7, 0);
+	Delay(35);
+	Thing_Activate(11);
+	Polyobj_Move(43, 10, 128, 60);
+	LocalAmbientSound("Elev_01", 127);
+}
+
+Script 104 (void)
+{
+	Thing_Deactivate(26);
+	SetLineSpecial(11, 0);
+	Line_SetBlocking(14, BLOCKF_CREATURES, 0);
+	LocalAmbientSound("Gen_Sw03", 127);
+	Delay(35);
+	Polyobj_Move(43, 10, 0, 60);
+	LocalAmbientSound("Elev_02", 127);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 100);
+	SetMusic("MP1_B1a");
+	Delay(80);
+	fadeto(0, 0, 0, 1.0, 0.5);
+	Delay(35);
+	SetMusic("D_NULL");
+	Delay(1);
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+	Delay(1);
+	Exit_Normal(0);
+}
+
+Script 131 (void)
+{
+	StopSound(66, CHAN_BODY);
+}
+
+SCript 134 (void)
+{
+	Delay(8);
+	PlaySound(53, "Light_01", CHAN_AUTO, 0.5, FALSE);
+	Thing_Activate(17);
+	Delay(2);
+	Thing_Deactivate(17);
+	Delay(2);
+	Thing_Activate(17);
+	Delay(2);
+	Thing_Deactivate(17);
+	Delay(2);
+	Thing_Activate(17);
+	Light_ChangeToValue(24, 168);
+	Thing_Deactivate(28);
+	Delay(7);
+	Light_ChangeToValue(25, 168);
+	Thing_Activate(19);
+	Delay(8);
+	Ceiling_RaiseByValue(243, 16, 248);
+}
+
+Script 137 (void)
+{
+	SetActorVelocity(307, 0.0, -7.8, 0.0, FALSE, FALSE);
+	PlaySound(307, "Drag", CHAN_BODY, 1.0, False, 0.5);
+	Delay(40);
+	Thing_Remove(307);
+}
+
+Script 153 (void)
+{
+	SetLineTexture(231, SIDE_FRONT, TEXTURE_MIDDLE, "-");
+	Line_SetBlocking(231, 0, BLOCKF_EVERYTHING);
+	SetLineSpecial(231, 0);
+	Line_SetBlocking(97, 0, 4);
+	SetLineSpecial(97, 0);
+	Thing_SetConversation(125, 0);
+	Thing_Deactivate(57);
+}
+
+Script 154 (void)
+{
+	LocalAmbientSound("WoodBar", 56);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"The barricade has been removed...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+	ACS_Execute(153, 0);
+}
+
+Script 155 (void)
+{
+	SetLineSpecial(232, 0);
+	SetLineSpecial(258, 80, 4);
+	Polyobj_RotateLeft(1, 64, 72);
+	ACS_Execute(153, 0);
+	SetActorState(278, "Death");
+	Thing_Remove(235);
+	Delay(32);
+	SpawnSpot("PsychoAxe", 41, 41, 0);
+	SetActorFlag(41, "AMBUSH", 1);
+}
+
+Script 156 (void)
+{
+	SetLineSpecial(44, 0);
+	Polyobj_RotateLeft(4, -64, 72);
+	SetActorState(45, "Death");
+	SetActorState(278, "Death");
+	Line_SetBlocking(42, 0, 4);
+	SetLineSpecial(42, 0);
+	Thing_SetConversation(44, 0);
+}
+
+Script 163 (void)
+{
+	SpawnSpot("JumpscareAxeGuy", 62, 0, 192);
+	LocalAmbientSound("Locked03",127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Something is blocking from the other side...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+
+	Thing_Remove(208);
+	Thing_Activate(209);
+	SpawnSpot("MoodCandle2", 220, 0, 0);
+}
+
+Script 164 (void)
+{
+	PlaySound(87, "Ritual01", CHAN_BODY, 1.0, TRUE, 0.4);
+	PlaySound(88, "Ritual02", CHAN_BODY, 1.0, TRUE, 0.4);
+}
+
+Script 165 (int map_enable)
+{
+	if(have_map)
+	{
+		if(map_enable == 1)
+		{
+			ACS_NamedExecute("UpdateMap", 0, 1);
+			ScriptCall("DFPlayer", "SetMapMenu", "Graphics/Maps/Map_01.png");
+		}
+		else
+		{
+			ACS_NamedExecute("UpdateMap", 0, 7);
+			ScriptCall("DFPlayer", "SetMapMenu", "Graphics/Maps/Map_01_Ew.png");
+		}
+	}
+}
+
+Script 166 (void)
+{
+	Thing_SetConversation(403, 0);
+}
+
+Script 167 (int type)
+{
+	Thing_Remove(402);
+	switch(type)
+	{
+		case 0:
+		SpawnSpot("Egg_DT_Giver", 117, 0, 0);
+		break;
+		case 1:
+		SpawnSpot("Egg_DR_Giver", 117, 0, 0);
+		break;
+		case 2:
+		SpawnSpot("Egg_PHY_Giver1", 117, 0, 0);
+		break;
+	}
+}
+
+script 254 (void)
+{
+	SetActorState(116, "Activate", 0);
+	CancelFade();
+	SetPlayerProperty(1,1,0);
+    FadeTo(255, 255, 255, 1.0, 1.3);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 100);
+	LocalAmbientSound("Mirror", 127);
+	Delay(17);
+	GiveInventory("DustSpawner", 1);
+	Delay(105);
+	Teleport_NoFog(247, 1, 0);
+	FadeTo(255, 255, 255, 0.0, 1.3);
+	Thing_Remove(257);
+	Delay(35*2);
+	SetMusic("D_NULL");
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 50);
+	SetPlayerProperty(1,0,0);
+	Delay(35);
+	SetMusic("MP_ROOM1");
+}
+
+script 255 (void)
+{
+	CancelFade();
+	TakeInventory("DustSpawner", 1);
+	SetPlayerProperty(1,1,0);
+    FadeTo(255, 255, 255, 1.0, 1.3);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 100);
+	LocalAmbientSound("Mirror", 127);
+	Delay(122);
+	Teleport_NoFog(249, 1, 0);
+	Delay(5);
+	FadeTo(255, 255, 255, 0.0, 1.3);
+	Delay(35*2);
+	SetMusic("D_NULL");
+	SetPlayerProperty(1,0,0);
+	Delay(35*2);
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 50);
+	SetActorState(116, "Spawn", 0);
+	SetMusic("MP1_B1");
+}
+
+Script "UpdateMap" (int id)
+{
+	switch(id)
+	{
+		case 0:
+		ScriptCall("DFPlayer", "SetMap", "Abandoned Complex", "Graphics/Maps/Map_01_AC.png");
+		break;
+		case 1:
+		ScriptCall("DFPlayer", "SetMap", "Hallway", "Graphics/Maps/Map_01_HW1.png");
+		break;
+		case 2:
+		ScriptCall("DFPlayer", "SetMap", "Recreation", "Graphics/Maps/Map_01_RC.png");
+		break;
+		case 3:
+		ScriptCall("DFPlayer", "SetMap", "Power", "Graphics/Maps/Map_01_PW.png");
+		break;
+		case 4:
+		ScriptCall("DFPlayer", "SetMap", "Storage 4", "Graphics/Maps/Map_01_S4.png");
+		break;
+		case 5:
+		ScriptCall("DFPlayer", "SetMap", "Storage 1", "Graphics/Maps/Map_01_S1.png");
+		break;
+		case 6:
+		ScriptCall("DFPlayer", "SetMap", "Loading Bay", "Graphics/Maps/Map_01_LB.png");
+		break;
+		case 7:
+		ScriptCall("DFPlayer", "SetMap", "Data Not Found");
+		break;
+		case 8:
+		ScriptCall("DFPlayer", "SetMap", "Data Not Found");
+		break;
+		case 9:
+		ScriptCall("DFPlayer", "SetMap", "Data Not Found");
+		break;
+		case 10:
+		ScriptCall("DFPlayer", "SetMap", "Storage 3", "Graphics/Maps/Map_01_S3.png");
+		break;
+		case 11:
+		ScriptCall("DFPlayer", "SetMap", "Waterways Access", "Graphics/Maps/Map_01_WW.png");
+		break;
+		case 12:
+		ScriptCall("DFPlayer", "SetMap", "Data Not Found");
+		break;
+		case 13:
+		ScriptCall("DFPlayer", "SetMap", "Utility", "Graphics/Maps/Map_01_UT.png");
+		break;
+		case 14:
+		ScriptCall("DFPlayer", "SetMap", "Storage 2", "Graphics/Maps/Map_01_S2.png");
+		break;
+		case 15:
+		ScriptCall("DFPlayer", "SetMap", "Hallway", "Graphics/Maps/Map_01_HW2.png");
+		break;
+		case 16:
+		ScriptCall("DFPlayer", "SetMap", "Hallway", "Graphics/Maps/Map_01_ST.png");
+		break;
+	}
+}
+
+Script "ClearLineSpecial" (int lineID)
+{
+	SetLineSpecial(lineID, 0);
+}

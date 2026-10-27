@@ -1,0 +1,157 @@
+[enu default]
+Hand_Info =
+"Base Damage: 20 + (20 * STR Level)\n"
+"Damage Type: Physical\n"
+"Weapon Slot: 1\n"
+"Base Draw Speed: Average\n"
+"Base Reload Speed: N/A\n"
+"Base Spread: N/A\n\n"
+"\cU(Requires Strength 1)\n"
+"-\cJAttack damage bypass most resistance. Most attacks can inflict \cIResonance Break\cJ.";
+
+Hand_Ability =
+"\cU(Requires Strength 1)\n"
+"-\cFBlocking\cJ: \cDHold [Secondary Fire] \cJto block. Blocking reduces 50% of incoming damage and consumes Stamina.\n\n"
+"\cU(Requires Strength 2)\n"
+"-\cFRiposte\cJ: \cJBlocking at the moment before an attack lands will automatically trigger a counter-attack.";
+
+Hand_Quirk =
+"\cU(Requires Strength 1)\n"
+"-\cFHeadbutt\cJ: \cDPress [Primary Fire]\cJ while blocking to launch a powerful headbutt at the cost of inflicting self damage.\n\n"
+"\cU(Requires Strength 1)\n"
+"-\cFHeavy Attack\cJ: \cDHold [Reload]\cJ to build up power for a powerful strike. Release the button to unleash the attack.\n\n"
+"\cU(Requires Strength 1)\n"
+"-\cFRetaliation Power\cJ: Blocking damage and headbutting will build up the retaliation power meter. Once the retaliation power meter is full, "
+"\cDPress [Reload] \cJto trigger a massive area-of-effect blast.\n\n"
+"\cU(Requires Strength 4)\n"
+"-\cFTouch of Death\cJ: \cDPress [Swap Fire Mode]\cJ to trigger an instant-kill attack. Requires killing enemies to charge up. "
+"Does not work on bosses.";
+
+//Handgun
+Handgun_Info =
+"Base Damage: \cR50 \cJ| \cI(300)\cJ\n"
+"Damage Type: \cRHypertrauma \cJ| \cIExplosive\cJ\n"
+"Weapon Slot: 2\n"
+"Base Draw Speed: Average\n"
+"Base Reload Speed: Average\n"
+"Base Spread: Low\n\n\n"
+"**FIRE MODES**\n"
+"---------------------------------------------------\n"
+"-\cRHypertrauma Rounds\cJ: Homemade rounds cooked up in some random basement and overloaded with gunpowder. Designed primarily for maximum fragmentation and "
+"shredding. \cDEffective against organic targets. Deals extra damage on headshots. Punches through multiple targets.\cJ.\n\n"
+"-\cIHigh-Explosive Rounds\cJ: Experimental demolition rounds manufactured by the CCE. \cDEffective against all targets, \cRbut can kill you if you aren't careful.";
+
+Handgun_Ability =
+"Conjure a swarm of insects to inflict Brain Rot on a target. Victims under the Brain Rot status become \cIFriendly\cJ and take constant damage. "
+"If the target dies, it will explode and damage nearby enemies.\n\n"
+"\cFRequires\cJ: Psychoentomo Communion\n"
+"\cFPsi Cost\cJ: 5";
+
+Handgun_Quirk =
+"\cGDegradation:\cJ\n"
+"Repeated firing will wear down the weapon's barrel, reducing bullet pressure and muzzle velocity. Therefore, leading to \cRreduced damage\cJ.";
+
+//Shotgun
+Shotgun_Info = 
+"Base Damage: 24-256\n"
+"Damage Type: Physical\n"
+"Weapon Slot: 3\n"
+"Base Draw Speed: Slow\n"
+"Base Reload Speed: Slow\n"
+"Base Spread: High\n\n\n"
+"**FIRE MODES**\n"
+"---------------------------------------------------\n"
+"-\cFPump-action\cJ: Switch to a standard pump-action technique.\n\n"
+"-\cFSlamfire\cJ: Switch to a slamfiring technique, gaining exceptionally \cDhigher firing rate\cJ, but at the cost of \cRworse recoil control\cJ.";
+
+Shotgun_Ability =
+"Discharge an electric orb that will bounce from the primary target up to 2 additional targets, \cIStunning\cJ each victim hit.\n\n"
+"Each target struck by the electric orb will grant you 1 Armor Stack and voltaically charge the Trench Gun's next shot, doubling damage dealt.\n\n"
+"\cFRequires\cJ: Limited Aeromancy Conduction\n"
+"\cFPsi Cost\cJ: 3";
+
+Shotgun_Quirk =
+"\cFRandomized Velocity:\cJ\n"
+"Each shell contains 8 pellets. Each pellet deals 8 Damage with a multiplier of 3-4. \n\n"
+"\cFReliable:\cJ\n"
+"This weapon will still function even at zero durability.\n\n"
+"\cFDueling Weapon:\cJ\n"
+"Capable of inflicting a \cIResonance Break\cJ.\n\n"
+"\cGDegradation:\cJ\n"
+"Repeated firing will wear down the weapon's barrel, creating uneven pressure and erratic flight paths for the pellets. Therefore, leading to \cRsub-optimal scattering \cJand \cRslower firing rate\cJ.\n\n"
+"\cGBalance:\cJ\n"
+"Does not inflict bonus headshot damage.";
+
+//The Hammer
+DB_Info = 
+"\cFBåś3>7++mÐåmągę: 0\n"
+"\cFÐåmãgê}oΦTΨ ŦÿpęX]Ö: \cV!fξ=kVΦ!\n\cJ"
+"\cFŴęå{{{  }}}±łøt: 3\n"
+"\cDBâšF≡ ,3;⧰Ø//mřåŵ  ?Śþęęd: ŠLøŵ\n"
+"BãśΝ≤+ 00000 !YssbKęęđ: ŠLøŵ\n"
+"BãLz} Xx1]R9ęåð: Ñõñę\n\n\n"
+"\cR**FÏŘË MØÐĘŚ**\n"
+"------------------------------------------------------------\n"
+"\cF-t!αΩ∞{∑~]ΣF7⌂L5Ω=≠≡g0\cJ: ΩR!7dΘaµ+3tF[θ≠β}v~wΦ@+|τ9u}Yd~ΦL`X!m≠r"
+"~t°ΩTθx}LΦ9!θ⊛h[βP~F3;V}≡α9Y!≠XJ∞-]wVφℵQΠΩ]πg8m=∑E⊛ZτF~z+9h]t≡U!8ΦnXg∞⌂±k≡}∆ξθ5≠Q}1uD+π≡Jv~7L)ω}tE0b≠±ΩΦl⊇H~9RΩ3Ω9~r+Jt^µg≠θ⌂≡|F~Ωbπ≡*tY~bΩ|gV≠Ψ0e-ξZ.";
+
+DB_Ability =
+"Discharge an electric orb that will bounce to many targets, \cIStunning\cJ each victim hit.\n\n"
+"Each target struck by the electric orb will have a lightning bolt descend upon them.\n\n"
+"Additionally, reload time is completely removed.\n\n"
+"\cFRequires\cJ: Empowered Resonance\n"
+"\cFPsi Cost\cJ: 5";
+
+DB_Quirk =
+"\cFαΩΠcB-}F≡~vΦ7≠uXβzq:\cJ\n"
+"\cVt!αΩ∞{∑~]ΣF7⌂L5Ω=≠≡g0mδΦE`~i}Θ9+uϞζη}↔⊇≠O≡+iZ8~TΦ}Lw}α∫9b}+Z3~WnT-εΩΥ}z!+θ;F*Ψ#BQ9l!5ΓX[&πtλΩ+`~≈Λc8*ω7}≡~aT!v⊗Φ}5ΨΩQ°g"  
+"ΩR!7dΘaµ+3tF[θ≠β}v~wΦ@+|τ9u}Yd~ΦL`X!m≠r~t°ΩTθx}LΦ9!θ⊛h[βP~F3;V}≡α9Y!≠XJ∞-]wVφℵQΠΩ]πg8m=∑E⊛ZτF~z+9h]t≡U!8ΦnXg∞⌂±k≡:";
+
+//Spray
+Spray_Info =
+"Base Damage: 60-70\n"
+"Damage Type: \c[DarkGreen]Necrotic\cJ\n"
+"Weapon Slot: 4\n"
+"Base Draw Speed: Average\n"
+"Base Reload Speed: N/A\n"
+"Base Spread: Low\n\n\n"
+"**FIRE MODES**\n"
+"---------------------------------------------------\n"
+"-\cFSpray\cJ: Spray deadly nerve gas. \cDExtremely effective against organic targets\cJ.\n\n"
+"-\cFThrow\cJ: Throw the spray can. It explodes shortly after impact, \cDreleasing a healing gas cloud\cJ.";
+
+Spray_Ability =
+"Forcibly tear apart the biomass of fallen enemies and fuse it with your own to replace damaged or missing parts. "
+"Grants 15 HP and 1 Armor Stack per corpse.\n\n"
+"The enemy corpse has to be somewhat intact to qualify.\n\n"
+"\cFRequires\cJ: Meta-Bioinduction\n"
+"\cFPsi Cost\cJ: 2";
+
+Spray_Quirk =
+"\cFMetaphysical Binding:\n"
+"\cJThe spray can and storage vial are ontologically tethered, bypassing the need to reload.\n\n"
+"\cGDegradation:\cJ\n"
+"\cJRepeated use corrodes the weapon's nozzle, disrupting optimal pressure and acceleration. Therefore, leading to \cRreduced range\cJ.";
+
+//Typhoon AR
+AR_Info =
+"Base Damage: 100\n"
+"Damage Type: \cF[|||||||||]\cJ\n"
+"Weapon Slot: 4\n"
+"Base Draw Speed: Slow\n"
+"Base Reload Speed: Slow\n"
+"Base Spread: Low\n\n\n"
+"**FIRE MODES**\n"
+"---------------------------------------------------\n"
+"-\cFBurst Fire\cJ: Switch to a five rounds burst firing mode.\n\n"
+"-\cFFull Auto\cJ: Switch to a fully automatic firing mode.";
+
+AR_Ability =
+"Manifest matter at a localized level. For 20 seconds, the Assault Rifle will not consume ammo when firing, nor will it require ammo to fire.\n\n"
+"\cFRequires\cJ: Empowered Resonance\n"
+"\cFPsi Cost\cJ: 7";
+
+AR_Quirk =
+"\cGDegredation:\n"
+"\cJRepeated firing will compromise the weapon's barrel and muzzle, causing unpredictable horizontal deviation and muzzle climb. Therefore, "
+"leading to \cRworse recoil control\cJ.";

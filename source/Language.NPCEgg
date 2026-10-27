@@ -1,0 +1,79 @@
+[enu default]
+UPG_01_DLG_01 = "\cD[Inspect the egg]";
+UPG_01_DLG_01a1 = "\cDThe egg feels warm to the touch. It pulsates gently from within. Its potential anticipates manifestation.\n\n"
+"\cIFLOWING MIND\n"
+"\cF+10 Physical Threshold: \cJFlat Physical Damage reduction. Good against low to medium damage.\n"
+"\cF+10 Armor Stacks: \cJAllows you to benefit from Physical Threshold & Physical Resistance. You lose one stack each time you take damage. Replenishable.\n\n"
+"\cIANCHORED MIND\n"
+"\cF+60% Physical Resistance: \cJMultiplicative Physical Damage reduction. Good against high damage.\n"
+"\cF+10 Armor Stacks: \cJAllows you to benefit from Physical Threshold & Physical Resistance. You lose one stack each time you take damage. Replenishable.";
+
+UPG_01_DLG_01a2 = "\cDThe egg feels warm to the touch. It pulsates gently from within. Its potential anticipates manifestation.\n\n"
+"\cIKEVLAR ARMOR MK.I\n"
+"\cF+10 Physical Threshold: \cJFlat Physical Damage reduction. Good against low to medium damage.\n"
+"\cF+10 Armor Stacks: \cJAllows you to benefit from Physical Threshold & Physical Resistance. You lose one stack each time you take damage. Replenishable.\n\n"
+"\cIHEAVY PLATING ARMOR MK.I\n"
+"\cF+60% Physical Resistance: \cJMultiplicative Physical Damage reduction. Good against high damage.\n"
+"\cF+10 Armor Stacks: \cJAllows you to benefit from Physical Threshold & Physical Resistance. You lose one stack each time you take damage. Replenishable.";
+
+UPG_01_DLG_01a3 = "\cDThe egg feels warm to the touch. It pulsates gently from within. Its potential anticipates manifestation.\n\n"
+"\cIPROTECTIVE MEAT PLATTER\n"
+"\cF+10 Physical Threshold: \cJFlat Physical Damage reduction. Good against low to medium damage.\n"
+"\cF+10 Armor Stacks: \cJAllows you to benefit from Physical Threshold & Physical Resistance. You lose one stack each time you take damage. Replenishable.\n\n"
+"\cICANCEROUS CRAB ARMOR\n"
+"\cF+60% Physical Resistance: \cJMultiplicative Physical Damage reduction. Good against high damage.\n"
+"\cF+10 Armor Stacks: \cJAllows you to benefit from Physical Threshold & Physical Resistance. You lose one stack each time you take damage. Replenishable.";
+
+UPG_01_DLG_021 = "\cD[Eat Shell] \cIAcquire Flowing Mind";
+UPG_01_DLG_022 = "\cD[Eat Shell] \cIAcquire Kevlar Armor Mk.I";
+UPG_01_DLG_023 = "\cD[Eat Shell] \cIAcquire Protective Meat Platter";
+UPG_01_DLG_02a = "\cDYou grab the egg and crush it in your hand. The creature within writhes in terror as you pluck the pieces of what was its abode and put them in your mouth. The shell dissolves pleasantly in your tongue. You feel the thing in your hand promptly stop struggling.\n\n\cF(Armor Upgraded)";
+
+UPG_01_DLG_031 = "\cD[Eat 'Yolk'] \cIAcquire Anchored Mind";
+UPG_01_DLG_032 = "\cD[Eat 'Yolk'] \cIAcquire Heavy Plating Armor Mk.I";
+UPG_01_DLG_033 = "\cD[Eat 'Yolk'] \cIAcquire Cancerous Crab Armor";
+UPG_01_DLG_03a = "\cDYou grab the egg and puncture it with your finger. You hear a muffled, tiny scream from within. You insert your finger through the opening and scramble the insides as the screams die down. After licking your finger, you find that the taste is slightly metallic, yet refreshing. You drink the rest.\n\n\cF(Armor Upgraded)";
+
+UPG_01_DLG_04a = "\cQ[Physique]\cI Eat The Whole Egg";
+UPG_01_DLG_04b = "\cQ[Physique]\cU Eat The Whole Egg";
+UPG_01_DLG_04ba = "\cDYour mouth easily opens wide enough to accommodate the whole egg. As you clamp down on it, "
+"the shell shards dissolve pleasantly in your mouth, and you feel something spasming desperately, yielding "
+"easily to the pressure your jaws exert. You taste metal, but a refreshing sensation fills your gullet by "
+"the time you're done.\n\n\cF(Armor Upgraded)";
+//UPG_01_DLG_04ba = "\cDOM NOM NOM NOM (Placeholder) Finally. Some good fucking food.";
+
+UPG_01_DLG_05 = "\cQLeave";
+
+UPG_02_DLG_01a1 = "\cDThe egg feels warm to the touch. It pulsates gently from within. Its potential anticipates manifestation.\n\n"
+"\cINERVES OF STEEL\n"
+"\cF+50% Entropy Resistance: \cJMultiplicative Entropy Damage reduction. Protects against energy or otherworldly attacks. Does not require Armor Stack to function.\n"
+"\cR-3 Armor Stacks: \cJLose 3 Armor Stacks permanently.\n\n"
+"\cIUNYIELDING BODY\n"
+"\cF+5 Physical Threshold: \cJFlat Physical Damage reduction. Good against low to medium damage.\n"
+"\cF+15% Physical Resistance: \cJMultiplicative Physical Damage reduction. Good against high damage.";
+
+UPG_02_DLG_01a2 = "\cDThe egg feels warm to the touch. It pulsates gently from within. Its potential anticipates manifestation.\n\n"
+"\cIPSI. SHIELDING VISOR MK.II\n"
+"\cF+50% Entropy Resistance: \cJMultiplicative Entropy Damage reduction. Protects against arcanic or otherworldly attacks. Does not require Armor Stack to function.\n"
+"\cR-3 Armor Stacks: \cJLose 3 Armor Stacks permanently.\n\n"
+"\cISUBDERMAL ALLOY SHEET\n"
+"\cF+5 Physical Threshold: \cJFlat Physical Damage reduction. Good against low to medium damage.\n"
+"\cF+15% Physical Resistance: \cJMultiplicative Physical Damage reduction. Good against high damage.";
+
+UPG_02_DLG_01a3 = "\cDThe egg feels warm to the touch. It pulsates gently from within. Its potential anticipates manifestation.\n\n"
+"\cIELDRITCH FLESH\n"
+"\cF+50% Entropy Resistance: \cJMultiplicative Entropy Damage reduction. Protects against arcanic or otherworldly attacks. Does not require Armor Stack to function.\n"
+"\cR-3 Armor Stacks: \cJLose 3 Armor Stacks permanently.\n\n"
+"\cIOSSIFIED OBSIDIAN CARAPACE\n"
+"\cF+5 Physical Threshold: \cJFlat Physical Damage reduction. Good against low to medium damage.\n"
+"\cF+15% Physical Resistance: \cJMultiplicative Physical Damage reduction. Good against high damage.";
+
+UPG_02_DLG_021 = "\cD[Eat Shell] \cIAcquire Nerves of Steel";
+UPG_02_DLG_022 = "\cD[Eat Shell] \cIAcquire Psi Shielding Visor Mk.II";
+UPG_02_DLG_023 = "\cD[Eat Shell] \cIAcquire Eldritch Flesh";
+UPG_02_DLG_02a = "\cDYou grab the egg and crush it in your hand. The creature within writhes in terror as you pluck the pieces of what was its abode and put them in your mouth. The shell dissolves pleasantly in your tongue. You feel the thing in your hand promptly stop struggling.\n\n\cF(Armor Upgraded)";
+
+UPG_02_DLG_031 = "\cD[Eat 'Yolk'] \cIAcquire Unyielding Body";
+UPG_02_DLG_032 = "\cD[Eat 'Yolk'] \cISubdermal Alloy Sheet";
+UPG_02_DLG_033 = "\cD[Eat 'Yolk'] \cIAcquire Ossified Obsidian Carapace";
+UPG_02_DLG_03a = "\cDYou grab the egg and puncture it with your finger. You hear a muffled, tiny scream from within. You insert your finger through the opening and scramble the insides as the screams die down. After licking your finger, you find that the taste is slightly metallic, yet refreshing. You drink the rest.\n\n\cF(Armor Upgraded)";

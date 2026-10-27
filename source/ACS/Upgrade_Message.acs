@@ -1,0 +1,447 @@
+#library "Upgrade_Message"
+#include "zcommon.acs"
+
+Script "Handgun_Ammo1" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Extended Mag: Tier I--\c[-]\nHandgun Maximum Capacity +2";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Handgun_Ammo2" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Extended Mag: Tier II--\c[-]\nHandgun Maximum Capacity +3";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Handgun_Damage" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Kinetic Accelerator--\c[-]\nHandgun Damage Increased";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Handgun_Accuracy" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Handgun Barrel Stabilizer --\c[-]\nBullet Spread Reduced";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Handgun_Broken" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"This gun is heavily damaged... It needs repair.";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.85, 8.0, 1.0);
+	Delay(35*5);
+}
+
+Script "Handgun_Possess" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Handgun now embedded with Possession ability.";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 3.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Shotgun_Accuracy" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Shotgun Choke--\c[-]\nPellet Spread Reduced";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Shotgun_Ammo" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"\c[Gold]--Shotgun Tube Extension--\c[-]\nTrench Gun Maximum Capacity +2";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Spray_Pyro" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Spray Can now embedded with Pyromancy\n\c[Gold]Codex Updated (Misc)";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 3.0, 1.0);
+	GiveInventory("AbilityPyro", 1);
+	Delay(35*4);
+}
+
+Script "Ammo_Belt" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Ammo Belt--\c[-]\nAP Round Ammo Capacity +15\nShell Ammo Capacity +6";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Bag_Upgrade1" (int bagAmount)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Item Pouch--\c[-]\nInventory Space +", d: bagAmount;
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Bag_Upgrade2" (int bagAmount)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Attachable Pockets--\c[-]\nBag Slots +", d: bagAmount, s: "\nAmmo Capacity++";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Tonic_Get" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Healing Tonic--\c[-]\nRestore HP, Stamina";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Tonic_Upgrade" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"\c[Cyan]--Cosmic Bead--\c[-]\nTonic Maximum Capacity +1";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Tonic_Upgrade2" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"\c[Cyan]--Dried Void Ichor--\c[-]\nTonic Healing Increased";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Tonic_Fill" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"\c[Cyan]--Lifeblood Infused Elixir--\c[-]\nTonic Refilled";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Wits" (void)
+{
+	AmbientSound("Crk_Warn", 127);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Your Wits grow sharper.\nYou can now anticipate some enemies' quick attack.";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 5.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Physique" (void)
+{
+	AmbientSound("PhyGet", 127);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Transfusion--\c[-]\nGenerate a supply of HP when PSI is used or gained";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Phy_Levelup_HPM" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Gene Sequence Mutated!--\c[-]\nMutation Point +1\nMax. Health +10";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Phy_Levelup_M" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Gene Sequence Mutated!--\c[-]\nMutation Point +1";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Phy_Levelup_A1" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Gene Sequence Mutated!--\c[-]\nNew Ability: \cDNecrotic Blobs";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Phy_Levelup_A2" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Gene Sequence Mutated!--\c[-]\nNew Ability: \cDCaustic Gland";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Phy_Levelup_A3" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Gold]--Gene Sequence Mutated!--\c[-]\nNew Ability: \cDRegurgitate";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Insight" (int amount)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\c[Cyan]--Insight Absorbed--\cJ\n+", d:amount, s:" Exaltation";
+                HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 0.5, 1.0);
+	Delay(35*3);
+}
+
+Script "BossInsight1" (int amount)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"--Paranormal Insight Seized--\n+", d:amount, s:" Exaltation";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 5.0, 1.0);
+	Delay(35*3); 
+}
+
+Script "BossInsight2" (int amount)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"\cZ--Esoteric Insight Captured--\cJ\n+", d:amount, s:" Exaltation";
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 5.0, 1.0);
+	Delay(35*3); 
+}
+
+Script "Codex_Weapon" (int type)
+{
+	str wep = "";
+	switch(type)
+    {
+	  case 0:
+	  wep = "\cFWrench";
+	  break;
+	  
+	  case 1:
+	  wep = "\cFHandgun";
+	  break;
+	  
+	  case 2:
+	  wep = "\cFTrench Gun";
+	  break;
+	  
+	  case 3:
+	  wep = "\cFDeath";
+	  break;
+	  
+	  case 4:
+	  wep = "\cFSpray Can";
+	  break;
+	  
+	  case 5:
+	  wep = "\cFChipped Tooth";
+	  break;
+	  
+	  case 6:
+	  wep = "\cFSniper Rifle";
+	  break;
+	}
+	
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"+Codex Entry: ", s:wep;
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 3.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Codex_Misc" (int type)
+{
+	str nfo = "";
+	switch(type)
+    {
+	  case 0:
+	  nfo = "\cFAnomaly Levels";
+	  break;
+	  
+	  case 1:
+	  nfo = "\cFFactions";
+	  break;
+	}
+	
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"+Codex Entry: ", s:nfo;
+    HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 3.0, 1.0);
+}
+
+Script "Codex_Bounty" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"--Kill-List Updated--";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 2.0, 1.0);
+	Delay(35*3);
+}
+
+Script "ForbidPhysique" (void)
+{
+    SetFont (const:"ACS_FONT");
+	HudMessage(s:"Your chosen waveform cannot commune with this.";
+	0, 1, CR_WHITE, 1.5, 0.85, 2.0);
+}
+
+Script "Jammed" (void)
+{
+	SetFont(const:"ACS_FONT");
+	for(int i = 0; i < 5; i++)
+	{
+		HudMessage(s:"Weapon Broken!!";
+		0, 900, CR_WHITE, 1.5, 0.55, 0.3);
+		Delay(7);
+		HudMessage(s:"\cGWeapon Broken!!";
+		0, 900, CR_WHITE, 1.5, 0.55, 0.5);
+		Delay(14);
+	}
+}
+
+Script "NoPsi" (void)
+{
+	SetFont(const:"ACS_FONT");
+	for(int i = 0; i < 5; i++)
+	{
+		HudMessage(s:"Insufficient Psi!!";
+		0, 900, CR_WHITE, 1.5, 0.55, 0.3);
+		Delay(7);
+		HudMessage(s:"\cGInsufficient Psi!!";
+		0, 900, CR_WHITE, 1.5, 0.55, 0.5);
+		Delay(14);
+	}
+}
+
+Script "Psi_Shield_on" (void)
+{
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"Psi-Shield Activated!";
+	0, 900, CR_WHITE, 1.5, 0.55, 4.0);
+}
+
+Script "Psi_Shield_off" (void)
+{
+	SetFont(const:"ACS_FONT");
+	for(int i = 0; i < 5; i++)
+	{
+		HudMessage(s:"Psi-Shield Deactivated!";
+		0, 900, CR_WHITE, 1.5, 0.55, 0.3);
+		Delay(7);
+		HudMessage(s:"\cGPsi-Shield Deactivated!";
+		0, 900, CR_WHITE, 1.5, 0.55, 0.5);
+		Delay(14);
+	}
+}
+
+Script "Radar_on" (void)
+{
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"Threat Detection Activated!";
+	0, 900, CR_WHITE, 1.5, 0.55, 4.0);
+}
+
+Script "Radar_off" (void)
+{
+	SetFont(const:"ACS_FONT");
+	for(int i = 0; i < 5; i++)
+	{
+		HudMessage(s:"Threat Detection Deactivated!";
+		0, 900, CR_WHITE, 1.5, 0.55, 0.3);
+		Delay(7);
+		HudMessage(s:"\cGThreat Detection Deactivated!";
+		0, 900, CR_WHITE, 1.5, 0.55, 0.5);
+		Delay(14);
+	}
+}
+
+Script "No_Ammo_HT" (void)
+{
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"Out of Hypertrauma Round!";
+	0, 901, CR_WHITE, 1.5, 0.45, 2.0);
+}
+
+Script "No_Ammo_HE" (void)
+{
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"Out of High-Explosive Round!";
+	0, 901, CR_WHITE, 1.5, 0.45, 2.0);
+}
+
+Script "AmmoFull" (void)
+{
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"Ammo Full!";
+	0, 901, CR_WHITE, 1.5, 0.45, 2.0);
+}
+
+Script "Full" (void)
+{
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"Consumables Full!";
+	0, 901, CR_WHITE, 1.5, 0.45, 2.0);
+}
+
+Script "StimFull" (void)
+{
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"Psykhus Injector Full!";
+	0, 901, CR_WHITE, 1.5, 0.45, 2.0);
+}
+
+Script "StimNone" (void)
+{
+	SetFont(const:"ACS_FONT");
+	HudMessage(s:"No Psykhus Injector!";
+	0, 901, CR_WHITE, 1.5, 0.45, 2.0);
+}
+
+Script "Infected" (void)
+{
+	AmbientSound("Crk_Warn", 127);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"You have been infected.";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "NewEntry" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"New Bestiary file added.";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "NewEntrySpirit" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Location's High Spirit file updated.";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "NewNote" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"New Note file added.";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "NewHarmonic" (void)
+{
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Intrinsic Harmonic integrated.\nNew Note file added.";
+                HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.05, 4.0, 1.0);
+	Delay(35*4);
+}
+
+Script "Ambush" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"There is an ambush nearby...";
+	HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.85, 4.0, 1.0);
+}

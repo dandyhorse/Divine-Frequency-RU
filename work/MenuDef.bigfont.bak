@@ -1,0 +1,42 @@
+ListMenu "MainMenu"
+{
+	Class "FadeMenu"
+	Animated
+	AnimatedTransition
+	DontDim
+	Font "BIGFONT", "White", "White"
+	Position 124, 72
+	HighlightTextItem "Новая игра", "n", "PlayerclassMenu"
+	Position 126, 92
+	HighlightTextItem "Настройки", "o", "TabTest", 0
+	Position 111, 112
+	HighlightTextItem "Загрузить игру", "l", "DFLoadMenu", 0
+	Position 110, 132
+	HighlightTextItem "Сохранить игру", "s", "DFSaveMenu", 0
+	Position 140, 152
+	HighlightTextItem "Титры", "s", "CreditMenu", 0
+	Position 140, 172
+	HighlightTextItem "Выход", "q", "QuitMenu", 0
+}
+
+ListMenu "SkillMenu"
+{
+	Animated
+	AnimatedTransition
+	DontDim
+	Font "BIGFONT", "Gray", "White"
+	Position 128, 72
+	ForceList
+	StaticTextCentered 160, 30, "Выберите сложность:"
+}
+
+OptionMenu "TabTest"
+{
+	Class "TabMenu"
+	Animated
+	AnimatedTransition
+	Tab "DFDisplayOptions", "Графика"
+	Tab "DFKeyBinds", "Управление"
+	Tab "DFSoundOptions", "Звук"
+	Tab "DFAdvancedOptions", "Доступность"
+}

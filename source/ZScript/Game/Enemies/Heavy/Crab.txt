@@ -1,0 +1,1872 @@
+Class Crab : DF_Monster //29488
+{
+  Actor ArmorLayer;
+  bool soul, growth;
+  int a1CD, a2CD;
+  override void Die(Actor source, Actor inflictor, int dmgFlags, Name MeansOfDeath)
+  {
+	super.Die(source, inflictor, dmgFlags, MeansOfDeath);
+	
+	A_KillChildren("Fire", KILS_KILLMISSILES);
+	
+	if(bPossessed)
+	{
+	  SetStateLabel("Death.Void");
+	  A_SpawnItemEx("Swarm_Explosion", zofs: (sHeight * scale.y) * 0.5);
+	}
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(Health > 0 && growth)
+	  A_SpawnItemEx("CrabPlant", random(-64,64), random(-88,88));
+  }
+  
+  override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle) 
+  {
+    int newDamage = damage;
+	
+	if(AP > 0)
+	{
+	  let ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  if(ev)
+	  {
+	    if(mod == "Trauma")
+	    {
+	      AP -= 5;
+	      newDamage = Max(0, damage * 0.1);  //.1
+		  ev.SetShieldIcon();
+	    }
+	    else if(mod == "ShotGib")
+	    {
+		  let pmo = players[consoleplayer].mo;
+		  if(pmo && !DFPlayer(pmo).bOrangePower)
+		  {
+	        AP -= 2;
+	        newDamage = Max(0, damage * 0.1);
+		    ev.SetShieldIcon();
+		  }
+	    }
+		else if(mod == "ArmorBreak")
+		{
+		  AP -= 25;
+		}
+	    else if(mod == "Explode")
+	    {
+		  if(!soul)
+	        AP -= 30;
+		  else
+		    AP -= 16;
+			
+	      newDamage = Max(0, damage * 0.6);
+		  ev.SetHitMark("CritMark", 1.2);
+	    }
+	    ev.SetArmorBreak(AP);
+	  }
+	  if(armored && AP <= 0)
+	  {
+	    armored = false;
+	    SetStateLabel("ArmorBreak");
+	    ev.shieldBarAlpha = 0.0;
+	    ev.shieldVal = 0;
+	  }
+	}
+	
+	return super.DamageMobj(inflictor, source, newDamage, mod, flags, angle); 
+  }
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	SetArmor(100);
+	Armored = true;
+	growth = true;
+  }
+  
+  override void BeginPlay()
+  {
+    radar_height = Height * 0.68;
+    Super.BeginPlay();
+  }
+  
+  action void CrabHit(bool thunder = false)
+  {
+    if(target && CheckMeleeRange())
+	{
+	  if(target is "DFPlayer" && target.health > 1)
+	  {
+		target.DamageMobj(self, self, target.health - 1, "Drowning");
+		DFPlayer(target).armorStack = clamp(DFPlayer(target).armorStack - 1, 0, DFPlayer(target).armorMax);
+	  }
+	  else
+	  {
+		target.DamageMobj(self, self, 1500, "Explode");
+	  }
+	}
+	
+
+    A_StartSound("Crab/Hit", CHAN_AUTO, attenuation: 0.6);
+	A_QuakeEx(3, 3, 6, 24, 0, 1024, "DSEMPTY", QF_SCALEDOWN);
+	let exp1 = Spawn("MineExplosion", Vec3Offset(64 * cos(angle), 64 * sin(angle), 8));
+	let exp2 = Spawn("MineExplosion2", Vec3Offset(64 * cos(angle), 64 * sin(angle), 2));
+	if(exp1 && exp2)
+	{
+	  exp1.scale = (1.0,1.0);
+	  exp1.A_SetRenderStyle(1.0, STYLE_Add);
+	  exp2.scale = (2.0,2.0);
+	}
+	
+	for(int i = 0; i < 32; i++)
+	{
+	  bool Left = random(true,false);
+	  A_SpawnParticleEx
+	  (
+		"444444",
+		TexMan.CheckForTexture("SMMMA0"),
+		style: STYLE_Translucent,
+		flags: SPF_RELATIVE|SPF_ROLL,
+		lifetime: 45,
+		size: random(128,144),
+		angle: 0.,
+		xoff: FRandom (48,144),
+		yoff: FRandom (-48,48),
+		zoff: FRandom (4,32),
+		velx: FRandom (1.5,-1.5),
+		vely: FRandom (1.5,-1.5),
+		velz: FRandom (0.4,3.0),
+		accelx: 0,
+		accely: 0,
+		accelz: -0.001,
+		startalphaf: 1.0,
+		fadestepf: -1,
+		sizestep: 0.5,
+		startroll: random(0,359),
+		rollvel: Left ? 0.5 : -0.5,
+		rollacc: Left ? 0.02 : -0.02
+	  );
+	  
+	  A_SpawnParticleEx
+	  (
+		"FFFFFF",
+		TexMan.CheckForTexture("SPFLA0"),
+		style: STYLE_Add,
+		flags: SPF_RELATIVE|SPF_ROLL,
+		lifetime: 45,
+		size: random(4,8),
+		angle: random(-60,60),
+		xoff: FRandom (48,144),
+		yoff: 0,
+		zoff: FRandom (4,24),
+		velx: FRandom(5.5, 7.5),
+		vely: 0,
+		velz: FRandom (15.2,18.0),
+		accelx: 0,
+		accely: 0,
+		accelz: -0.9,
+		startalphaf: 1.0,
+		fadestepf: 0.0,
+		sizestep: 0.0,
+		startroll: random(0,359),
+		rollvel: 0,
+		rollacc: 0
+	  );
+	  
+	  int pitch = random(2,32);
+	  int ang = angle + random(-90,90);
+		  
+	  Vector3 newPos = random(128,144) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch)); //ALL plushiinations
+	  Vector3 basePos = Vec3Offset(94 * cos(ang), 94 * sin(ang), 0);
+	  Vector3 newVel = 0.2 * newPos;
+		  
+	  Actor puff = Spawn("CrabSpark",  basePos + (random(24,32) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch))));
+	  if(puff)
+	    puff.vel = newVel;
+	}
+  }
+  
+  action void CrabStep(bool left = false)
+  {
+    A_StartSound("Crab/Walk", CHAN_AUTO, attenuation: 0.6);
+	A_QuakeEx(1, 1, 1, 8, 0, 1024, "DSEMPTY");
+  }
+  
+  Default
+  {
+    //$Category "Enemies/Heavy"
+    Health 1200; //1500
+    Radius 28;
+    Height 154;
+    Speed 5;
+    PainChance 0;
+	MeleeRange 128;
+	MeleeThreshold 96;
+	YScale 0.83;
+    Monster;
+	DamageFactor "Energy", 0.0;
+	Mass 800;
+	Tag "Enlightened Reaper";
+	ActiveSound "Crab/Active";
+	MONSTER;
+    +LOOKALLAROUND
+	+DONTTHRUST
+	+DROPOFF
+	+STOPRAILS //Thank GOD this flag exists
+	+DF_Monster.Large;
+	+DF_Monster.PoisonResist;
+  }
+  States
+  {
+    Spawn:
+	  CRBW A 10 A_Look();
+	  Wait;
+	See:
+	  CRBW A 2 A_Chase();
+      CRBW A 3 CrabStep();
+	  CRBW B 4 A_Chase();
+	  CRBW CC 2 A_Chase();
+	  CRBW DDD 2 A_Chase();
+	  CRBW E 2 A_Chase();
+	  CRBW FFGG 2 A_Chase();
+	  CRBW H 2 A_Chase();
+	  CRBW H 3 CrabStep();
+	  CRBW I 4 A_Chase();
+	  CRBW JJKK 2 A_Chase();
+	  CRBW LLL 2 A_Chase();
+	  CRBW M 2 A_Chase();
+	  CRBW NN 2 A_Chase();
+	  CRBW OO 2 A_Chase();
+	  CRBW PP 2 A_Chase();
+      Loop;
+	//Spawn:
+	ArmorBreak:
+	  CRBR A 3;
+	  TNT1 A 0
+	  {
+		ArmorLayer = Spawn("MonsterWeakAura", pos);
+	    if(ArmorLayer)
+		  ArmorLayer.master = self;
+	  }
+	  CRBW A 5 A_Die();
+	  //Loop;
+	  Goto See;
+	Melee:
+	  TNT1 A 0 PlayActiveSound();
+	  CRBR A 5 A_FaceTarget();
+	  CRBR BC 4 A_FaceTarget();
+	  CRBR DE 3 A_FaceTarget();
+	  CRBR F 2 A_FaceTarget();
+	  CRBR G 2 A_FaceTarget();
+	  CRBA G 1
+	  {
+	    A_StartSound("Crab/Swing", CHAN_AUTO, attenuation: 0.6);
+		A_FaceTarget();
+		Thrust(12, angle);
+	  }
+	  CRBA G 2 A_FaceTarget();
+	  CRBA HI 1 A_FaceTarget();
+	  TNT1 A 0 CrabHit();
+	  CRBA JKLMNO 4;
+	  Goto See;
+	Stun:
+	  CRBA A 4
+	  {
+		A_Pain();
+		A_StunEffect();
+	  }
+	  TNT1 A 0 A_ClearStun();
+	  CRBR A random(2,3);
+	  TNT1 A 0 A_GiveInventory("StunToken", 1);
+	  CRBR BABCBCDED random(2,3);
+	  Goto LineAttack;
+	LineAttack:
+	  TNT1 A 0
+	  {
+	    if(a1CD > 0 && a2CD <= 0)
+		  return ResolveState("Jump");
+		else
+		{
+		  a1CD = 35*8;
+		  return ResolveState(null);
+		}  
+	  }
+	  CRBA ABC 3 A_FaceTarget();
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("ChampionBoltLayer", zofs: 256, zvel: -15.0);
+		A_StartSound("PsychoHammer/Charge", CHAN_AUTO, attenuation: 0.5);
+	  }
+	  CRBA E 3 A_FaceTarget();
+	  CRBA E 4
+	  {
+	    A_SpawnItemEx("ElectricChargeEffect", zofs: 160, flags: SXF_SETMASTER);
+		A_QuakeEx(1, 1, 8, 20, 0, 2048, "DSEMPTY", QF_SCALEDOWN);
+		A_FaceTarget();
+	  }
+	  CRBA E 2
+	  {
+	    if(CheckInventory("StunToken", 1))
+		  A_TakeInventory("StunToken", 1);
+		  
+	    A_FaceTarget();
+		A_GiveInventory("ElectricAbsorb", 1);
+		if(target)
+		{
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFC0"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELPOS, 5, 600, AngleTo(target), 64, zoff: 56, sizestep: -60);
+	      A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK2"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELPOS|SPF_LOCAL_ANIM, 19, 600, AngleTo(target), 64, zoff: height * 0.5, startroll: random(0,359));
+	      A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK3"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELPOS|SPF_LOCAL_ANIM, 19, 600, AngleTo(target), 64, zoff: height * 0.5, startroll: random(0,359));
+	      A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK4"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELPOS|SPF_LOCAL_ANIM, 19, 600, AngleTo(target), 64, zoff: height * 0.5, startroll: random(0,359));
+		}
+	  }
+	  CRBA E 2 
+	  {
+	    A_StartSound("Crab/BoltAttack", CHAN_AUTO, volume: 1.0, attenuation: 0.2);
+		A_FaceTarget();
+	  }
+	  CRBA E 4 
+	  {
+	    A_SpawnItemEx("ElectricChargeEffect", zofs: 112, flags: SXF_SETMASTER);
+		A_FaceTarget();
+	  }
+	  CRBA E 4 
+	  {
+	    A_SpawnItemEx("ElectricChargeEffect", zofs: 104, flags: SXF_SETMASTER);
+		A_FaceTarget();
+	  }
+	  CRBA E 4 
+	  {
+	    A_SpawnItemEx("ElectricChargeEffect", zofs: 96, flags: SXF_SETMASTER);
+		A_FaceTarget();
+	  }
+	  CRBA E 4 
+	  {
+	    A_SpawnItemEx("ElectricChargeEffect", zofs: 88, flags: SXF_SETMASTER);
+		A_FaceTarget();
+	  }
+	  CRBA E 2 
+	  {
+	    A_SpawnItemEx("ElectricChargeEffect", zofs: 80, flags: SXF_SETMASTER);
+		A_FaceTarget();
+	  }
+	  CRBA F 3 
+	  {
+	    A_SpawnItemEx("ElectricChargeEffect", zofs: 56, flags: SXF_SETMASTER);
+		A_FaceTarget();
+		A_TakeInventory("ElectricAbsorb", 1);
+		A_SpawnItemEx("CrabFadeStrike", zofs: -20, zvel: -5);
+	  }
+	  CRLP K 3 
+	  {
+	    A_SpawnItemEx("ElectricChargeEffect", zofs: 32, flags: SXF_SETMASTER);
+		A_FaceTarget();
+	  }
+	  CRLP L 1;
+	  CRLP L 2
+	  {
+	    let pmo = players[consoleplayer].mo;
+		if(pmo)
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFC0"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELPOS, 5, 224, AngleTo(pmo), 64, zoff: 44, sizestep: 150);
+		  
+		A_FaceTarget();  
+		A_SpawnItemEx("CrabSeeker", 64, xvel: 100);
+		A_QuakeEx(2, 7, 3, 20, 0, 2048, "DSEMPTY", QF_SCALEDOWN);
+		for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,32);
+		  int ang = angle + random(-90,90);
+			  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch)); //ALL plushiinations
+		  Vector3 basePos = Vec3Offset(94 * cos(ang), 94 * sin(ang), 0);
+		  Vector3 newVel = 1.5 * newPos;
+			  
+		  Actor puff = Spawn("ChampionHammerSpark",  basePos + (random(24,32) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch))));
+		  if(puff)
+			puff.vel = newVel;
+		}
+	  }
+	  CRLP L 15 A_SpawnParticleEx("a3b1ff", TexMan.CheckForTexture("SPRK1_01"), style: STYLE_AddShaded, flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM, lifetime: 14, size: 600, xoff: 88, sizestep: 50);
+	  CRLP MNORS 3;
+	  TNT1 A 0 A_Jump(256, "See");
+	  Goto See;
+	StunFinish:
+	  TNT1 A 0
+	  {
+	    A_ClearStun();
+		A_SpriteOffset(0.0, 0.0);
+	  }
+	  Goto Melee+5;
+	Death:
+	  TNT1 A 0 A_StartSound("Crab/Death", CHAN_AUTO);
+	  CRDT AB 5
+	  {
+	    A_SpawnItemEx("BloodHazeM", 0, random(-12,12), random(76,80), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("DFBloodSquirt",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		for(int i = 0; i < 4; i++)
+		{
+		  A_SpawnItemEx("BloodM",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		  A_SpawnItemEx("BloodM",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		}
+	  }
+	  CRDT C 1
+	  {
+	    A_SpriteOffset(0, -6.0);
+	    A_SpawnItemEx("BloodHazeM", 0, random(-12,12), random(76,80), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("DFBloodSquirt",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		for(int i = 0; i < 4; i++)
+		{
+		  A_SpawnItemEx("BloodM",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		  A_SpawnItemEx("BloodM",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		}
+	  }
+	  CRDT C 1 A_SpriteOffset(0, -4.0);
+	  CRDT C 1 A_SpriteOffset(0, -2.0);
+	  CRDT C 1 A_SpriteOffset(0, 0.0);
+	  CRDT D 1
+	  {
+	    A_SpriteOffset(0, -6.0);
+	    A_SpawnItemEx("BloodHazeM", 0, random(-12,12), random(76,80), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("DFBloodSquirt",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		for(int i = 0; i < 4; i++)
+		{
+		  A_SpawnItemEx("BloodM",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		  A_SpawnItemEx("BloodM",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		}
+	  }
+	  CRDT D 1 A_SpriteOffset(0, -4.0);
+	  CRDT D 1 A_SpriteOffset(0, -2.0);
+	  CRDT D 6 A_SpriteOffset(0, 0.0);
+	  CRDT E 2
+	  {
+	    A_SpawnItemEx("BloodHazeM", 0, random(-12,12), random(76,80), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("DFBloodSquirt",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		for(int i = 0; i < 4; i++)
+		{
+		  A_SpawnItemEx("BloodM",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		  A_SpawnItemEx("BloodM",0, random(-12,12),random(52,128),random(-2,2),random(-2,2),random(3,4));
+		}
+	  }
+	  CRDT F 3;
+	Death.Execute:
+	Death.Void:
+	  CRDT G 2;
+	  CRDT G 0
+	  {
+	    A_StartSound("BODSPLT2", CHAN_AUTO);
+		A_StartSound("ElecExp1", CHAN_AUTO, volume: 0.5);
+		let exp = Spawn("MineExplosion2", pos);
+		if(exp)
+		  exp.scale = (1.5,1.5);
+
+		A_SpawnParticleEx
+		  (
+			"FFFFFF",
+			TexMan.CheckForTexture("BWAVA0"),
+			style: STYLE_ADD,
+			flags: SPF_RELATIVE|SPF_ROLL,
+			lifetime: 35,
+			size: 256,
+			angle: 0.,
+			xoff: 0,
+			yoff: 0,
+			zoff: 24,
+			velx: 0,
+			vely: 0,
+			velz: 0,
+			accelx: 0,
+			accely: 0,
+			accelz: 0,
+			startalphaf: 1.0,
+			fadestepf: 0.15,
+			sizestep: 100.0,
+			startroll: random(0,359),
+			rollvel: 0,
+			rollacc: 0
+		  );
+
+		let pmo = players[consoleplayer].mo;
+		if(pmo)
+		  angle = AngleTo(pmo);
+		
+		A_SpawnItemEx("CrabHalf", 0, 117, 0, 1, 3);
+		A_SpawnItemEx("CrabHalf2", 0, -96, 0, 1, -3);
+		A_Fall();
+	  }
+	  TNT1 A 0 
+	  {
+		A_SpawnItemEx("MeatChunk1", random(-20,20), random(-32,32), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_TriggerBloodSplat(256);
+	  }
+	  TNT1 A 1
+	  {
+	    if(soul)
+		{
+		  A_GiveExp(500);
+		  A_SpawnItemEX("SoulOrb", zofs: 88, flags: SXF_NOCHECKPOSITION);
+		}
+		else
+		  A_GiveExp(500);
+		  
+	    A_SpawnItemEx(String.Format("CrushGore%d", random(1,4)));
+	    A_SpawnItemEx("BloodFountain", random(-24,24), random(-32,32), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("MeatChunk2", random(-20,20), random(-32,32), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-32,32), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnProjectile("ExtremeDecal", 116, 0, 0, CMF_AIMDIRECTION);
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk3", random(-20,20), random(-32,32), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+	    A_SpawnItemEx("SkullFrag1", random(-20,20), random(-32,32), random(88,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("FlyArm1", random(-20,20), random(-32,32), random(40,48), random(4,8), zvel: random(14,16), angle: random(0,359), failchance: 200);
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_QuakeEx(6, 6, 8, 70, 0, 2024, "DSEMPTY", QF_SCALEDOWN);
+	    A_SpawnItemEx("MeatChunk4", random(-20,20), random(-32,32), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-32,32), random(76,80), random(3,4), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-32,32), random(76,80), random(3,4), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk5", random(-20,20), random(-32,32), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("P_GutSpawn", flags: SXF_SETMASTER);
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItemEx("BigBone1", random(-8,8), random(-32,32), random(8,92), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-32,32), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk6", random(-20,20), random(-32,32), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItem("Blood", 0, 92);
+		A_SpawnItemEx("Bone1", random(-20,20), random(-32,32), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-32,32), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk7", random(-20,20), random(-32,32), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("BigBone1", random(-20,20), random(-32,32), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-32,32), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-32,32), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 4
+	  {
+	    A_SpawnItemEx("BloodFountain", random(-24,24), random(-32,32), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+	    A_SpriteOffset(0, 2.0);
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-32,32), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  Stop;
+  }
+}
+
+Class CrabFighter : Crab
+{
+  action void CrabLightning()
+  {
+    if(target)
+	{
+	  if(CheckMeleeRange())
+	  {
+	    if(target is "DFPlayer")
+	    {
+	      if(target.health > 1)
+		  {
+		    target.DamageMobj(self, self, target.health - 1, "Drowning");
+		    target.A_TakeInventory("Armor", 1);
+		  }
+		  else
+		    target.DamageMobj(self, self, 999, "Explode");
+		}
+	  }
+	  else
+	  {
+	    A_Explode(300, 256, XF_NOTMISSILE, damagetype: "Energy");
+	  }
+	}
+	
+	A_StartSound("Cr_Hit3", CHAN_AUTO, attenuation: 0.4);
+	A_QuakeEx(3, 3, 6, 24, 0, 1024, "DSEMPTY", QF_SCALEDOWN);
+	let exp = Spawn("MineExplosion2", Vec3Offset(64 * cos(angle), 64 * sin(angle), 2));
+	if(exp)
+	{
+	  exp.scale = (1.0,1.0);
+	  exp.A_SetRenderStyle(1.0, STYLE_Add);
+	  exp.scale = (2.0,2.0);
+	}
+	
+	A_SpawnParticleEx
+	(
+	    "5CA3FF",
+		TexMan.CheckForTexture("SPRK1_01"),
+		style: STYLE_AddShaded,
+		flags: SPF_RELPOS|SPF_RELANG|SPF_FULLBRIGHT|SPF_LOCAL_ANIM,
+		lifetime: 14,
+		size: 650,
+		xoff: 88,
+		//.startalphaf: 2.0,
+		//fadestepf: 0.1,
+		sizestep: 20
+	);
+	
+	for(int i = 0; i < 32; i++)
+	{
+	  A_SpawnParticleEx
+	  (
+		"FFFFFF",
+		TexMan.CheckForTexture("SPFLA0"),
+		style: STYLE_Add,
+		flags: SPF_RELATIVE|SPF_ROLL,
+		lifetime: 45,
+		size: random(4,8),
+		angle: random(-60,60),
+		xoff: FRandom (48,144),
+		yoff: 0,
+		zoff: FRandom (4,24),
+		velx: FRandom(5.5, 7.5),
+		vely: 0,
+		velz: FRandom (15.2,18.0),
+		accelx: 0,
+		accely: 0,
+		accelz: -0.9,
+		startalphaf: 1.0,
+		fadestepf: 0.0,
+		sizestep: 0.0,
+		startroll: random(0,359),
+		rollvel: 0,
+		rollacc: 0
+	  );
+	  
+	  int pitch = random(2,32);
+	  int ang = angle + random(-90,90);
+		  
+	  Vector3 newPos = random(128,144) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch)); //ALL plushiinations
+	  Vector3 basePos = Vec3Offset(94 * cos(ang), 94 * sin(ang), 0);
+	  Vector3 newVel = 0.2 * newPos;
+		  
+	  Actor puff = Spawn("CrabSpark",  basePos + (random(24,32) * (cos(pitch) * cos(ang), cos(pitch) * sin(ang), sin(pitch))));
+	  if(puff)
+	    puff.vel = newVel;
+	}
+  }
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	soul = true;
+	growth = false;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(a1CD > 0)
+	  a1CD--;
+	  
+	if(a2CD > 0)
+	  a2CD--;
+
+	A_SpawnItemEx("ChampionFade", random(0,4), random(-4,4), random(0,3), flags: SXF_TRANSFERSCALE|SXF_TRANSFERSPRITEFRAME);
+	A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("BossFX1"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELATIVE, 17, 32, 0, random(-28,28), random(-28,28), random(8,154), velz: 1.5);
+  }
+  
+  Default
+  {
+    MinMissileChance 160;
+	DamageFactor "Explode", 0.4;
+  }
+  
+  States
+  {
+    Missile:
+	  TNT1 A 0 A_Jump(256, "LineAttack", "Jump");
+	  CRLP SRQPON 3 A_FaceTarget();
+	  CRLP C 1 A_FaceTarget();
+	  Loop;
+	Jump:
+	  TNT1 A 0
+	  {
+	    if(a2CD > 0 && a1CD <= 0)
+		  return ResolveState("LineAttack");
+		else if(a1CD > 0 && a2CD > 0)
+		{
+		  a2CD = 35*5;
+		  return ResolveState(null);
+		}
+		else
+		{
+		  a2CD = 35*5;
+		  return ResolveState(null);
+		}  
+	  }
+	  CRLP SRQPON 3 A_FaceTarget();
+	  CRLP C 1 A_FaceTarget();
+	  TNT1 A 0
+	  {
+	    if(target)
+		{
+	      if(Distance3D(target) <= 850)
+		    return ResolveState("ShortLeap");
+		  else
+		    return ResolveState("FarLeap");
+		}
+		return ResolveState(null);
+	  }
+	ShortLeap:
+	  CRLP D 3
+	  {
+	    if(target)
+		{
+	      A_FaceTarget();
+		  Thrust(Distance2D(target) / 28.0, angle);
+		  A_GiveInventory("ElectricChargeUp", 1);
+		  vel.z = 10;
+		}
+	  }
+	  TNT1 A 0
+	  {
+	    Spawn("MineExplosion2", pos + (0,0,floorz - pos.z));
+	    for(int i = 0; i < 32; i++)
+		{
+		  bool Left = random(True,false);
+		  A_SpawnParticleEx
+		  (
+			"888888",
+			TexMan.CheckForTexture("SMMMA0"),
+			style: STYLE_Translucent,
+			flags: SPF_RELATIVE|SPF_ROLL,
+			lifetime: 64,
+			size: random(224,256),
+			angle: random(0,359),
+			xoff: FRandom (48,144),
+			yoff: 0,
+			zoff: (floorz - pos.z) + FRandom (4,48),
+			velx: FRandom (2.0,4.0),
+			vely: 0.,
+			velz: FRandom (1.0,3.0),
+			accelx: 0,
+			accely: 0,
+			accelz: -0.001,
+			startalphaf: 0.6,
+			fadestepf: -1,
+			sizestep: 0.5,
+			startroll: random(0,359),
+			rollvel: Left ? 0.5 : -0.5,
+			rollacc: Left ? 0.02 : -0.02
+		  );
+		}
+	  }
+	  CRLP EE 2
+	  {
+	    if(health > 0)
+	      return A_CheckFloor("ShortLeapHit");
+		  
+		return ResolveState(null);
+	  }
+	  TNT1 A 0 A_GiveInventory("ElectricChargeStick", 1);
+	  CRLP FFGG 2
+	  {
+	    if(health > 0)
+	      return A_CheckFloor("ShortLeapHit");
+		  
+		return ResolveState(null);
+	  }
+	  TNT1 A 0 A_TakeInventory("ElectricChargeUp", 1);
+	  CRLP H 1
+	  {
+	    if(health > 0)
+	      return A_CheckFloor("ShortLeapHit");
+		  
+		return ResolveState(null);
+	  }
+	  Wait;
+	ShortLeapHit:
+	  CRLP IIJK 1;
+	  CRLP L 2;
+	  CRLP L 2
+	  {
+	    CrabLightning();
+		A_TakeInventory("ElectricChargeStick", 1);
+	  }
+	  Goto HitDone;
+	FarLeap:
+	  CRLP D 5
+	  {
+	    if(target)
+		{
+	      A_FaceTarget();
+		  Thrust(Distance2D(target) / 28.0, angle);
+		  
+		  vel.z = 16;
+		}
+	  }
+	 TNT1 A 0
+	  {
+	    Spawn("MineExplosion2", pos + (0,0,floorz - pos.z));
+	    for(int i = 0; i < 32; i++)
+		{
+		  bool Left = random(True,false);
+		  A_SpawnParticleEx
+		  (
+			"888888",
+			TexMan.CheckForTexture("SMMMA0"),
+			style: STYLE_Translucent,
+			flags: SPF_RELATIVE|SPF_ROLL,
+			lifetime: 64,
+			size: random(224,256),
+			angle: random(0,359),
+			xoff: FRandom (48,144),
+			yoff: 0,
+			zoff: (floorz - pos.z) + FRandom (4,48),
+			velx: FRandom (2.0,4.0),
+			vely: 0.,
+			velz: FRandom (1.0,3.0),
+			accelx: 0,
+			accely: 0,
+			accelz: -0.001,
+			startalphaf: 0.6,
+			fadestepf: -1,
+			sizestep: 0.5,
+			startroll: random(0,359),
+			rollvel: Left ? 0.5 : -0.5,
+			rollacc: Left ? 0.02 : -0.02
+		  );
+		}
+	  }
+	  CRLP E 5 A_GiveInventory("ElectricChargeStick", 1);
+	  CRLP FG 4 A_CheckFloor("LongLeapHit");
+	  CRLP H 3 A_CheckFloor("LongLeapHit");
+	  CRLP IIIJJJ 1
+	  {
+	    vel.z -= 2;
+	    return A_CheckFloor("LongLeapHit"); 
+	  }
+	  CRLP K 1
+	  {
+	    vel.z -= 4;
+	    return A_CheckFloor("LongLeapHit"); 
+	  }
+	  Wait;
+	LongLeapHit:
+	  CRLP L 1;
+	  CRLP L 2
+	  {
+	    vel *= 0.1;
+		A_TakeInventory("ElectricChargeStick", 1);
+	    CrabLightning();
+	  }
+	  Goto HitDone;
+	HitDone:
+	  CRLP MNOR 3;
+	  TNT1 A 0
+	  {
+	    if(target)
+		{
+	      A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK2"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELPOS|SPF_LOCAL_ANIM, 19, 600, AngleTo(target), 64, zoff: height * 0.3, startroll: random(0,359));
+	      A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK3"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELPOS|SPF_LOCAL_ANIM, 19, 600, AngleTo(target), 64, zoff: height * 0.3, startroll: random(0,359));
+	      A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK4"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELPOS|SPF_LOCAL_ANIM, 19, 600, AngleTo(target), 64, zoff: height * 0.3, startroll: random(0,359));
+		}
+	  }
+	  CRLP S 3;
+	  Goto Spawn;
+  }
+}
+
+Class CrabSummoner : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() < 20)
+	  A_FadeIn(0.05);
+  }
+  Default
+  {
+    Scale 1.0;
+    RenderStyle "Add";
+	Alpha 0.0;
+	+BRIGHT
+	+FLATSPRITE
+	+NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  CHSG AAAAAAAAAAAA 1 { roll += 1; }
+	  //TNT1 A 0 A_SpawnItemEx("ChampionPreUlt");
+	  CHSG AAAAAAAAAAAAAAAAAAAAAAA 1 { roll += 1; }
+	  TNT1 A 0 A_SpawnItemEx("ChampionBoltLayer");
+	  CHSG AAAA 1 { roll += 1; }
+	  TNT1 A 0
+	  {
+	    roll = 0;
+	    A_SpawnItemEx("ChampionFlare");
+	    A_StartSound("PsychoHammer/Charge", CHAN_AUTO, attenuation: 0.3);
+		A_SetScale(frandom(2.2, 2.5));
+		bFlatSprite = false;
+		bSpriteFlip = random(0,1);
+		A_QuakeEx(2, 2, 8, 35, 0, 5000, "DSEMPTY");
+		A_SpawnItemEx("CrabFighter_Script");
+
+		let actr = Spawn("MineExplosion2", pos);
+		if(actr)
+		  actr.A_SetScale(3.0);
+		  
+		actr = Spawn("ChampionThunderCharge", pos);
+		if(actr)
+		{
+		  actr.A_SetScale(0.8);
+		  ChampionThunderCharge(actr).fade = True;
+		  ChampionThunderCharge(actr).large = True;
+		}
+	  }
+	  LBLT GHIJKL 1 Bright
+	  {
+	    for(int i = 0; i < random(4,6); i++)
+		  A_SpawnItemEx("ChampionBoltSpark", xvel: random(7,12), zvel: random(10,32), angle: random(0,359));
+	  }
+	  LBLT MNOPQR 1 Bright;
+	  LBLT STUVWXY 1 Bright A_FadeOut(0.08);
+	  Stop;
+  }
+}
+
+Class CrabFighter_Script : CrabFighter
+{
+  States
+  {
+    Spawn:
+	  CRBW AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 1
+	  {
+	    let pmo = players[consoleplayer].mo;
+		if(pmo)
+		  angle = AngleTo(pmo);
+	    A_SpriteOffset(frandom(-2.0,2.0), frandom(-2.0,2.0));
+		let fade = Spawn("MonsterGlitch", Pos);
+	    if(fade)
+	    {
+	      fade.sprite = sprite; 
+	      fade.frame = frame;
+	      fade.scale = scale;
+	      fade.angle = angle;
+	      fade.master = self;
+		  
+	      int glow = random(0,3);
+	      if(glow < 3)
+	        fade.A_SetRenderStyle(frandom(0.7, 0.9), STYLE_ADD);
+	      else
+	        fade.A_SetRenderStyle(frandom(0.7, 0.9), STYLE_Translucent);
+		}
+	  }
+	  Goto Super::Spawn;
+  }
+}
+
+Class CrabFadeStrike : Actor
+{
+  Default
+  {
+    YScale 0.83;
+	//RenderStyle "Add";
+	//Alpha 0.6;
+	+BRIGHT
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  CRLP GHIJKL 2;
+	  Stop;
+  }
+}
+
+Class CrabPlant : Actor
+{
+  int tic;
+  
+  override void BeginPlay()
+  {
+    bSPRITEFLIP = random(0,1);
+    scale = (frandom(0.13, 0.18), frandom(0.13, 0.18));
+    tic = random(5,10);
+  }
+  
+  override void Tick()
+  {
+    if(tic > 0)
+	{
+	  Super.Tick();
+	  scale += (frandom(0.005, 0.01), frandom(0.005, 0.01));
+	  tic--;
+	  roll = random(-4,4);
+	}
+	
+	if(GetAge() > 20)
+	{
+	  A_FadeOut(0.1);
+	  scale -= (frandom(0.005, 0.01), frandom(0.005, 0.01));
+	}
+  }
+  
+  Default
+  {
+    RenderStyle "Translucent";
+    +FORCEXYBILLBOARD
+	+NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  GVEG A 1 NoDelay { frame = random(0,10); }
+	  GVEG "#" -1;
+	  Stop;
+  }
+}
+
+Class CrabSeeker : Actor
+{
+  int limit;
+  
+  Override void PostBeginPlay()
+  {
+    limit = 0;
+	A_StartSound("Crab/BoltLayer", CHAN_AUTO, volume: 0.6, attenuation: 0.6);
+  }
+  
+  Default
+  {
+    SeeSound "Crab/BoltLayer";
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 2
+	  {
+	    let actr = Spawn("CrabBolt", pos);
+		if(actr && limit % 2 == 0)
+		  CrabBolt(actr).snd = true;
+	  }
+	  TNT1 A 0
+	  {
+	    if(self.limit == 8)
+		  return ResolveState("Death");
+		  
+		limit++;
+		return ResolveState(null);
+	  }
+	  Loop;
+	Death:
+	  TNT1 A 10;
+	  TNT1 A 70 A_StartSound("Cr_Hit4", CHAN_AUTO, attenuation: 0.0);
+	  Stop;
+  }
+}
+
+Class CrabBolt : Actor
+{
+  bool snd;
+  int sType;
+  
+  Default
+  {
+    Scale 5.0;
+    RenderStyle "Add";
+	+FLATSPRITE
+	+NOINTERACTION
+  }
+  
+  States
+  {
+    Spawn:
+	  BLTN AA 3 Bright
+	  {
+	    if(sType == 0)
+		{
+	      sprite = GetSpriteIndex("TNT1");
+		  sType++;
+		}
+		else
+		{
+		  sprite = GetSpriteIndex("BLTN");
+		  sType--;
+		}
+	  }
+	  TNT1 A 0 Spawn(String.Format("CrabLightning%d", random(1,5)), pos);
+	  BLTN AAA 2 Bright
+	  {
+	    if(sType == 0)
+		{
+	      sprite = GetSpriteIndex("TNT1");
+		  sType++;
+		}
+		else
+		{
+		  sprite = GetSpriteIndex("BLTN");
+		  sType--;
+		}
+	  }
+	  BLTN AA 1 Bright
+	  {
+	    if(sType == 0)
+		{
+	      sprite = GetSpriteIndex("TNT1");
+		  sType++;
+		}
+		else
+		{
+		  sprite = GetSpriteIndex("BLTN");
+		  sType--;
+		}
+	    for(int i = 0; i < random(2,3); i++)
+		  A_SpawnItemEx("ChampionBoltSpark", xvel: random(7,12), zvel: random(10,32), angle: random(0,359));
+	  }
+	  TNT1 A 0
+	  {
+	    if(snd)
+	      A_StartSound("Crab/Bolt", CHAN_AUTO, volume: 0.8, attenuation: 0.6);
+	  }
+	  BLTN AA 1 Bright
+	  {
+	    if(sType == 0)
+		{
+	      sprite = GetSpriteIndex("TNT1");
+		  sType++;
+		}
+		else
+		{
+		  sprite = GetSpriteIndex("BLTN");
+		  sType--;
+		}
+	    for(int i = 0; i < random(2,3); i++)
+		  A_SpawnItemEx("ChampionBoltSpark", xvel: random(7,12), zvel: random(10,32), angle: random(0,359));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("ChampionFlare");
+		A_SetScale(frandom(2.2, 2.5));
+		bFlatSprite = false;
+		bSpriteFlip = random(0,1);
+	    A_Explode(random(300,400), 144, damagetype: "Energy");
+		A_QuakeEx(2, 2, 8, 35, 0, 1024, "DSEMPTY", QF_SCALEDOWN);
+
+		let actr = Spawn("MineExplosion2", pos);
+		if(actr)
+		  actr.A_SetScale(3.0);
+		  
+		actr = Spawn("ChampionThunderCharge", pos);
+		if(actr)
+		{
+		  actr.A_SetScale(0.8);
+		  ChampionThunderCharge(actr).fade = True;
+		  ChampionThunderCharge(actr).large = True;
+		}
+	  }
+	  LBLT JLN 1 Bright;
+	  LBLT PRTVWY 1 Bright A_FadeOut(0.05);
+	  Stop;
+  }
+}
+
+Class CrabLightning1 : Actor
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	bSPRITEFLIP = random(0,1);
+  }
+  Default
+  {
+    RenderStyle "Add";
+	Scale 2.0;
+	+BRIGHT
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TBT1 ABCDEFGHIJKLMNOPQR 1;
+	  Stop;
+  }
+}
+
+Class CrabLightning2 : CrabLightning1
+{
+  States
+  {
+    Spawn:
+	  TBT2 ABCDEFGHIJKLMNOPQRST 1;
+	  Stop;
+  }
+}
+
+Class CrabLightning3: CrabLightning1
+{
+  States
+  {
+    Spawn:
+	  TBT3 ABCDEFGHIJKLMNOP 1;
+	  Stop;
+  }
+}
+
+Class CrabLightning4 : CrabLightning1
+{
+  States
+  {
+    Spawn:
+	  TBT4 ABCDEFGHIJKLMNOPQRSTUV 1;
+	  Stop;
+  }
+}
+
+Class CrabLightning5 : CrabLightning1
+{
+  States
+  {
+    Spawn:
+	  TBT5 ABCDEFGHIJKLMNOPQRST 1;
+	  Stop;
+  }
+}
+
+Class ElectricChargeUp : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner && (GetAge() < owner.height))
+	{
+	  if(GetAge() > 6 && GetAge() % 3 == 0)
+	    owner.A_SpawnItemEx("ElectricRadiate", zofs: owner.height * 0.5);
+	    //owner.A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPARK5"), STYLE_Add, SPF_FULLBRIGHT|SPF_RELATIVE|SPF_ROLL, random(2,3), random(64,256), xoff: 32, zoff: owner.height * 0.5, startroll: random(0,359));
+		
+	  for(int i = 0; i < 5; i++)
+		owner.A_SpawnItemEx("ElectricArc", random(-owner.radius, owner.radius), random(-owner.radius, owner.radius), GetAge()*8 + random(-8,8), frandom(-0.5, 0.5), frandom(-0.5, 0.5), frandom(-0.5, 0.5));
+	}
+	else
+	  Destroy();
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class ElectricRadiate : Actor
+{
+  Default
+  {
+    RenderStyle "Add";
+	+FORCEXYBILLBOARD
+    +NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay
+	  {
+	    A_SetScale(frandom(0.3, 0.45));
+		A_SetRoll(random(0,359));
+	    return A_Jump(256, random(1,26));
+	  }
+	  ENAR ABCDEFGHIJKLMNOPQRSTUVWXYZ 0 A_Jump(256, "Idle");
+	Idle:
+	  ENAR "#" random(1,2) Bright;
+	  ENAR "#" random(1,2);
+	  ENAR "#" random(2,3) Bright;
+	  ENAR "#" random(2,3);
+	  Stop;
+  }
+}
+
+Class ElectricAbsorb : Inventory
+{
+  override void DoEffect()
+  {
+    Super.DoEffect();
+	
+	if(owner)
+	{
+	  for(int i = 0; i < 8; i++)
+	  {
+		  int pitch = random(-90,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 160 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch) * 0.83); //ALL plushiinations
+		  Vector3 newVel = -0.02 * newPos;
+		  
+		  Actor puff = owner.Spawn("CrabSpark", owner.pos + newPos + (0,0,80));
+		  if(puff)
+		  {
+		    puff.vel = newVel;
+		    puff.scale = (1.5, 1.5);
+			puff.A_SetRenderStyle(0.8, STYLE_AddShaded);
+			puff.SetShade("a3d1ff");
+		  }
+	  }
+	}
+  }
+  
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}
+
+Class SoulOrbVertices : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+    if(!master)
+	  Destroy();
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 35
+	  {
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLG0"), STYLE_Add, SPF_RELATIVE|SPF_FULLBRIGHT, 24, 16, 0, zoff: -106);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLG0"), STYLE_Add, SPF_RELATIVE|SPF_FULLBRIGHT, 24, 16, 0, zoff: 106);
+	    for(double i = 0.0; i < 360.0; i += 15.0)
+		  for(int j = -75; j < 90; j += 15)
+		  {
+		    Vector3 newPos = 128 * (cos(j) * cos(i), cos(j) * sin(i), sin(j) * 0.83);
+			A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLG0"), STYLE_Add, SPF_RELATIVE|SPF_FULLBRIGHT, 24, 8, 0, newPos.x, newPos.y, newPos.z);
+		  }
+	  }
+	  Wait;
+  }
+}
+
+Class SoulOrbBall : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+    if(!master)
+	  Destroy();
+  }
+  Default
+  {
+	YScale 0.83;
+	+BRIGHT
+	+FORCEXYBILLBOARD
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  PSK1 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  PSK2 ABCDEF 1;
+	  Loop;
+  }
+}
+
+Class SoulOrb : Actor
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	A_SpawnItemEx("SoulOrbBall", flags: SXF_SETMASTER);
+	A_SpawnItemEx("SoulOrbVertices", flags: SXF_SETMASTER);
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	alpha = frandom(0.5,1.0);
+	A_SetRoll(roll + 2, SPF_INTERPOLATE);
+  }
+  
+  Default
+  {
+    //RenderStyle "AddShaded";
+	//StencilColor "#478bff";
+	RenderStyle "Add";
+	//XScale 1.2;
+	//YScale 1.0;
+	Scale 1.2;
+	+BRIGHT
+	+FORCEXYBILLBOARD
+	+NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  PEYE A 10
+	  {
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("PEYEA0"), STYLE_ADD, SPF_FULLBRIGHT, 20, 40, 0, sizestep: 5);
+	    let pmo = players[consoleplayer].mo;
+		if(pmo && Distance3D(pmo) <= 224)
+		  return ResolveState("Death");
+			
+		return ResolveState(null);
+	  }
+	  Wait;
+	Death:
+	  TNT1 A 1
+	  {
+	    let pmo = players[consoleplayer].mo;
+		if(pmo)
+		{
+		  DFPlayer(pmo).DoHeal(300);
+		  pmo.A_GiveInventory("Stamina", 999);
+		  pmo.A_GiveInventory("TonicHealFX", 1);
+		  pmo.A_SetBlend("Light Blue", 0.37, 45);
+		  pmo.A_StartSound("StimUse4", CHAN_AUTO);
+		  GenericScreenStuff ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+		  if(ev)
+		  {
+			ev.UpdateChat(String.Format("· %s \cJconsumes \cFRaw Psykhus.", pmo.GetTag()));
+			ev.UpdateChat("\cD+300 Health.");
+			ev.UpdateChat("\cD+900 Stamina.");
+		  }
+		}
+	  }
+	  Stop;
+  }
+}
+
+Class CrabArmorImplode : Actor
+{
+  override void BeginPlay()
+  {
+    roll = random(0,359);
+    Super.BeginPlay();
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	A_SetRoll(roll + 2, SPF_INTERPOLATE);
+	alpha -= 0.05;
+	scale *= 0.7;
+  }
+  
+  Default
+  {
+    //RenderStyle "AddStencil";
+	//StencilColor "Cyan";
+	RenderStyle "Add";
+	Alpha 0.8;
+	Scale 3.0;
+    +NOINTERACTION
+	+FORCEXYBILLBOARD
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  SPRK JKLMNOPQR 3 Bright;
+	  Stop;
+  }
+}
+
+Class CrabHalf : Corpse
+{
+  Default
+  {
+    Radius 106;
+	Height 44;
+	Tag "Enlightened Reaper Remains";
+    YScale 0.83;
+	Gravity 0.5;
+	Corpse.Exp 100;
+	+THRUACTORS
+  }
+  States
+  {
+    Spawn:
+	  CRD1 A 5;
+	  CRD1 B 5
+	  {
+		for(int i = 0; i < 5; i++)
+		{
+		  A_SpawnItemEx("BloodXL2", 0, random(-32,32), random(8, 128), random(-2,2), random(-2,2), random(3,4));
+		  A_SpawnItemEx("BloodXL2", 0, random(-32,32), random(8, 128), random(-2,2), random(-2,2), random(3,4));
+		  A_SpawnItemEx("DFSquirtLeft", 0, random(-32,32), random(8,128), random(-2,2), random(-2,2), random(0,2));
+		}
+	    A_SpawnItemEx("BloodHazeM", 0, random(-32,32), random(8,128), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("BloodHazeM", 0, random(-32,32), random(8,128), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+	  }
+	  CRD1 C 4
+	  {
+		for(int i = 0; i < 5; i++)
+		{
+		  A_SpawnItemEx("DFBlood", 0, random(-32,32), random(8, 128), random(-2,2), random(-2,2), random(3,4));
+		  A_SpawnItemEx("DFBlood", 0, random(-32,32), random(8, 128), random(-2,2), random(-2,2), random(3,4));
+		  A_SpawnItemEx("DFSquirtLeft", 0, random(-32,32), random(8,128), random(-2,2), random(-2,2), random(0,2));
+		}
+	    A_SpawnItemEx("BloodHazeM", 0, random(-32,32), random(8,128), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("BloodHazeM", 0, random(-32,32), random(8,128), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+	  }
+	  CRD1 DE 3
+	  {
+		for(int i = 0; i < 5; i++)
+		{
+		  A_SpawnItemEx("DFBlood", 0, random(-64,0), random(8, 88), random(-2,2), random(-2,2), random(3,4));
+		  A_SpawnItemEx("DFBlood", 0, random(-64,0), random(8, 88), random(-2,2), random(-2,2), random(3,4));
+		  A_SpawnItemEx("DFSquirtLeft", 0, random(-64,0), random(8,88), random(-2,2), random(-2,2), random(0,2));
+		}
+	    A_SpawnItemEx("BloodHazeM", 0, random(-64,0), random(8,88), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("BloodHazeM", 0, random(-64,0), random(8,88), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+	  }
+	  CRD1 FG 2
+	  {
+		for(int i = 0; i < 5; i++)
+		{
+		  A_SpawnItemEx("DFBlood", 0, random(-88,0), random(8, 56), random(-2,2), random(-2,2), random(3,4));
+		  A_SpawnItemEx("DFBlood", 0, random(-88,0), random(8, 56), random(-2,2), random(-2,2), random(3,4));
+		  A_SpawnItemEx("DFSquirtLeft", 0, random(-88,0), random(8,56), random(-2,2), random(-2,2), random(0,2));
+		}
+	    A_SpawnItemEx("BloodHazeM", 0, random(-88,0), random(8,56), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("BloodHazeM", 0, random(-88,0), random(8,56), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+	  }
+	  CRD1 H -1;
+	  Stop;
+  }
+}
+
+Class CrabHalf2 : CrabHalf
+{
+  Default
+  {
+    Radius 69;
+	Height 57;
+  }
+  States
+  {
+    Spawn:
+	  CRD2 A 5;
+	  CRD2 BC 2
+	  {
+		for(int i = 0; i < 5; i++)
+		  A_SpawnItemEx("DFSquirtRight", 0, random(-32,32), random(8,128), random(-2,2), random(-2,2), random(0,2));
+		  
+		A_SpawnItemEx("BloodXL2", 0, random(-32,32), random(8, 128), random(-2,2), random(-2,2), random(3,4));
+	    A_SpawnItemEx("BloodHazeM", 0, random(-32,32), random(8,128), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("BloodHazeM", 0, random(-32,32), random(8,128), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+	  }
+	  CRD2 D 2
+	  {
+		A_SpawnItemEx("BloodXL2", 0, random(-32,32), random(8, 128), random(-2,2), random(-2,2), random(3,4));
+	    A_SpawnItemEx("BloodHazeM", 0, random(-32,32), random(8,128), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+		A_SpawnItemEx("BloodHazeM", 0, random(-32,32), random(8,128), frandom(-1,1), frandom(-1,1), frandom(0,1), random (0, 359));
+	  }
+	  CRD2 E 4;
+	  CRD2 F 4;
+	  CRD2 G 3;
+	  CRD2 H -1;
+	  Stop;
+  }
+}
+
+Class CrabSpark : Actor
+{
+  int lifeTime;
+  
+  override void BeginPlay()
+  {
+    lifeTime = random(0,17);
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() >= lifeTime)
+	  A_FadeOut(0.1);
+  }
+  
+  Default
+  {
+    RenderStyle "Add";
+	Scale 0.5;
+    +NOINTERACTION
+  }
+  
+  States
+  {
+    Spawn:
+	  0000 A 8 Bright NoDelay A_FaceMovementDirection();
+	  Wait;
+  }
+}
+
+Class CrabRitual : Actor
+{
+  Actor sphere;
+  override void Tick()
+  {
+	Super.Tick();
+	
+	if(InStateSequence(CurState, ResolveState("See")))
+	  A_SpawnItemEx("MonsterFade", zvel: 0.5, flags: SXF_TRANSFERSCALE|SXF_TRANSFERSPRITEFRAME|SXF_SETMASTER);
+  }
+  
+  Default
+  {
+    +NOINTERACTION
+	XScale 0.9;
+	Yscale 0.75;
+  }
+  States
+  {
+    Spawn:
+	  RTNR H -1;
+	  Stop;
+	Ready:
+	  RTNR H 1
+	  {
+	    A_SpawnParticleEx
+	    (
+		  "FFFFFF",
+		  TexMan.CheckForTexture("PEYEA0"),
+		  style: STYLE_Add,
+		  flags: SPF_FULLBRIGHT|SPF_RELATIVE|SPF_ROLL,
+		  lifetime: 45,
+		  size: random(3,5),
+		  angle: 0.,
+		  xoff: FRandom (-48,48),
+		  yoff: FRandom (-48,48),
+		  zoff: FRandom (4,56),
+		  velx: 0,
+		  vely: 0,
+		  velz: 1,
+		  accelx: 0,
+		  accely: 0,
+		  accelz: 0,
+		  startalphaf: 1.0,
+		  fadestepf: -0.1,
+		  sizestep: 0.0,
+		  startroll: random(0,359),
+		  rollvel: 0,
+		  rollacc: 0
+	    );
+	  }
+	  Wait;
+	Set:
+	  TNT1 A 1;
+	  TNT1 A 0
+	  {
+	    sphere = Spawn("CrabRitualPsykhus", pos);
+		if(sphere)
+		{
+		  CrabRitualPsykhus(sphere).minSize = 88;
+		  CrabRitualPsykhus(sphere).maxSize = 120;
+		  sphere.master = self;
+		}
+	  }
+	  RTNR H -1;
+	  Stop;
+	Go:
+	  TNT1 A 0
+	  {
+	    A_StartSound("Ritual03", CHAN_AUTO, attenuation: 0.2);
+		A_QuakeEx(3, 3, 5, 54, 0, 1024, "DSEMPTY", QF_SCALEUP);
+	  }
+	  RTNR IJKLMN 4;
+	  RTBD AAABBBCCCDDD 1 A_SetScale(scale.x += 0.015, scale.y += 0.012);
+	  TNT1 A 0 A_SpawnItemEx("ChampionPreUlt");
+	  RTBD EEEFFFGGGHHHIIIJJJ 1 A_SetScale(scale.x += 0.015, scale.y += 0.012);
+	Death:
+	  TNT1 A 0
+	  {
+	    A_RemoveChildren(True, RMVF_EVERYTHING);
+	    A_StartSound("BODSPLT3", CHAN_AUTO, attenuation: 0.7);
+		A_StartSound("BODSPLT5", CHAN_AUTO, attenuation: 0.7);
+	  }
+	  TNT1 A 0 
+	  {
+	    A_SpawnItemEx("Crab", tid: tid);
+		A_SpawnItemEx("MeatChunk1", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		int ang = random(0,359);
+		A_SpawnItemEx("ExplodeSprayer", random(-20,20), random(-20,20), random(80,96), 4, zvel: random(8,10), angle: ang);
+		A_SpawnItemEx("ExplodeSprayer", random(-20,20), random(-20,20), random(80,96), 4, zvel: random(8,10), angle: ang + 120);
+		A_SpawnItemEx("ExplodeSprayer", random(-20,20), random(-20,20), random(80,96), 4, zvel: random(8,10), angle: ang + 240);
+		  
+		vel = (0,0,0);
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("FlyingEyeball1", random(-20,20), random(-20,20), random(86,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("FlyingEyeball2", random(-20,20), random(-20,20), random(86,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("MeatChunk2", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk3", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+	    A_SpawnItemEx("SkullFrag1", random(-20,20), random(-20,20), random(88,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("PsychoGibbed", zofs: 44);
+	    A_SpawnItemEx("MeatChunk4", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-20,20), random(76,80), random(3,4), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("RibRack", random(-20,20), random(-20,20), random(76,80), random(3,4), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MeatChunk5", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("P_GutSpawnGreen", flags: SXF_SETMASTER);
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItemEx("BigBone1", random(-8,8), random(-16,16), random(8,92), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("Bone2", random(-24,24), random(-20,20), random(8,92), frandom(-6.0,2.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk6", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 AA 1
+	  {
+	    A_SpawnItem("Blood", 0, 92);
+		A_SpawnItemEx("Bone1", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 0
+	  {
+	    A_SpawnItemEx("MeatChunk7", random(-20,20), random(-20,20), random(40,48), frandom(0.0,2.0), zvel: random(14,16), angle: random(0,359));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+		A_SpawnItemEx("BigBone1", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BigBone2", random(-20,20), random(-20,20), random(8,96), random(-4,5), zvel: random(10,14), angle: random(0,359));
+		A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL2", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("BloodFountain", random(-24,24), random(-24,24), random(44,88), random(-6,6), random(-6,6), random(5,7), random (0, 360));
+	    A_SpriteOffset(0, 2.0);
+		A_SpawnItemEx("BigBone1", random(-8,8), random(-16,16), random(8,92), frandom(-6.0,3.0), frandom(-2.0,2.0), frandom(6,8));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+		A_SpawnItemEx("BloodXL", random(-24,24), random(-24,24), random(32,112), random(-2,2), random(-2,2), random(-1,2), random (0, 360));
+	  }
+	  Stop;
+  }
+}
+
+Class CrabRitualPsykhus : Actor
+{
+  int minSize, maxSize;
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(master)
+	{
+	  for(int i = 0; i < 11; i++)
+	  {
+	    int pitch = random(-90,90);
+	    int angle = random(0,359); 
+	    Vector3 newPos = random(minSize, maxSize) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch));
+	    Vector3 newVel = -0.02 * newPos;
+	  
+	    A_SpawnParticleEx
+	    (
+			"FFFFFF",
+			TexMan.CheckForTexture("PEYEA0"),
+			style: STYLE_Add,
+			flags: SPF_RELATIVE|SPF_ROLL|SPF_FULLBRIGHT,
+			lifetime: 35,
+			size: random(3,5),
+			angle: 0,
+			xoff: newPos.x,
+			yoff: newPos.y,
+			zoff: newPos.z + 64,
+			velx: newVel.x,
+			vely: newVel.y,
+			velz: newVel.z,
+			accelx: 0,
+			accely: 0,
+			accelz: 0,
+			startalphaf: 1.0,
+			fadestepf: 0.05,
+			sizestep: 0.0,
+			startroll: random(0,359),
+			rollvel: 0,
+			rollacc: 0
+	    );
+	  }
+	}
+  }
+  
+}

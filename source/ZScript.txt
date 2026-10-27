@@ -1,0 +1,1208 @@
+version "5.0.0"
+
+#include "menu/tabmenu.zs"
+#include "menu/descriptormenu.zs"
+#include "menu/handler.zs"
+#include "menu/highlight.zs"
+#include "menu/fademenu.zs"
+
+#include "Actors/3DModel.txt"
+#include "Actors/Icons.txt"
+#include "Actors/Weather.txt"
+#include "Actors/Scripted.zc"
+#include "Actors/Overlay.zc"
+#include "Actors/Debris/Glass.txt"
+#include "Actors/Debris/Wood.txt"
+#include "Actors/Decorations/Alcohol.txt"
+#include "Actors/Decorations/Cup.txt"
+#include "Actors/Decorations/Flora.txt"
+#include "Actors/Decorations/Jars.txt"
+#include "Actors/Decorations/Vase.txt"
+#include "Actors/Gore/Bodies.txt"
+#include "Actors/Gore/Head.txt"
+#include "Actors/Gore/Gib.txt"
+#include "Actors/Gore/Hanging.txt"
+#include "Actors/Horror/Horror.txt"
+#include "Actors/Light Source/Bulb.txt"
+#include "Actors/Light Source/Candle.txt"
+#include "Actors/Light Source/Torch.txt"
+#include "Actors/Light Source/SkullLight.txt"
+
+#include "Actors/Decorations/Mushroom.txt"
+#include "Actors/Decorations/Other.txt"
+
+#include "Gutamatics/Include.zsc"
+#include "ZScript/ConversationMenu/conversationmenucomponents.txt"
+#include "ZScript/ConversationMenu/conversationmenubase.txt"
+#include "ZScript/ConversationMenu/sample.txt"
+#include "weather/reader.zs"
+#include "weather/precipitation.zs"
+#include "weather/weatherhandler.zs"
+#include "weather/weather.zs"
+
+#include "ZScript/Special/Flares.txt"
+#include "ZScript/Special/StepEventHandler.zc"
+
+#include "ZScript/UI/BossDefeat.txt"
+#include "Zscript/UI/Calibration.txt"
+#include "ZScript/UI/DamageNumber.txt"
+#include "ZScript/UI/DuelDefeat.txt"
+#include "ZScript/UI/GenericScreenStuff.txt"
+#include "ZScript/UI/GenericUpgrade.txt"
+#include "ZScript/UI/HUD.txt"
+#include "ZScript/UI/ItemHighlight.txt"
+#include "ZScript/UI/Note.txt"
+#include "ZScript/UI/pickup.zsc"
+#include "ZScript/UI/Radar.txt"
+#include "ZScript/UI/SaveGame.txt"
+#include "ZScript/UI/Scanner.txt"
+#include "ZScript/UI/UIZForms/Include.zsc"
+#include "ZScript/UI/ZFMenus.txt"
+
+#include "ZScript/Game/Enemies/Enemies.txt"
+#include "ZScript/Game/Inventory/Ammo.txt"
+#include "ZScript/Game/Inventory/Consumable.txt"
+#include "ZScript/Game/Inventory/Key.txt"
+#include "ZScript/Game/Inventory/Lights.txt"
+#include "ZScript/Game/Inventory/NPC_QUEST.txt"
+#include "ZScript/Game/Inventory/Stim.txt"
+#include "ZScript/Game/Inventory/Tool.txt"
+#include "ZScript/Game/Inventory/Traps.txt"
+#include "ZScript/Game/Inventory/TrapsFX.txt"
+#include "ZScript/Game/Player/Debug.txt"
+#include "ZScript/Game/Player/Player.txt"
+#include "ZScript/Game/Player/Movement.txt"
+#include "ZScript/Game/Player/ShaderHandler.txt"
+#include "ZScript/Game/Player/Skill.txt"
+#include "ZScript/Game/Player/Upgrade_Str.txt"
+#include "ZScript/Game/Player/Upgrade_Wit.txt"
+#include "ZScript/Game/Player/Upgrade_Phy.txt"
+#include "ZScript/Game/Weapons/Base.txt"
+#include "ZScript/Game/Weapons/Hands.txt"
+#include "ZScript/Game/Weapons/Hands_Base.txt"
+#include "ZScript/Game/Weapons/Pistol2.txt"
+#include "ZScript/Game/Weapons/Shotgun2.txt"
+#include "ZScript/Game/Weapons/SSG.txt"
+#include "ZScript/Game/Weapons/SprayCan.txt"
+#include "ZScript/Game/Weapons/AR.txt"
+#include "ZScript/Game/Weapons/Puffs.txt"
+
+Class VThinker : VisualThinker
+{}
+
+Class DF_StaticObj : Actor
+{
+  String SpriteName;
+  property SpriteName : SpriteName;
+  
+  void CreateVT()
+  {
+    TextureID tex = TexMan.CheckForTexture(SpriteName);
+    let p = Level.SpawnVisualThinker("VThinker");
+	if(p)
+	{
+	  p.Texture = tex;
+	  p.pos = pos;
+	  p.vel = vel;
+      p.SetRenderStyle(GetRenderStyle());
+	  if(!bFORCEXYBILLBOARD)
+	    p.flags = SPF_NO_XY_BILLBOARD;
+	  if(bSPRITEFLIP)
+	    p.bXFlip = true;
+	  p.alpha = alpha;
+	  p.Scale = scale;
+	}
+  }
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	CreateVT();
+  }
+}
+
+Class M1_BrokenWood : Actor
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	for(int i = 0; i < 6; i++)
+	{
+	  A_SpawnItemEx("WoodScript", random(-368, 368), random(-368, 368));
+	  A_SpawnItemEx("WoodScript2", random(-368, 368), random(-368, 368));
+	}
+	
+	if(GetAge() > 4)
+	  Destroy();
+  }
+  
+  Default
+  {
+    +NOINTERACTION
+  }
+}
+
+Class WoodScript : DarkWoodDebris
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() > 105)
+	  Destroy();
+  }
+  Default
+  {
+    +NOCLIP
+  }
+}
+
+Class WoodScript2 : LightWoodDebris
+{
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(GetAge() > 105)
+	  Destroy();
+  }
+  Default
+  {
+    +NOCLIP
+  }
+}
+
+Class CandelabraBlue : Actor
+{
+  Default
+  {
+    //+FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  CBRA B -1;
+	  Stop;
+  }
+}
+
+Class SoundDecoy : SwitchableDecoration
+{
+  string user_sndString;
+  double user_sndAttn;
+  
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A -1;
+	  Stop;
+	Active:
+	  TNT1 A 1 A_StartSound(user_sndString, CHAN_AUTO, attenuation: user_sndAttn);
+	  Stop;
+  }
+}
+
+Class PotLeaf1 : Actor //Lol
+{
+  int tic;
+  
+  override void PostBeginPlay()
+  {
+    double scale = frandom(0.8, 1.0);
+	self.scale.x = scale;
+	self.scale.y = abs(scale);
+	
+    tic = random(10,12);
+	Super.PostBeginPlay();
+  }
+  
+  override void Tick()
+  {
+    if(tic >= 0)
+	  tic--;
+	if(tic == 0)
+	{
+	  self.vel *= 0.2;
+	  self.Gravity = 0.2;
+	}
+	Super.Tick();
+  }
+  
+  Default
+  {
+    +FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_Jump(256, randompick(1,5,9,13));
+	  LEA1 AAAABBBBCCCCDDDD 4 A_CheckFloor("Death");
+	  Goto Spawn+1;
+	Death:
+	  TNT1 A 0;
+	  Stop;
+  }
+}
+
+Class PotLeaf2 : PotLeaf1
+{
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_Jump(256, randompick(1,3,5,7));
+	  LEA2 AABBCCDD 2 A_CheckFloor("Death");
+	  Goto Spawn+1;
+  }
+}
+
+Class BarrelExplode : ModelBase
+{  
+  Default
+  {
+    Health 5;
+    Scale 2.3;
+    Radius 28;
+	Height 72;
+	+SHOOTABLE
+	+NOBLOOD
+  }
+  States
+  {
+    Death:
+	  TNT1 A 1
+	  {
+		A_AlertMonsters();
+        A_Explode(random(420,500), 230, XF_NOTMISSILE , 0, 120, damagetype: "Explode");
+		A_QuakeEx(4, 9, 9, 35, 0, 2048, "DSEMPTY", QF_RELATIVE|QF_SCALEDOWN|QF_SHAKEONLY);
+		A_QuakeEx(0, 0, 0, 4, 0, 2048, "DSEMPTY", QF_SHAKEONLY, rollintensity: 5);
+		A_SpawnItemEx("ExplodeSmokeDeploy", zofs: 16, zvel: 12);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_ADD, SPF_FULLBRIGHT, 15, 223, 0,
+	    0, 0, 48, startalphaf: 0.9, fadestepf: 0.07, sizestep: 11);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFA0"), STYLE_ADD, SPF_FULLBRIGHT, 10, 500, 0,
+	    0, 0, 48, startalphaf: 1.0, fadestepf: 0.1);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SMK1_01"), STYLE_Translucent, SPF_RELATIVE|SPF_ROLL|SPF_LOCAL_ANIM, 61, 256, 0,
+	    -64, 0, 4, fadestepf: 0.0, startroll: random(0,359));
+		
+		if(master)
+		  master.Destroy();
+	  }
+	  TNT1 A 1
+	  {
+		A_StartSound("Bar_Exp2", CHAN_AUTO, volume: 0.7, attenuation: 0.7);
+		A_SpawnItemEx("MineExplosion3", zofs: 32);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SMK1_01"), STYLE_Translucent, SPF_RELATIVE|SPF_ROLL|SPF_LOCAL_ANIM, 61, 256, 0,
+	    64, 0, 4, fadestepf: 0.0, startroll: random(0,359));
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MineExplosion", zofs: 8);
+		A_SpawnItemEx("MineExplosion2", zofs: 2);
+		A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SMK1_01"), STYLE_Translucent, SPF_RELATIVE|SPF_ROLL|SPF_LOCAL_ANIM, 61, 256, 0,
+	    0, -64, 4, fadestepf: 0.0, startroll: random(0,359));
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = frandom(0.5, 0.8) * (0.8 * newPos);
+		  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SPFLA0"), STYLE_ADD, SPF_FULLBRIGHT, 35, 12, 0, newPos.x, newPos.y, newPos.z, newVel.x, newVel.y, newVel.z,
+		  accelz: -0.01
+		  );
+	    }
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SMK1_01"), STYLE_Translucent, SPF_RELATIVE|SPF_ROLL|SPF_LOCAL_ANIM, 61, 256, 0,
+	    0, 64, 4, fadestepf: 0.0, startroll: random(0,359));
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ESpark",  pos + (random(24,32) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch))));
+		  if(puff)
+		    puff.vel = newVel;
+	    }
+	  }
+	  TNT1 A 0 A_SpawnItemEx("BlastTrail");
+	  TNT1 A 90;
+	  Stop;
+  }
+}
+
+Class WallExplosion : Actor
+{
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A -1;
+	  Stop;
+	Death:
+	  TNT1 A 1
+	  {
+	    A_StartSound("Barricade/Break", CHAN_AUTO, attenuation: 0.7);
+		A_QuakeEx(3, 3, 8, 45, 0, 384, "DSEMPTY", QF_SCALEDOWN);
+		
+		for(int i = 0; i < 8; i++)
+		  A_SpawnItemEx("DarkWoodDebris",random(4,16),random(-32, 32), random(8, 112),
+		  frandom(8,12), frandom(-4,4), random(0,12), random(-32,32));
+	  }
+	  TNT1 A 1
+	  {
+	    for(int i = 0; i < 8; i++)
+		  A_SpawnItemEx("LightWoodDebris",random(4,16),random(-32, 32), random(8, 112),
+		  frandom(8,12), frandom(-4,4), random(0,12), random(-32,32));
+	  }
+	  TNT1 A 70 A_StartSound("WallExp1", CHAN_AUTO, volume: 0.8, attenuation: 0.8);
+	  Stop;
+  }
+}
+
+Class ExplodeSmokeDeploy : Actor
+{
+  int range;
+  
+  override void BeginPlay()
+  {
+    range = 104;
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	range -= 4;
+  }
+  
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0;
+	  TNT1 AAAAAAAA random(1,3) A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("SMK1_01"), STYLE_Translucent, SPF_RELATIVE|SPF_ROLL|SPF_LOCAL_ANIM, 61, 256, 0,
+	  random(-range, range), random(-range, range), random(0,4), fadestepf: 0.0, startroll: random(0,359));
+	  Stop;
+  }
+}
+
+Class FirePlace : Actor
+{
+  override void PostBeginPlay()
+  {
+    bSPRITEFLIP = random(0,1);
+  }
+  
+  Default
+  {
+    +BRIGHT
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_Jump(256, random(1,26));
+	  FRPL ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  Goto Spawn+1;
+  }
+}
+
+Class BarrelSmoke : Actor
+{
+  Default
+  {
+    +FORCEXYBILLBOARD
+    +NOINTERACTION
+	+ROLLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay
+	  {
+	    roll = random(0,359);
+	    A_Jump(127, "Alt");
+	  }
+	  SMK1 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  SMK2 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  SMK3 ABCDEFGHIJKL 1;
+	  Stop;
+	Alt:
+	  SMK6 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  SMK7 ABCDEFGHIJKLMNOPQRSTUVWXYZ 1;
+	  SMK8 ABCDEFGHIJKL 1;
+	  Stop;
+  }
+}
+
+Class GasCylinder : ModelBase
+{  
+  Default
+  {
+    Health 5;
+    Scale 0.92;
+    Radius 28;
+	Height 50;
+	+SHOOTABLE
+  }
+  States
+  {
+    Death:
+	  TNT1 A 1
+	  {
+		A_AlertMonsters();
+        A_Explode(random(420,500), 230, XF_NOTMISSILE , 0, 120, damagetype: "Explode");
+		A_QuakeEx(4, 9, 9, 35, 0, 2048, "DSEMPTY", QF_RELATIVE|QF_SCALEDOWN|QF_SHAKEONLY);
+		A_QuakeEx(0, 0, 0, 4, 0, 2048, "DSEMPTY", QF_SHAKEONLY, rollintensity: 5);
+		A_SpawnItemEx("ExplosionFlare", zofs: 48);
+		
+		if(master)
+		  master.Destroy();
+	  }
+	  TNT1 A 1
+	  {
+		A_StartSound("Bar_Exp1", CHAN_AUTO, volume: 0.65, attenuation: 0.7);
+		A_SpawnItemEx("MineExplosion3", zofs: 32);
+	  }
+	  TNT1 A 1
+	  {
+	    A_SpawnItemEx("MineExplosion", zofs: 8);
+		A_SpawnItemEx("MineExplosion2", zofs: 2);
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ExplosionTracer2", pos + newPos);
+		  if(puff)
+		    puff.vel = newVel * frandom(0.5, 0.8);
+	    }
+	  }
+	  TNT1 A 1
+	  {
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ESpark",  pos + (random(24,32) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch))));
+		  if(puff)
+		    puff.vel = newVel;
+	    }
+	  }
+	 // TNT1 A 0 A_SpawnItemEx("BlastTrail");
+	  TNT1 A 0
+	  {
+	    //for(int i = 0; i < 5; i++)
+		  //for(int j = 0; j < 5; j++)
+		    //A_SpawnItemEx("ExplosionSmoke1", random(-88, -84) + (i * 44), random(-88, -84) + (j * 44), random(48,64), frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(-0.5, 0.7));
+	  }
+	  TNT1 A 90;
+	  Stop;
+  }
+}
+
+Class Mine : Actor
+{
+  bool blowUp;
+  
+  override bool CanCollideWith(Actor other, bool passive)
+  {
+    if(!blowUp && passive)
+	{
+	  if(other.bSOLID && other.bSHOOTABLE)
+	  {
+	    blowUp = true;
+	    SetStateLabel("Death");
+	  }
+	}
+		
+	return false;
+  }
+  Default
+  {
+    //$Category Traps
+    Health 10;
+    Radius 26;
+	Height 8;
+	Scale 1.2;
+	+SHOOTABLE
+	+SOLID
+  }
+  States
+  {
+    Spawn:
+	  0000 A 105 light("BombLight");
+	  0000 A 3 A_StartSound("LndMine");
+	  Loop;
+	Idle:
+	  0000 A -1;
+	  Stop;
+	Death:
+	  TNT1 A 1
+	  {
+	    bShootable = false;
+		blowUp = true;
+		A_AlertMonsters();
+		A_SpawnItemEx("ExplosionFlare", zofs: 48);
+	  }
+	  TNT1 A 1 Light("MineExplodeLight1")
+	  {
+        A_Explode(random(1000,1200), 230, XF_NOTMISSILE , 0, 120, damagetype: "Explode");
+		A_QuakeEx(2, 9, 9, 35, 0, 2048, "DSEMPTY", QF_RELATIVE|QF_SCALEDOWN);
+		A_SpawnItemEx("ExplosionSmoke1",random(-64,64),random(-64,64), 4, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+		A_StartSound("Bar_Exp1", CHAN_AUTO, volume: 0.65, attenuation: 0.5);
+		for(int i = 0; i < 12; i++)
+		  A_SpawnItemEx("ExplosionSmoke2", 0, 0, random(8,32), randompick(-24, 24), zvel: frandom(0.5, 1.0), angle: random(0,359));
+		  
+		if(master)
+		  master.Destroy();
+	  }
+	  TNT1 A 1 Light("MineExplodeLight1")
+	  { 
+		A_SpawnItemEx("MineExplosion3", zofs: 32);
+		A_SpawnItemEx("ExplosionSmoke1",random(-56,56),random(-56,56), 8, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+	  }
+	  TNT1 A 1 Light("MineExplodeLight2")
+	  {
+	    A_SpawnItemEx("MineExplosion", zofs: 8);
+		A_SpawnItemEx("MineExplosion2", zofs: 2);
+		A_SpawnItemEx("ExplosionSmoke1",random(-48,48),random(-48,48), 24, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+		
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ExplosionTracer2", pos + newPos);
+		  if(puff)
+		    puff.vel = newVel * frandom(0.5, 0.8);
+	    }
+	  }
+	  TNT1 A 1 Light("MineExplodeLight3")
+	  {
+	    for(int i = 0; i < 18; i++)
+		{
+		  int pitch = random(2,90);
+		  int angle = random(0,359);
+		  
+		  Vector3 newPos = 32 * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch)); //ALL plushiinations
+		  Vector3 newVel = 0.8 * newPos;
+		  
+		  Actor puff = Spawn("ESpark",  pos + (random(24,32) * (cos(pitch) * cos(angle), cos(pitch) * sin(angle), sin(pitch))));
+		  if(puff)
+		    puff.vel = newVel;
+	    }
+	  }
+	  TNT1 A 1 A_SpawnItemEx("ExplosionSmoke1",random(-40,40),random(-40,40), 48, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+	  TNT1 A 1 A_SpawnItemEx("ExplosionSmoke1",random(-32,32),random(-32,32), 64, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+	  TNT1 A 1 A_SpawnItemEx("ExplosionSmoke1",random(-32,32),random(-32,32), 80, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+	  TNT1 A 1 A_SpawnItemEx("ExplosionSmoke2",random(-32,32),random(-32,32), 96, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+	  TNT1 A 1 A_SpawnItemEx("ExplosionSmoke2",random(-32,32),random(-32,32), 128, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+	  TNT1 A 1 A_SpawnItemEx("ExplosionSmoke2",random(-32,32),random(-32,32), 160, frandom(-1.0, 1.0), frandom(-1.0, 1.0), frandom(1.0, 4.0));
+	  TNT1 A 90;
+	  Stop;
+  }
+}
+
+Class ESpark : Actor
+{
+  int lifeTime;
+  
+  override void BeginPlay()
+  {
+    lifeTime = random(80,105);
+  }
+  
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(lifeTime <= 0)
+	  Destroy();
+	
+	lifeTime--;
+  }
+  
+  Default
+  {
+    RenderStyle "Add";
+    +NOINTERACTION
+  }
+  
+  States
+  {
+    Spawn:
+	  0000 A 8 Bright NoDelay A_FaceMovementDirection();
+	  Wait;
+  }
+}
+
+Class FireTrap : SwitchableDecoration
+{
+  int user_zvel;
+  bool fire;
+  
+  override void Tick()
+  {
+    //if(fire)
+      //A_SpawnItemEx("FlameShot", xvel: frandom(-1.0, 1.0), yvel: frandom(-1.0, 1.0), zvel: user_zvel, angle: random(0,359));
+    Super.Tick();
+  }
+  
+  Default
+  {
+    //$Category Traps
+	Radius 20;
+	Height 15;
+    +SOLID
+	+NOGRAVITY
+  }
+  States
+  {
+    Spawn:
+	Inactive:
+	  TNT1 A -1;
+	  Stop;
+	Active:
+	  TNT1 A random(8,35);
+	FireLoop:
+	  TNT1 A 0;
+	  TNT1 A random(115,130) {self.fire = true;}
+	  TNT1 A 1
+	  {
+	    self.fire = false;
+	    A_SetTics(35 * random(6,8));
+	  }
+	  Loop;
+  }
+}
+
+Class FireTrapShot : Actor
+{
+  Default
+  {
+    Radius 8;
+    Height 8;
+    Speed 20;
+    Damage 4;
+    Projectile;
+    Alpha 0.87;
+	RenderStyle "Add";
+    DamageType "Fire";
+	+FORCEPAIN
+	+PIERCEARMOR
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_StartSound("CUL_FIR1", CHAN_AUTO);
+      FRFX ABCDEFGHIJKLMNO 2 bright A_Explode(8, 32, damagetype: "Physical"); //Because magic fire. duh
+      Stop;
+    Death:
+	  TNT1 A 0 A_StartSound("CUL_FIR2");
+      FRFX HIJKLMNO 2 bright A_Explode(8, 32, damagetype: "Physical");
+      Stop;
+  }
+}
+
+Class Fungal1 : Actor
+{
+  override void BeginPlay()
+  {
+    A_SetSize(16.0 * scale.x, 48.0 * scale.y);
+    Super.BeginPlay();
+  }
+  
+  Default
+  {
+    //$Category Decorations/Vegitation
+	//$Color 3
+	//Health 100;
+    Tag "Fungal Green";
+    Radius 28;
+    Height 48;
+	Monster;
+	+DONTTHRUST
+	+FLOORCLIP
+	+SHOOTABLE
+	+BRIGHT
+  }
+  States
+  {
+    Spawn:
+	  0000 ABCDEFGHIJKLMNOPQRSTUVWXYZ 2;
+	  0001 ABCDEFGHIJKLMNOPQRS 2;
+	  0001 T random(20,35);
+	  Loop;
+  }
+}
+
+Class Fungal2 : Fungal1
+{
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+  }
+  
+  Default
+  {
+    Tag "Fungal Blue";
+  }
+}
+
+
+Class PlantPot2 : Actor //18228
+{
+  String user_spawnitm;
+  
+  Default
+  {
+    //$Category Decorations/Vase
+    //$Color 3
+    Health 5;
+	Radius 17;
+    Height 26;
+    DamageFactor "Poison", 0.0;
+    DamageFactor "Fire", 0.0;
+	+SHOOTABLE
+	+SOLID
+	+NOBLOOD
+  }
+  States
+  {
+    Spawn:
+      FPOT B -1;
+      Stop;
+	Death:
+	  TNT1 AAAAAAA 0
+	  {
+	    A_SpawnItemEx("PotLeaf1", random(-14,14), random(-14,14), random(5,20), random(-6,6), random(-6,6), frandom(6,15), 0, 0, 48);
+		A_SpawnItemEx("PotLeaf2", random(-14,14), random(-14,14), random(5,20), random(-6,6), random(-6,6), frandom(6,15), 0, 0, 48);
+	  }
+	  TNT1 A 0
+	  {
+	    A_StartSound("Vase/Death");
+		if(self.user_spawnitm != "")
+		  A_SpawnItemEx(self.user_spawnitm, flags: SXF_NOCHECKPOSITION);
+	  }
+	  //TNT1 A 0 A_Jump(127, 2);
+	 /* TNT1 A 0
+	  {
+	    for(int i = 0; i < 7; i++)
+		  A_SpawnItemEx("DropletDebris", random(-3, 3), random(-3, 3), random(5, 32), random(-6, 6), random(-6, 6), random(5, 8));
+	  }*/
+	  TNT1 A 1;
+	  Stop;
+  }
+}
+
+Class PlantPot1 : PlantPot2
+{
+  Default
+  {
+    Radius 19;
+    Height 41;
+  }
+  States
+  {
+    Spawn:
+      FPOT A -1;
+      Stop;
+  }
+}
+
+Class Plant1 : PlantPot2
+{
+  Default
+  {
+    Radius 14;
+    Height 30;
+  }
+  States
+  {
+  Spawn:
+	POT1 A -1;
+	Stop;
+  }
+}
+
+Class Plant2 : PlantPot2
+{
+  Default
+  {
+    Radius 14;
+    Height 61;
+  }
+  States
+  {
+  Spawn:
+	POT2 A -1;
+	Stop;
+  }
+}
+
+Class RoseBundle : Actor
+{
+  override void BeginPlay()
+  {
+    A_SetScale(frandom(0.9, 1.3));
+	bSPRITEFLIP = random(0,1);
+  }
+  
+  Default
+  {
+    Radius 4;
+	Height 8;
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  ROSF A 0 NoDelay
+	  {
+	    frame = random(0,3);
+	  }
+	  ROSF "#" -1;
+	  Stop;
+  }
+}
+
+Class Rose : RoseBundle
+{
+  override void BeginPlay()
+  {
+    Super.BeginPlay();
+  }
+  
+  States
+  {
+    Spawn:
+	  ROSF E 0 NoDelay
+	  {
+	    frame = random(4,7);
+	  }
+	  ROSF "#" -1;
+	  Stop;
+  }
+}
+
+Class FireShooter : SwitchableDecoration
+{
+  int user_tag;
+  
+  Default
+  {
+    Scale 5.0;
+  }
+  
+  States
+  {
+    Spawn:
+	Inactive:
+	  FRST A -1;
+	  Stop;
+	Active:
+	  TNT1 A 0 ACS_NamedExecute("FireShooterSound", 0, user_tag, 0, 0);
+	  FRST AA 2
+	   {
+	    for(int i = 0; i < random(2,3); i++)
+	      A_SpawnItemEx("FS_Ember", random(-16,16), random(-16,16), random(48, 88),
+		  random(-8,8), random(-8,8), random(40,56),
+		  random(0, 359));
+	  }
+	  FRST BCD 1 Bright
+	  {
+	    for(int i = 0; i < random(4,6); i++)
+	      A_SpawnItemEx("FS_Ember", random(-16,16), random(-16,16), random(48, 88),
+		  random(-8,8), random(-8,8), random(40,56),
+		  random(0, 359));
+	  }
+	  FRST EFGHIJKLM 2 Bright
+	  {
+	    for(int i = 0; i < random(2,4); i++)
+	      A_SpawnItemEx("FS_Ember", random(-16,16), random(-16,16), random(64, 112),
+		  random(-8,8), random(-8,8), random(40,56),
+		  random(0, 359));
+	  }
+	  FRST NOP 3 Bright;
+	  FRST A 1 A_SetTics(random(8,14)*35);
+	  Loop;
+  }
+}
+
+Class FS_Ember : Actor
+{
+  Default
+  {
+    Radius 8;
+    Height 8;
+    Speed 10;
+    Scale 2.4;
+    Gravity 1.0;
+    RenderStyle "Add";
+    +NOBLOCKMAP
+    +FORCEXYBILLBOARD
+	+NOCLIP
+  }
+  States
+  {
+    Spawn:
+	  FSPK C random(35,45) Bright;
+	  FSPK CCCCC 2 Bright
+	  {
+	    self.vel.y -= 1.0;
+	  }
+	  TNT1 A 0 A_SetGravity(0.5);
+	See:
+	  FSPK C 4 Bright A_CheckFloor("Death");
+	  TNT1 A 0 A_FadeOut(frandom(0.05, 0.07));
+	  Loop;
+	Death:
+	  TNT1 A 0;
+	  Stop;
+  }
+}
+
+Class Block : Actor
+{
+  double user_radius, user_height;
+  
+  override void PostBeginPlay()
+  {
+    //A_SetSize(user_radius, user_height);
+	//console.printf("%d\n%d", height, radius);
+  }
+  
+  Default
+  {
+    +SOLID
+	+CANPASS
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_SetSize(52.0, 128.0);
+	  TNT1 A 0 { console.printf("%d\n%d", height, radius); }
+	  TNT1 A -1;
+	  Stop;
+  }
+}
+
+Class RandomBigRock : Actor //16100
+{
+  override void BeginPlay()
+  {
+    A_SetScale(frandom(0.8, 1.2));
+	bSPRITEFLIP = random(0,1);
+  }
+  
+  Default
+  {
+    //$Category Decorations/Vegitation
+    //$Color 3
+    Radius 16;
+    Height 16;
+    +FORCEXYBILLBOARD
+	+SOLID
+  }
+  States
+  {
+    Spawn:
+      NROK A 0 NoDelay { frame = random(0,8); }
+      NROK "#" -1;
+	  Stop;
+  }
+}
+
+Class RandomSmallRock : RandomBigRock //16101
+{
+  override void BeginPlay()
+  {
+    A_SetScale(frandom(0.45, 0.6));
+	bSPRITEFLIP = random(0,1);
+  }
+  
+  Default
+  {
+    Radius 10;
+    Height 10;
+  }
+}
+
+Class SmallRockDebris : RandomSmallRock
+{
+  override void BeginPlay()
+  {
+    A_SetScale(frandom(0.3, 0.4));
+	bSPRITEFLIP = random(0,1);
+  }
+  
+  Default
+  {
+    +THRUACTORS
+	+NOBLOCKMAP
+	-SOLID
+  }
+}
+
+Class MovingActor : Actor
+{
+  int user_speed;
+  
+  Default
+  {
+    //$Category MapSFX
+    Radius 4;
+	Height 4;
+	Speed 1;
+    Monster;
+	+FLOORCLIP
+	//-SHOOTABLE
+	+THRUACTORS
+	+BRIGHT
+	+DROPOFF
+  }
+  States
+  {
+    Spawn:
+	  TNT1 A 0 NoDelay A_SetSpeed(user_speed);
+	  TNT1 A 4 A_Look();
+	  Wait;
+	See:
+	  TNT1 A 0 A_FaceTarget();
+	  TNT1 A 1 A_Chase(flags: CHF_DONTTURN);
+	  Wait;
+  }
+}
+
+Class GrassRandom : Actor
+{
+  bool Ticked;
+  
+  override void BeginPlay()
+  {
+    bSPRITEFLIP = random(0,1);
+    A_SetScale(frandom(0.25, 0.5));
+  }
+  
+  override void Tick()
+  {
+    if(!Ticked)
+	{
+	  Ticked = true;
+	  Super.Tick();
+	}
+  }
+  
+  Default
+  {
+	//$Sprite GVEGA0
+    //$Category Decorations/Vegitation
+    //$Color 3
+	Scale 0.5;
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  GVEG A 0 NoDelay { frame = random(0,3); }
+      GVEG "#" -1;
+      Stop;
+  }
+}
+
+Class RootRandom : GrassRandom
+{
+  Default
+  {
+    //$Sprite GVEGE0
+  }
+  States
+  {
+    Spawn:
+	  GVEG E 0 NoDelay { frame = random(4,6); }
+      GVEG "#" -1;
+      Stop;
+  }
+}
+
+Class ElectricFence : Actor
+{
+  Default
+  {
+    RenderStyle "Add";
+    +NOINTERACTION
+	+WALLSPRITE
+  }
+  States
+  {
+    Spawn:
+	  ELFN ABC random(1,4) Bright;
+	  Loop;
+  }
+}
+
+Class MayoBuild : Inventory
+{
+  override void AttachToOwner(Actor other)
+  {
+    DFPlayer(other).invMax = 7;
+    other.A_GiveInventory("Hands", 1);
+    other.A_GiveInventory("Handgun", 1);
+    other.A_GiveInventory("Trenchgun", 1);
+	other.A_GiveInventory("SSG", 1);
+	other.A_GiveInventory("PierceAmmo", 1);
+	other.A_GiveInventory("PSI", 2);
+	other.A_GiveInventory("GasAmmo", 300);
+	other.A_GiveInventory("Psi_SG", 1);
+    other.A_GiveInventory("DT1", 1);
+	other.A_GiveInventory("SuperSoda", 1);
+	other.A_GiveInventory("Volt", 1);
+	other.A_GiveInventory("Vodka", 1);
+	other.A_GiveInventory("Lube", 1);
+	other.A_GiveInventory("MeatCan", 1);
+	other.A_GiveInventory("Stim", 1);
+    other.A_GiveInventory("Key_Computer1", 1);
+	other.A_GiveInventory("Key_Letter", 1);
+	other.A_GiveInventory("ExaltXP", 9650);
+	other.A_GiveInventory("StrOrigin", 1);
+	other.A_GiveInventory("Astro_Gift1", 1);
+	other.A_GiveInventory("BestiaryPack01", 1);
+	other.A_GiveInventory("BestiaryPack02", 1);
+	other.A_GiveInventory("BestiaryPack03", 1);
+	other.A_GiveInventory("PsiLicense", 1);
+    EventHandler.SendNetworkEvent("LevelUpBoi:PhyToken:0");
+	EventHandler.SendNetworkEvent("w_HandgunAuto");
+	other.TakeInventory("BulletLoaded", 16);
+	Destroy();
+  }
+  Default
+  {
+    Inventory.Amount 1;
+  }
+}

@@ -1,0 +1,167 @@
+//Original Code by Gutawer
+class ScannerHandler : EventHandler
+{
+  Actor highlight;
+  DFPlayer pmo;
+  int rotate;
+  bool tex_setup;
+  double hp_bar, hp_mult, hp_len;
+  TextureID spinTex, HP_Base, HP_BG;
+  ui Vector2 tlCornerPos;
+  
+  override void WorldTick()
+  {
+    Super.WorldTick();
+	
+	if(rotate > 360)
+	  rotate = 0;
+	rotate += 5;
+	
+	if(!pmo)
+	  pmo = DFPlayer(players[consoleplayer].mo);
+	
+	if(pmo && pmo.hActr)
+	{
+	  highlight = pmo.hActr;
+	  if(highlight.bIsMonster && highlight.Health > 0 && highlight.Distance3D(pmo) <= 3000)
+	  {
+		hp_bar = 150;
+		if(DF_Monster(highlight).bLarge)
+		  hp_bar = 350;
+		  
+		hp_mult = 1.0 / highlight.SpawnHealth();
+		hp_len = (hp_mult * highlight.Health) * hp_bar;
+	  }
+	  else
+	    highlight = null;
+	}
+	else
+	{
+	  highlight = null;
+	}
+	
+	if(!tex_setup)
+	{
+	  spinTex = TexMan.CheckForTexture("ScanSpin", TexMan.Type_Any);
+	  HP_Base = TexMan.CheckForTexture("HP_Base", TexMan.Type_Any);
+	  HP_BG = TexMan.CheckForTexture("HP_BG", TexMan.Type_Any);
+	  tex_setup = true;
+	}
+  }
+	
+  override void RenderUnderlay(RenderEvent e)
+  {
+	if(automapactive != 0)
+	  return;
+	  
+	let pmo = players[consoleplayer].mo;
+	  
+	if(!pmo)
+	  return;
+	  
+	if(pmo && !DFPlayer(pmo).hasScanner)
+	  return;
+	  
+	if(!highlight)
+	  return;
+	
+	double fovH = (e.camera.player) ? e.camera.player.FOV : e.camera.cameraFOV;
+	GMMatrix4 worldToClip = GMMatrix4.worldToClip(e.viewPos, e.viewAngle, e.viewPitch, e.viewRoll, fovH, Screen.GetAspectRatio());
+	Vector3 adjustedWorldPos = e.viewPos + LevelLocals.vec3Diff(e.viewPos, GMVectorUtil.lerpVec3(highlight.Prev, highlight.Pos, e.Fractic));
+	
+	// this moves the position of the actor into absolute coordinates relative to the viewPos
+    // (which the view matrix is expecting)			
+	Vector3 positions[8];
+	positions[0] = (adjustedWorldPos + ( highlight.Radius,  highlight.Radius, 0               ));
+	positions[1] = (adjustedWorldPos + (-highlight.Radius,  highlight.Radius, 0               ));
+	positions[2] = (adjustedWorldPos + ( highlight.Radius, -highlight.Radius, 0               ));
+	positions[3] = (adjustedWorldPos + (-highlight.Radius, -highlight.Radius, 0               ));
+	positions[4] = (adjustedWorldPos + ( highlight.radius,  highlight.Radius, highlight.Height));
+	positions[5] = (adjustedWorldPos + (-highlight.radius,  highlight.Radius, highlight.Height));
+	positions[6] = (adjustedWorldPos + ( highlight.radius, -highlight.Radius, highlight.Height));
+	positions[7] = (adjustedWorldPos + (-highlight.radius, -highlight.Radius, highlight.Height));
+						
+	Vector3 ndcPositions[8];
+	// ndcCounter tracks how many valid ndcPositions were found, if it's not 8 by the end of the loop then
+	// we won't draw anything
+	int ndcCounter = 0;
+	bool anyOnScreen = false;
+	for(int j = 0; j < 8; j++)
+	{
+	  Vector3 worldPos = positions[j];
+	  let ndcPos = worldToClip.multiplyVector3(worldPos);
+			
+	  if(ndcPos.x <= 1 && ndcPos.x >= -1 && ndcPos.y <= 1 && ndcPos.y >= -1)
+	  {
+		anyOnScreen = true;
+	  }
+	  if(ndcPos.z <= 1 && ndcPos.z >= -1)
+	  {
+		ndcCounter++;
+		ndcPositions[j] = ndcPos;
+	  }
+						
+	  if(anyOnScreen && ndcCounter >= 8)
+	  {
+		// the infinities are used here since any real number will be automatically lower/higher than infinity/-infinity
+		double lowestX  =  double.infinity;
+		double lowestY  =  double.infinity;
+		double highestX = -double.infinity;
+		double highestY = -double.infinity;
+							
+		// create a bounding box from the projected positions
+		for(int i = 0; i < 8; i++)
+		{
+		  Vector2 ndc = ndcPositions[i].xy;
+		  if(ndc.x < lowestX ) lowestX  = ndc.x;
+		  if(ndc.y < lowestY ) lowestY  = ndc.y;
+		  if(ndc.x > highestX) highestX = ndc.x;
+		  if(ndc.y > highestY) highestY = ndc.y;
+		}
+							
+		Vector3 corners[4];
+		corners[0] = (clamp(lowestX , -0.95, 0.95), clamp(lowestY , -0.95, 0.95), 0);
+		corners[1] = (clamp(highestX, -0.95, 0.95), clamp(lowestY , -0.95, 0.95), 0);
+		corners[2] = (clamp(lowestX , -0.95, 0.95), clamp(highestY, -0.95, 0.95), 0);
+		corners[3] = (clamp(highestX, -0.95, 0.95), clamp(highestY, -0.95, 0.95), 0);
+		string cornerTextures[4];
+		cornerTextures[0] = "PRJBOXBL";
+		cornerTextures[1] = "PRJBOXBR";
+		cornerTextures[2] = "PRJBOXTL";
+		cornerTextures[3] = "PRJBOXTR";
+		Vector2 cornerDirs[4];
+		cornerDirs[0] = (-1,  1);
+		cornerDirs[1] = ( 1,  1);
+		cornerDirs[2] = (-1, -1);
+		cornerDirs[3] = ( 1, -1);
+			
+		if(highlight)
+		{
+		  for(int i = 0; i < 4; i++)
+		  {
+			Vector2 viewportPos = GMGlobalMaths.ndcToViewPort(corners[i]);						
+			Screen.drawTexture(TexMan.checkForTexture(cornerTextures[i], TexMan.Type_Any), false, viewportPos.x, viewportPos.y);
+			tlCornerPos = GMGlobalMaths.ndcToViewPort(corners[2]);
+		  }
+		  
+		  Screen.DrawTexture(spinTex, false, tlCornerPos.x - 18, tlCornerPos.y - 8,
+		  DTA_Rotate, rotate,
+		  DTA_Alpha, 0.9,
+		  DTA_LegacyRenderStyle, STYLE_ADD);
+								  
+		  Screen.DrawTexture(HP_BG, false, tlCornerPos.x, tlCornerPos.y - 16,
+		  DTA_DestWidth, int(hp_bar),
+		  DTA_DestHeight, 10,
+		  DTA_WindowRight, int(hp_bar)
+		  );
+		  
+		  Screen.DrawTexture(HP_Base, false, tlCornerPos.x, tlCornerPos.y - 16,
+		  DTA_DestWidth, int(hp_len),
+		  DTA_DestHeight, 10,
+		  DTA_WindowRight, int(hp_bar)
+		  );
+	    }
+	  }
+	}
+  }
+}

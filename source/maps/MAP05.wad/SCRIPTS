@@ -1,0 +1,738 @@
+#include "zcommon.acs"
+
+Script 1 ENTER
+{
+	if(GetUserCVar(0, "dev_debug") == 0)
+	{
+		ACS_NamedExecute("Autosave", 0);
+		SetMusic("D_NULL");
+		ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+		SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+		ChangeCamera(19,1,0);
+		fadeto(0, 0, 0, 1.0, 0.0);
+		Delay(35);
+		ChangeCamera(0,1,0);
+		SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN);
+		fadeto(0, 0, 0, 0.0, 2.0);
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"You are awakened in a lower depth.";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 2.5, 1.0, 1.0);
+		Delay(35*5);
+		ScriptCall("DFPlayer", "SetObjective", "$Obj_02");
+	}
+	Delay(2);
+	if(CheckInventory("M1_ChampDead") > 0)
+	{
+		Thing_Remove(48);
+		Thing_Remove(49);
+		Thing_Remove(112);
+		ACS_Execute(39, 0);
+	}
+}
+
+Script 2 (void) //Cue Subway Music, Eat Flesh
+{
+	SetMusic("MP1_C4");
+	PlaySound(44, "Subway03", CHAN_AUTO, 0.4, 0, 0.5);
+
+	if(CheckInventory("M1_ChampDead") > 0)
+	{
+		SetLineTexture(91, SIDE_FRONT, TEXTURE_MIDDLE, "M_TILE05");
+		Line_SetBlocking(91, BLOCKF_EVERYTHING, 0);
+		Thing_Deactivate(34);
+		//Thing_Deactivate(75);
+		Thing_Remove(33);
+		Thing_Remove(40);
+	}
+}
+
+Script 3 (void)
+{
+	Delay(16);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"No response...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+}
+
+Script 4 (void)
+{
+	//Prompt tutorial
+	ScriptCall("GenericScreenStuff", "PromptTutorial", "Tip_DuelHelp");
+
+	//Prepare the reward
+	ACS_Execute(39, 0);
+
+	//Code
+	SetLineSpecial(37, 0);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 50);
+	Delay(1);
+	FadeTo(0, 0, 0, 1.0, 2.0);
+	Delay(35*2);
+	ChangeCamera(35, 1, 0);
+	Delay(35*2);
+	LocalAmbientSound("Duel01", 65);
+	SetMusic("D_NULL");
+	Delay(35);
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+
+	//Prompt
+	SetFont(const:"ACS_FONT");
+	HudMessageBold(s:"You begin to submerge into an otherworldly depth.";
+	0, 1, CR_UNTRANSLATED, 1.5, 0.5, 3.0);
+	Delay(1);
+	ScriptCall("GenericScreenStuff", "Clean");
+	Delay(35*3);
+
+	HudMessageBold(s:"Submerging in complete blackness as your mind becomes the envoy between worlds.";
+	0, 1, CR_UNTRANSLATED, 1.5, 0.5, 4.0);
+	Delay(35*4);
+	Delay(20);
+
+	//Activate Boss Music
+	Thing_Deactivate(34);
+	SetMusic("MP1_BOSS");
+	HudMessageBold(s:"Inside the depth, you see a great storm in the darkness...";
+	0, 1, CR_UNTRANSLATED, 1.5, 0.5, 4.0);
+	Delay(47);
+	LocalAmbientSound("Thunder0", 127);
+	Delay(93);
+
+	HudMessageBold(s:"Quiet your mind and brace for the oncoming waves.";
+	HUDMSG_FADEOUT, 1, CR_UNTRANSLATED, 1.5, 0.5, 2.0, 1.0);
+	ChangeActorPitch(0, 0.25);
+	if(CheckInventory("Trenchgun") <= 0)
+	{
+		GiveInventory("Trenchgun", 1);
+	}
+	if(CheckInventory("ShotgunAmmo") <= 0)
+	{
+		GiveInventory("ShotgunAmmo", 3);
+	}
+	if(CheckInventory("PistolAmmo") <= 0)
+	{
+		GiveInventory("PistolAmmo", 8);
+	}
+	Delay(1);
+	GiveInventory("Duel_Prep", 1);
+	SetWeapon("Trenchgun");
+	Delay(22);
+	ScriptCall("DFPlayer", "QuietLand", TRUE);
+	Light_ChangeToValue(79, 0);
+	Teleport_NoFog(12, 1, 31);
+	GiveInventory("LanternKill", 1);
+	SetLineTexture(76, SIDE_FRONT, TEXTURE_MIDDLE, "-");
+	Thing_Deactivate(75);
+	Thing_Remove(33);
+	Thing_Remove(40);
+	//Do tutorial if we's really them boys!
+	if(CheckInventory("PhyOrigin") > 0)
+	{
+		ScriptCall("GenericScreenStuff", "PromptTutorial", "Tip_DuelPhy");
+	}
+	else if(CheckInventory("StrToken") > 0)
+	{
+		ScriptCall("GenericScreenStuff", "PromptTutorial", "Tip_DuelStr");
+	}
+	Delay(22);
+	ChangeCamera(0, 1, 0);
+	FadeTo(0, 0, 0, 0.0, 1.0);
+}
+
+Script 5 (void)
+{
+	FadeTo(0, 0, 0, 1.0, 0.0);
+	Delay(2);
+	FadeTo(0, 0, 0, 0.0, 2.0);
+	ScriptCall("DFPlayer", "QuietLand", FALSE);
+	Teleport_NoFog(30, 1, 30);
+	ChangeActorPitch(0, 0.05);
+	SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN);
+}
+
+script 6  (void)
+{
+	if(CheckInventory("Key_Subway") > 0)
+	{
+		ClearLineSpecial();
+		Thing_Deactivate(107);
+		TakeInventory("Key_Subway", 1);
+		LocalAmbientSound("Unlock5",127);
+		SetPlayerProperty(0, 1, 4);
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"Unlocked.";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+		Delay(35);
+		Line_SetBlocking(103, 0, 32);
+		SetActorState(102, "Spin", FALSE);
+		Delay(35);
+		SetPlayerProperty(0, 0, 4);
+	}
+	else
+	{
+		LocalAmbientSound("Locked04",127);
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"The door is locked...";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+	}
+}
+
+Script 7 (void)
+{
+	ScriptCall("Saver", "Autosave");
+	Delay(5);
+	ACS_Execute(12, 0);
+}
+
+bool EnterHall = FALSE;
+Script 8 (int sec_tag)
+{
+	CancelFade();
+	LocalAmbientSound("DoorTP1", 127);
+	SetPlayerProperty(1,1,0);
+	fadeto(0, 0, 0, 1.0, 0.5);
+	Delay(32);
+	Teleport_NoFog(sec_tag, 1, sec_tag);
+	Delay(24);
+	LocalAmbientSound("DoorTP2", 127);
+	if(!EnterHall)
+	{
+		EnterHall = TRUE;
+		SetMusic("MP1_C2");
+	}
+	fadeto(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+}
+
+Script 9 (int sec_tag)
+{
+	CancelFade();
+	LocalAmbientSound("DoorTP1", 127);
+	SetPlayerProperty(1,1,0);
+	fadeto(0, 0, 0, 1.0, 0.5);
+	Delay(32);
+	Teleport_NoFog(sec_tag, 1, sec_tag);
+	Delay(24);
+	LocalAmbientSound("DoorTP2", 127);
+	SetMusic("MP1_C3");
+	fadeto(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+}
+
+Script 10 (int stag)
+{
+	CancelFade();
+	LocalAmbientSound("DoorTP7", 127);
+	SetPlayerProperty(1,1,0);
+	fadeto(0, 0, 0, 1.0, 0.5);
+	Delay(70);
+	LocalAmbientSound("CLIMB",127);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 10);
+	Delay(35);
+	SetMusic("D_NULL");
+	Teleport_NoFog(stag, 1, stag);
+	SetActorPitch(0, 0);
+	Delay(60);
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+	LocalAmbientSound("pl_fall", 127);
+	Delay(14);
+	ScriptCall("Saver", "Autosave");
+	SetPlayerProperty(1,0,0);
+	fadeto(0, 0, 0, 0.0, 0.5);
+}
+
+Script 11 (int hzOn)
+{
+	if(hzOn == 0)
+	{
+		GiveInventory("LowZone", 1);
+	}
+	else
+	{
+		GiveInventory("HighZone", 1);
+	}
+}
+
+Script 12 (void)
+{
+	while(TRUE)
+	{
+		if(ThingCountName("Champion", 32) <= 0)
+		{
+			ACS_Execute(13, 0);
+			break;
+		}
+		Delay(1);
+	}
+}
+
+Script 13 (void) //Champion Defeated
+{
+	Delay(35*13);
+	TakeInventory("Duel_Prep", 1);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+	Delay(1);
+	FadeTo(0, 0, 0, 1.0, 6.0);
+	SetLineTexture(91, SIDE_FRONT, TEXTURE_MIDDLE, "M_TILE05");
+	Line_SetBlocking(91, BLOCKF_EVERYTHING, 0);
+	LocalAmbientSound("Boss01b", 127);
+	Delay(35*4);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 200);
+	Delay(35*3);
+	Teleport_NoFog(39, 1, 39);
+	SetActorPitch(0, 0.0);
+	Delay(35*4);
+	SetMusic("D_NULL");
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+	GiveInventory("LanternLive", 1);
+	FadeTo(0, 0, 0, 0.0, 4.0);
+	SetPlayerProperty(0, 0, 4);
+	Delay(35*2);
+	ScriptCall("DFPlayer", "GiveExaltation", 5000);
+	//ScriptCall("DFPlayer", "InjectorUpgrade");
+}
+
+Script 14 (void)
+{
+	SetPlayerProperty(0, 1, 4);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 200);
+	FadeTo(255, 255, 255, 1.0, 8.0);
+	Delay(35*10);
+	Teleport_NoFog(339, 1, 339);
+	SetMusic("D_NULL");
+	SetActorPitch(0, 0.0);
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 0);
+}
+
+Script 15 (void)
+{
+	PlaySound(43, "Subway01", CHAN_AUTO, 0.7, 0, 0.5);
+	SetLineSpecial(45, 0);
+}
+
+Script 16 (int cam) //End Level
+{
+	Thing_SetConversation(119, 0);
+	Thing_SetConversation(28, 0);
+	Thing_Deactivate(47);
+	Thing_Deactivate(34);
+	Thing_Remove(127);
+	SetLineSpecial(46, 0);
+	SetLineSpecial(128, 0);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 100);
+	ScriptCall("GenericScreenStuff", "PromptTutorial", "Clear");
+	FadeTo(0, 0, 0, 1.0, 2.0);
+	Delay(35*2);
+	ScriptCall("DFPlayer", "SetHud", FALSE);
+	Delay(1);
+	ChangeCamera(cam, 1, 0);
+	Delay(35*2);
+	FadeTo(0, 0, 0, 0.0, 2.0);
+	Delay(35);
+	LocalAmbientSound("TrainOut",127);
+	Delay(35*5);
+	FadeTo(0, 0, 0, 1.0, 4.0);
+	Delay(35*15);
+	Exit_Normal(0);
+	/*Delay(35*5);
+	SetFont (const:"ACS_FONT");
+	HudMessage(l:"END_Demo";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.5, 300.0, 2.0, 2.0);*/
+}
+
+script 17  (void)
+{
+	LocalAmbientSound("Locked02",127);
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Stuck...";
+                HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+}
+
+script 18  (void)
+{
+	CancelFade();
+	Thing_Deactivate(49);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+	FadeTo(0, 0, 0, 1.0, 2.0);
+	Delay(35*3);
+	LocalAmbientSound("ADB_Cook", 127);
+	Delay(180);
+	FadeTo(0, 0, 0, 0.0, 1.6);
+	Delay(53);
+	SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN);
+	Thing_SetConversation(48, 4);
+	StartConversation(48, 1);
+}
+
+int secret_banana = 0;
+Script 19 (void)
+{
+	if(secret_banana < 50)
+	  secret_banana++;
+
+	if(secret_banana == 14)
+	{
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"Your persistence may give way to a knowledge few mortals can handle...";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+	}
+	else if(secret_banana == 30)
+	{
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"Almost there...";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+	}
+
+	if(secret_banana == 50)
+	{
+		Thing_Activate(113);
+		SpawnSpot("Peel", 54);
+		SetFont (const:"ACS_FONT");
+		HudMessage(s:"An all-powerful weapon of limitless destruction has spawned near the bed.";
+		HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+		secret_banana++;
+	}
+}
+
+Script 20 (void)
+{
+	Line_SetBlocking(57, 0, 256);
+}
+
+Script 21 (void) //Lights out!
+{
+	ClearLineSpecial();
+	LocalAmbientSound("SBWLite1", 64);
+	LocalAmbientSound("SBWLite2", 127);
+	Light_Fade(66, 0, 35*2);
+	Light_LowerByValue(70, 64);
+	Delay(3);
+	Thing_Deactivate(67);
+	Thing_Deactivate(69);
+	Thing_Deactivate(500);
+	Thing_Deactivate(501);
+	Thing_Deactivate(502);
+	Thing_Activate(74);
+	Delay(35*4);
+	LocalAmbientSound("SBWLite3", 48);
+
+	for(int i = 0; i < 4; i++)
+	{
+		Thing_Activate(67);
+		Thing_Activate(500);
+		Thing_Activate(501);
+		Thing_Activate(502);
+		Delay(random(1,2));
+		Thing_Deactivate(67);
+		Thing_Deactivate(500);
+		Thing_Deactivate(501);
+		Thing_Deactivate(502);
+		Delay(random(1,2));
+	}
+	Thing_Deactivate(74);
+	Thing_Activate(69);
+	Light_RaiseByValue(70, 64);
+	Light_RaiseByValue(66, 64);
+	Thing_Activate(67);
+	Delay(1);
+	Light_Fade(66, 144, 17);
+	Thing_Activate(500);
+	Delay(5);
+	Thing_Activate(501);
+	Delay(5);
+	Thing_Activate(502);
+}
+
+Script 22 (void) //Set Chance encounter.. Light spook!
+{
+	bool a = random(0,1);
+	if(a)
+	{
+		SetLineSpecial(73, 80, 21);
+	}
+}
+
+Script 23 (void)
+{
+	if(CheckInventory("WitToken") > 0)
+	{
+		ScriptCall("DFPlayer", "DetectAmbush");
+		ClearLineSpecial();
+	}
+}
+
+script 25 (int type)
+{
+	GiveInventory("MailboxToken", 1);
+	switch(type)
+	{
+		case 1:
+		SetActorState(77, "HT", FALSE);
+		Break;
+
+		case 2:
+		SetActorState(77, "AP", FALSE);
+		Break;
+
+		case 3:
+		SetActorState(77, "Shell", FALSE);
+		Break;
+	}
+}
+
+bool MailClose = FALSE;
+Script 26 (void)
+{
+	if(!MailClose)
+	{
+		PlaySound(77, "MailBye", CHAN_AUTO, 1.0, FALSE);
+		MailClose = TRUE;
+	}
+}
+
+Script 27 (void) //rip doors
+{
+	SetActorState(84, "Death");
+	Line_SetBlocking(82, 0, 32);
+	SetLineSpecial(82, 0);
+	SetLineTexture(82, SIDE_FRONT, TEXTURE_MIDDLE, "-");
+	Thing_SetConversation(85, 0);
+	Thing_Deactivate(83);
+}
+
+Script 28 (void) //Couch stuff
+{
+	LocalAmbientSound("Locked02",127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Something is blocking the door from the other side...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+}
+
+Script 29 (void) //Looparound door pt1
+{
+	LocalAmbientSound("Locked01", 127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"The door is locked from the other side...";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 3.5, 1.0, 1.0);
+}
+
+Script 30 (void) //Looparound door pt2
+{
+	SetLineSpecial(87, 7, 10, 32, 64, 105);
+	SetLineSpecial(88, 7, 10, -32, 64, 105);
+	LocalAmbientSound("Unlock1", 127);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Unlocked.";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 1.5, 1.0, 1.0);
+}
+
+Script 31 (void) //Uh oh, trigger sign-post events after picking up key
+{
+	until(CheckInventory("Key_Subway") > 0)
+	{
+		Delay(10);
+	}
+	Thing_Activate(7);
+	SetActorProperty(94, APROP_Alpha, 0.8);
+	Ceiling_RaiseByValue(97, 8, 184);
+	FloorAndCeiling_RaiseByValue(98, 8, 184);
+	Line_SetBlocking(99, 0, BLOCKF_PLAYERS|BLOCKF_MONSTERS);
+	SetLineSpecial(46, 80, 34);
+	SetLineSpecial(92, 80, 32);
+	SpawnSpot("Moodcandle", 901, 0, 0);
+	SpawnSpot("Moodcandle2", 902, 0, 0);
+	Thing_Activate(903);
+
+	//Lights to help signpost
+	Thing_Deactivate(67);
+	Thing_Deactivate(69);
+	Thing_Deactivate(500);
+	Thing_Deactivate(501);
+	Thing_Deactivate(502);
+	Thing_Activate(74);
+	Thing_Activate(109);
+	//Remove light shut-off event
+	Thing_Remove(110);
+}
+
+Script 32 (void)
+{
+	SetLineSpecial(92, 0, 0);
+	if(CheckInventory("M1_ChampDead") == 0)
+	{
+		Light_ChangeToValue(900, 255);
+		Delay(3);
+		LocalAmbientSound("SBWLite4", 127);
+		Light_Fade(900, 0, 35*4);
+	}
+}
+
+Script 33 (void)
+{
+	SetActorVelocity(106, 0.0, 25.0, 0.0, FALSE, FALSE);
+	Delay(10);
+	GiveActorInventory(106, "AlphaDrain", 1);
+}
+
+Script 34 (void)
+{
+	ClearLineSpecial();
+	Ceiling_RaiseByValue(101, 8, 200);
+	Thing_Activate(95);
+}
+
+Script 35 (void)
+{
+	LocalAmbientSound("Lan_On", 127);
+	GiveInventory("LanternLive", 1);
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Your lantern's light flickers back to life!";
+	HUDMSG_FADEOUT, 1, CR_WHITE, 1.5, 0.85, 6.5, 2.0);
+}
+
+Script 37 (void)
+{
+	ScriptCall("GenericScreenStuff", "PromptTutorial", "Tip_Stim");
+}
+
+Script 38 (void)
+{
+	SpawnSpot("Bong", 111, 0, 0);
+	Delay(10);
+	PlaySound(111, "Tome01", CHAN_BODY, 0.6);
+}
+
+Script 39 (void) //Duel Reward
+{
+	TeleportOther(123, 121, 0);
+	TeleportOther(120, 122, 0);
+}
+
+Script 40 (void)
+{
+	Delay(8);
+	PlaySound(126, "Subway05", CHAN_AUTO);
+	Thing_Activate(124);
+	SetActorState(125, "Active", 0);
+	Delay(20);
+	Thing_Deactivate(124);
+	SetActorState(125, "Spawn", 0);
+}
+
+Script 41 (void)
+{
+	LocalAmbientSound("Dive_01", 127);
+}
+
+Script 100 (void) //Dee-bug
+{
+	ChangeActorPitch(0, 0.25);
+	SetWeapon("Trenchgun");
+	GiveInventory("ShotgunAmmo", 15);
+	GiveInventory("ShellLoaded", 8);
+	Delay(23);
+	ScriptCall("DFPlayer", "QuietLand", TRUE);
+	Light_ChangeToValue(79, 0);
+	Teleport_NoFog(12, 1, 31);
+	GiveInventory("LanternKill", 1);
+	GiveInventory("StimRefill", 1);
+	GiveInventory("BaseArmor", 200);
+	SetLineTexture(76, SIDE_FRONT, TEXTURE_MIDDLE, "-");
+	Thing_Deactivate(75);
+	Thing_Remove(33);
+	Thing_Remove(40);
+	Delay(22);
+	ChangeCamera(0, 1, 0);
+	FadeTo(0, 0, 0, 0.0, 1.0);
+}
+
+Script "Light_Flash" (int level)
+{
+	if(level == 0)
+	{
+		Light_Stop(63);
+		Light_Stop(64);
+		Delay(1);
+		Light_ChangeToValue(63, 136);
+		Light_ChangeToValue(64, 168);
+		Delay(1);
+		Light_Fade(63, 0, 105);
+		Light_Fade(64, 136, 105);
+	}
+	else if(level == 1)
+	{
+		Light_Stop(63);
+		Light_Stop(64);
+		Delay(1);
+		Light_ChangeToValue(63, 0);
+		Light_ChangeToValue(64, 136);
+		Delay(1);
+		Light_Fade(63, 136, 25);
+		Light_Fade(64, 168, 25);
+	}
+	else if(level == 2)
+	{
+		SetActorState(100, "Spawn", FALSE);
+		Delay(14);
+		SetActorState(65, "Spawn", FALSE);
+	}
+	else if(level == 3)
+	{
+		Light_Stop(63);
+		Light_Stop(64);
+		Delay(1);
+		Light_ChangeToValue(63, 152);
+		Light_ChangeToValue(64, 184);
+		Delay(1);
+		Light_Fade(63, 0, 175);
+		Light_Fade(64, 136, 175);
+	}
+	else if(level == 4)
+	{
+		Light_Stop(63);
+		Light_Stop(64);
+		Delay(1);
+		Light_ChangeToValue(63, 160);
+		Light_ChangeToValue(64, 192);
+		Delay(1);
+		Light_Fade(63, 0, 175);
+		Light_Fade(64, 136, 175);
+		Delay(20);
+		SetActorState(100, "Spawn", FALSE);
+	}
+}
+
+Script "Duel_Exit" (void)
+{
+	ACS_Terminate(12, 0);
+	FadeTo(0, 0, 0, 1.0, 0.0);
+	SetPlayerProperty(0, 1, PROP_TOTALLYFROZEN);
+	ChangeCamera(129, 0, 0);
+	Teleport_NoFog(130, 1, 0);
+	TakeInventory("Duel_Prep", 1);
+	SetMusic("D_NULL");
+	LocalAmbientSound("DuelExit", 96);
+	Thing_Remove(32);
+	Thing_Remove(120);
+	Thing_Remove(123);
+	Delay(35*3);
+	Teleport_NoFog(39, 1, 0);
+	ChangeCamera(0, 0, 0);
+	FadeTo(0, 0, 0, 0.0, 4.0);
+	SetPlayerProperty(0, 0, PROP_TOTALLYFROZEN);
+	//Cleanup
+	SetLineTexture(91, SIDE_FRONT, TEXTURE_MIDDLE, "M_TILE05");
+	Line_SetBlocking(91, BLOCKF_EVERYTHING, 0);
+	Thing_Deactivate(34);
+	Thing_Remove(33);
+	Thing_Remove(40);
+}
+
+Script "Duel_PowerTip" (void)
+{
+	SetFont (const:"ACS_FONT");
+	HudMessage(s:"Empowered Shots bypass damage resistance.";
+	HUDMSG_FADEINOUT, 1, CR_WHITE, 1.5, 0.85, 4.5, 1.0, 1.0);
+	Delay(35*60);
+}

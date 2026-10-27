@@ -1,0 +1,108 @@
+974Q
+^64U
+^64U
+^64U
+SPTRX
+SNAM4
+Light_Flash
+Duel_Exit
+Duel_PowerTip
+STRL0
+dev_debug
+Autosave
+D_NULL
+DFPlayer
+MusicFade
+ACS_FONT
+You are awakened in a lower depth.
+SetObjective
+$Obj_02
+M1_ChampDead
+MP1_C4
+Subway03
+M_TILE05
+No response...
+GenericScreenStuff
+PromptTutorial
+Tip_DuelHelp
+Duel01
+You begin to submerge into an otherworldly depth.
+Clean
+Submerging in complete blackness as your mind becomes the envoy between worlds.
+MP1_BOSS
+Inside the depth, you see a great storm in the darkness...
+Thunder0
+Quiet your mind and brace for the oncoming waves.
+Trenchgun
+ShotgunAmmo
+PistolAmmo
+Duel_Prep
+QuietLand
+LanternKill
+PhyOrigin
+Tip_DuelPhy
+StrToken
+Tip_DuelStr
+Key_Subway
+Unlock5
+Unlocked.
+Spin
+Locked04
+The door is locked...
+Saver
+DoorTP1
+DoorTP2
+MP1_C2
+MP1_C3
+DoorTP7
+CLIMB
+pl_fall
+LowZone
+HighZone
+Champion
+Boss01b
+LanternLive
+GiveExaltation
+Subway01
+Clear
+SetHud
+TrainOut
+Locked02
+Stuck...
+ADB_Cook
+Your persistence may give way to a knowledge few mortals can handle...
+Almost there...
+Peel
+An all-powerful weapon of limitless destruction has spawned near the bed.
+SBWLite1
+SBWLite2
+SBWLite3
+WitToken
+DetectAmbush
+MailboxToken
+Shell
+MailBye
+Death
+Something is blocking the door from the other side...
+Locked01
+The door is locked from the other side...
+Unlock1
+Moodcandle
+Moodcandle2
+SBWLite4
+AlphaDrain
+Lan_On
+Your lantern's light flickers back to life!
+Tip_Stim
+Bong
+Tome01
+Subway05
+Active
+Spawn
+Dive_01
+ShellLoaded
+StimRefill
+BaseArmor
+DuelExit
+Empowered Shots bypass damage resistance.
+ACSe(

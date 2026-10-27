@@ -1,0 +1,115 @@
+974k
+9742
+SPTR
+SNAM\
+Init
+Blink_Light
+Lego1
+Lego2
+Lego3
+Lego4
+Lego5
+Lego6
+STRL
+Death
+Swarm
+SOLID
+Dev_Debug
+GenericScreenStuff
+Clean
+Autosave
+DoorTP8
+Gary/Active
+PromptTutorial
+Sprint
+Reset
+GaryEvasion
+Crusher1
+Crush
+DSEMPTY
+ACS_FONT
+Electrifying Containment Field deactivated.
+GaryEnergyBurst
+Electrifying Containment Field deployed.\n
+ out of 4 charges available.
+Insufficient charge.
+Tip_Parry
+WHITE
+Lan_Die
+LanternKill
+Your lantern's light flickers and fades away...
+Bouncing_Light
+Giant
+Activate
+Flip
+Gary
+DFPlayer
+MusicFade
+CrushGoreCeil
+D_NULL
+BigMetalGate
+HighZone
+HighZ01
+HighZ02
+LowZone
+Elev_01
+Gen_Sw03
+Elev_02
+M01_E01
+M01_E02
+EV_Bump1
+M01_E03
+M01_E04
+EV_Bump2
+EV_Bump3
+EV_Bump4
+EV_Bump5
+MP1_C1
+Anom_04
+Lego1
+Lego2
+Lego3
+Lego4
+Lego5
+Lego6
+SetLocation
+59'0''N 43
+59'0''W
+Null0d La5ds6ape: 07
+51'0''N 3!
+^4'0''W\nA7om0l1us 0ct2vity: \cGH1z6rd7us
+Nu1led 3and7ca0e: $4
+2%'!''N @8
+*1'0''W\nAn-1alo3s A*t14v0ty: \cG-az4rd0us
+N10led La9ds0a1e: 43
+0'59''N 39
+0'59''W\nAn3m8l-us -c6iv2ty: \cG01za10dou8
+Nulled Landscape: 39
+59'0''N 43
+59'0''W\nResonance Proximity: \cGCritical
+Mannequin4
+Mannequin5
+HeadLiving
+RotHead4
+HeadLiving2
+HeadLiving3
+M1_Wake3
+Shore00
+M1_Wake4
+SHBeat01
+Creep
+A Transcended Anomaly is near.\nEncounter Type: Exploit
+Vision01
+PulseShaderHit
+dsempty
+Vision02
+SetHUD
+Vision03
+3 7 5 0 0 | 3 6 5 0 0
+Vision04
+WitOrigin
+BagUpgrade
+Cage02
+Cage01
+MINI
+ACSe

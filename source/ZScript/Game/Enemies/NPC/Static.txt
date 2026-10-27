@@ -1,0 +1,698 @@
+//MAP01 //////////////////////////
+Class ActorDudeBro : Actor
+{
+  Default
+  {
+    //$Category "NPC"
+	//$Color 1
+	XScale 0.72;
+	YScale 0.6;
+    Radius 23;
+	Height 100;
+	+CASTSPRITESHADOW
+    +SOLID
+  }
+  States
+  {
+    Spawn:
+	  ADBR A -1;
+	  Stop;
+  }
+}
+
+Class Apple : Actor //Yummy
+{
+  Default
+  {
+    Scale 0.4;
+    +FORCEXYBILLBOARD
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  APLE A -1;
+	  Stop;
+  }
+}
+
+Class BloodSkull : Actor
+{
+  Default
+  {
+    //$Category "Enemies/Heavy"
+	Radius 70;
+	Height 295;
+	XScale 3.0;
+	YScale 3.6;
+	FloatBobStrength 0.5;
+	+FLOATBOB
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  0000 A -1;
+	  Stop;
+	See:
+	  0000 A 0 A_SetRenderStyle(1.0, STYLE_Normal);
+	  0000 A -1;
+	  Stop;
+  }
+}
+
+Class Egg : Actor
+{
+  Default
+  {
+    //$Category "NPC"
+	//$Color 1
+	Scale 0.5;
+    Radius 5;
+	Height 15;
+    +SOLID
+  }
+  States
+  {
+    Spawn:
+	  EGGO A -1;
+	  Stop;
+  }
+}
+
+Class Egg_DT_Giver : Actor
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  pmo.A_GiveInventory("DT1", 1);
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+}
+
+Class Egg_DR_Giver : Actor
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  pmo.A_GiveInventory("DR1", 1);
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+}
+
+Class Egg_PHY_Giver1 : Actor
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	let pmo = players[consoleplayer].mo;
+	if(pmo)
+	{
+	  DFPlayer(pmo).armor_flat += 10;
+	  DFPlayer(pmo).armor_mult += 0.6;
+	  DFPlayer(pmo).armorMax += 10;
+	  DFPlayer(pmo).armorStack = DFPlayer(pmo).armorMax;
+	  DFPlayer(pmo).armor_str = String.Format("PT: %d | PR: %d", DFPlayer(pmo).armor_flat, int(round(DFPlayer(pmo).armor_mult * 100.0))) .. "%";
+	}
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+}
+
+Class Box_NPC : Actor
+{
+  double def_ang;
+  vector3 def_pos;
+  
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	def_ang = angle;
+	def_pos = pos;
+  }
+  
+  Default
+  {
+    DamageFactor 0.0;
+	Radius 16;
+	Height 47;
+	Scale 1.3;
+	+CANPASS
+	+DONTTHRUST
+	+NOBLOOD
+	+NOBLOODDECALS
+	+NOGRAVITY
+	+SHOOTABLE
+	+SOLID
+  }
+  States
+  {
+    Spawn:
+	  0000 A -1;
+	  Stop;
+	Panic:
+	  0000 A random(1,2)
+	  {
+	    A_SetAngle(def_ang + random(-5,5));
+		SetOrigin(def_pos + (random(-4,4), random(-4,4), 0), TRUE);
+	  }
+	  Wait;
+  }
+}
+
+Class CeremonyVial : Actor
+{
+  Default
+  {
+    +NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  CVIL A -1;
+	  Stop;
+	Activate:
+	  CVIL AAAA 1
+	  {
+	    for(int i = 0; i < 2; i++)
+		  A_SpawnItemEx("GasAmmoSmoke", frandom(-8.0, 8.0), frandom(-8.0, 8.0), frandom(-8.0, 8.0), frandom(-0.2,0.2), frandom(-0.2,0.2), frandom(-0.2,0.2));
+	  }
+	  CVIL A 1
+	  {
+	    A_SpawnItemEx("GasAmmoBubble", random(-12,12), random(-12,12), random(4,16), zvel: frandom(0.5,1.0));
+		for(int i = 0; i < 2; i++)
+		  A_SpawnItemEx("GasAmmoSmoke", frandom(-8.0, 8.0), frandom(-8.0, 8.0), frandom(-8.0, 8.0), frandom(-0.2,0.2), frandom(-0.2,0.2), frandom(-0.2,0.2));
+	  }
+	  Loop;
+  }
+}
+
+Class CeremonyVial_FX : Actor
+{
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	let pmo = players[consoleplayer].mo;
+	if(pmo)
+	{
+      pmo.GiveBody(100, 100);
+	  pmo.A_GiveInventory("Stamina", 600);
+	  pmo.A_GiveInventory("TonicHealFX", 1);
+	  pmo.A_StartSound("StimUse4", CHAN_AUTO);
+	  pmo.A_SetBlend(Color(173, 216, 230), 0.37, 52, Color(173, 216, 230), 0.0);
+	}
+  }
+  Default
+  {
+    +NOINTERACTION
+  }
+}
+
+Class HighAxeGuy : PsychoAxe
+{
+  Default
+  {
+    //$Category "Enemies/Scripted"
+  }
+  States
+  {
+    Spawn:
+      ZM1I A -1; 
+	  Stop;
+  }
+}
+
+Class HighPipeGuy : PsychoPipe
+{
+  Default
+  {
+    //$Category "Enemies/Scripted"
+  }
+  States
+  {
+    Spawn:
+      ZM2I A -1; 
+	  Stop;
+  }
+}
+
+Class JumpScareAxeGuy : PsychoAxe
+{
+  Default
+  {
+    //$Category "Enemies/Scripted"
+	SeeSound "";
+  }
+  States
+  {
+    Spawn:
+	  ZM1I A 4 A_LookEx(label: "Creep");
+	  Wait;
+    Creep:
+      ZM1I A 4 A_JumpIfInTargetLOS("ReadySee", 90);
+	  Wait;
+	ReadySee:
+	  ZM1I AA 7 A_FaceTarget();
+	  Goto See;
+  }
+}
+
+Class LanternNPC : Actor
+{
+  Default
+  {
+    Radius 6;
+	Height 24;
+	XScale 0.4;
+	YScale 0.33;
+  }
+  States
+  {
+    Spawn:
+	  LNTR A -1;
+	  Stop;
+  }
+}
+
+Class Mailbox : ModelBase
+{
+  void SpawnAmmo(string type)
+  {
+    int velx = random(5,6);
+	double vely = frandom(-1.0,1.0);
+	Vector3 iVel = (velx * cos(angle) + vely * sin(angle) , velx * sin(angle) - vely * cos(angle), random(4,5));
+	let itm = Spawn(type, pos);
+	if(itm)
+	{
+	  itm.A_SetRenderStyle(0.0, STYLE_TRANSLUCENT);
+	  itm.vel = iVel;
+	  itm.A_GiveInventory("AlphaReset", 1);
+	}
+  }
+  
+  Default
+  {
+	Radius 21;
+	Height 73;
+	Scale 1.3;
+	+SHOOTABLE
+	+CANPASS
+	+SOLID
+	+NOBLOOD
+	+NOBLOODDECALS
+	+DONTTHRUST
+	+DONTFACETALKER
+  }
+  States
+  {
+    Talk:
+	  0000 A 0
+	  {
+	    if(players[consoleplayer].mo)
+		  angle = AngleTo(players[consoleplayer].mo);
+	  }
+	  0000 A -1;
+	  Stop;
+    HT:
+	  0000 A 0 SpawnAmmo("HTMag");
+	  Goto Spawn;
+	AP:
+	  0000 A 0 SpawnAmmo("APMag");
+	  Goto Spawn;
+	Shell:
+	  0000 A 0 SpawnAmmo("ShellMag");
+	  Goto Spawn;
+  }
+}
+
+Class Spray_NPC : Actor
+{
+  Default
+  {
+    XScale 0.3;
+	YScale 0.25;
+	-FORCEXYBILLBOARD
+  }
+  States
+  {
+    Spawn:
+	  AURP B -1;
+	  Stop;
+  }
+}
+
+Class Terminal : ModelBase
+{
+  Default
+  {
+    Radius 12;
+	Height 25;
+	+DONTFACETALKER
+  }
+  States
+  {
+    Spawn:
+	  0000 A -1;
+	  Stop;
+	Off:
+	  0000 B -1;
+	  Stop;
+  }
+}
+
+Class Train_Ticket : InventoryItem
+{
+  Default
+  {
+	Radius 16;
+	Height 4;
+	XScale 0.1;
+	YScale -0.1;
+	Tag "Train Ticket";
+    +NOGRAVITY
+	+FLATSPRITE
+  }
+  States
+  {
+	Spawn:
+	  TIKT B -1;
+	  Stop;
+	Pickup:
+	  TNT1 A -1;
+	  Fail;
+  }
+}
+
+Class HTPass : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+  }
+}
+
+Class APPass : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+  }
+}
+
+Class ShellPass : Inventory
+{
+  Default
+  {
+    Inventory.Amount 1;
+	Inventory.MaxAmount 1;
+  }
+}
+
+////////////////MAP02
+Class Astronaut : Actor
+{
+  Default
+  {
+    //$Category "NPC"
+	//$Color 1
+    Radius 27;
+	Height 105;
+	XScale 0.6;
+	YScale 0.5;
+	RenderStyle "Translucent";
+	FloatBobStrength 0.25;
+    +SOLID
+	+FLOATBOB
+	-SHOOTABLE
+	+NOGRAVITY
+  }
+  States
+  {
+    Spawn:
+	  ASTR A random(280, 700);
+	  TNT1 A 1;
+	  ASTR A 1;
+	  TNT1 A 1;
+	  ASTR A 1;
+	  TNT1 A 2;
+	  ASTR A 2;
+	  TNT1 A 3;
+	  Loop;
+  }
+}
+
+Class Bob_01 : Actor
+{
+  bool acs;
+  int lookTime;
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  target = pmo;
+  }
+  override void Tick()
+  {
+    Super.Tick();
+	
+	if(CheckIfInTargetLOS(90))
+	  lookTime++;
+	  
+	if(lookTime > 80)
+	  A_FadeOut(0.05);
+	  
+	if(alpha <= 0.05 && !acs)
+	{
+	  acs = true;
+	  ACS_NamedExecute("AlienGrow");
+	}
+  }
+  Default
+  {
+    RenderStyle "Translucent";
+    YScale 0.83;
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+	  RGD1 PONMLKJIHGFEDCBA 3;
+	  Loop;
+  }
+}
+
+Class Bob_02 : Bob_01
+{
+  Default
+  {
+    FloatBobStrength 0.3;  
+    +FLOATBOB
+  }
+  States
+  {
+    Spawn:
+	  RGD2 A -1;
+	  Stop;
+  }
+}
+
+Class Bob_03 : Bob_02
+{
+  Default
+  {
+    XScale 2.4;
+    YScale 2.0;
+  }
+  States
+  {
+    Spawn:
+	  RGD3 A -1;
+	  Stop;
+  }
+}
+
+Class Bob_04 : Bob_01
+{
+  Default
+  {
+    XScale 3.6;
+    YScale 3.0;
+  }
+  States
+  {
+    Spawn:
+	  RGD4 A 1 A_SpriteOffset(frandom(-2.0,2.0), frandom(-2.0,2.0));
+	  Wait;
+  }
+}
+
+Class Bob_05 : Actor
+{
+  bool acs;
+  override void PostBeginPlay()
+  {
+    Super.PostBeginPlay();
+	
+	let pmo = players[consoleplayer].mo;
+	if(pmo)
+	  target = pmo;
+  }
+  override void Tick()
+  {
+    Super.Tick();
+	
+	A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFB0"), STYLE_Normal, SPF_FULLBRIGHT|SPF_RELATIVE, 175, 64, 0,
+	128, 256, 0, 0, 0, 24);
+	A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFB0"), STYLE_Normal, SPF_FULLBRIGHT|SPF_RELATIVE, 175, 64, 0,
+	128, -256, 0, 0, 0, 24);
+	A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFB0"), STYLE_Normal, SPF_FULLBRIGHT|SPF_RELATIVE, 175, 64, 0,
+	384, 450, 0, 0, 0, 24);
+	A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFB0"), STYLE_Normal, SPF_FULLBRIGHT|SPF_RELATIVE, 175, 64, 0,
+	384, -450, 0, 0, 0, 24);
+	
+	if(GetAge() % 4 == 0)
+	{
+	  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFB0"), STYLE_Normal, SPF_FULLBRIGHT|SPF_RELATIVE, 175, 64, 0,
+	  256, -353, 0, 0, 0, 24);
+	  A_SpawnParticleEx("FFFFFF", TexMan.CheckForTexture("EXPFB0"), STYLE_Normal, SPF_FULLBRIGHT|SPF_RELATIVE, 175, 64, 0,
+	  256, 353, 0, 0, 0, 24);
+	}
+  }
+  Default
+  {
+    XScale 4.8;
+    YScale 4.0;
+  }
+  States
+  {
+    Spawn:
+	  RGD5 A 1;
+	  RGD5 B random(0,1);
+	  RGD5 C 1;
+	  Loop;
+  }
+}
+
+Class Fridge_NPC : Fridge {}
+
+Class GoatDemon : Actor
+{
+  Default
+  {
+    //$Category "NPC"
+	//$Color 1
+    Radius 27;
+	Height 105;
+	XScale 0.96;
+	YScale 0.8;
+	Alpha 0.0;
+	RenderStyle "Translucent";
+	FloatBobStrength 0.1;
+	+CASTSPRITESHADOW
+    -SOLID
+	+FLOATBOB
+	-SHOOTABLE
+	+NOGRAVITY
+  }
+  States
+  {
+    Spawn:
+	  GOAT BCDEFGHIJKLMNOPQRST 2;
+	  GOAT UA 1;
+	  Loop;
+	Ready:
+	  TNT1 A 0
+	  {
+	    A_GiveInventory("AlphaReset", 1);
+		//A_StartSound("Wing01", CHAN_AUTO, attenuation: 0.3);
+	  }
+	  Goto Spawn;
+  }
+}
+
+Class Skull8 : Actor
+{
+  Default
+  {
+    //$Category "NPC"
+	//$Color 1
+	Scale 0.4;
+	Radius 8;
+	Height 15;
+	+NOINTERACTION
+  }
+  States
+  {
+    Spawn:
+      MIND A -1;
+	  Stop;
+  }
+}
+
+Class Waiter_Light : Actor
+{
+  Default
+  {
+    Radius 4;
+    Height 8;
+	+NOINTERACTION
+  }
+  
+  States
+  {
+    Spawn:
+	  0000 A -1;
+	  Stop;
+	On:
+	  0000 B -1;
+	  Stop;
+	Off:
+	  0000 A -1;
+	  Stop;
+  }
+}
+
+Class Waiter : Actor
+{
+  Default
+  {
+    //$Category "NPC"
+	//$Color 1
+    Radius 38;
+	Height 101;
+	XScale 0.72;
+	YScale 0.6;
+    +SOLID
+	-SHOOTABLE
+  }
+  States
+  {
+    Spawn:
+	  DPOL A -1;
+	  Stop;
+	Ready:
+	  DPOL B -1;
+	  Stop;
+  }
+}

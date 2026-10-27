@@ -1,0 +1,314 @@
+#include "zcommon.acs"
+
+Script "Init" ENTER
+{
+	if(GetUserCVar(0, "dev_debug") == 0)
+	{
+		Delay(1);
+		ScriptCall("GenericScreenStuff", "Clean");
+		SetPlayerProperty(0, 1, 4);
+		ChangeCamera(206, 1, 0);
+		FadeTo(0, 0, 0, 1.0, 0.0);
+		Delay(35*5);
+		LocalAmbientSound("HBeat02", 64);
+		SetFont(const:"ACS_FONT");
+		HudMessage(s:"A new path has been opened for you.";
+		HUDMSG_FADEINOUT, 2, CR_WHITE, 1.5, 0.5, 4.0, 1.0, 2.0);
+		Delay(35*8);
+		ChangeCamera(0, 1, 0);
+		Teleport_NoFog(207, 1, 0);
+		FadeTo(0, 0, 0, 0.0, 4.0);
+		GiveInventory("HighZone", 1);
+		Delay(35*4);
+		SetPlayerProperty(0, 0, 4);
+	}
+}
+
+Script "Return" RETURN
+{
+	ScriptCall("DFPlayer", "SetLocation", "Buried Level");
+	ChangeCamera(206, 1, 0);
+	FadeTo(0, 0, 0, 1.0, 0.0);
+	SetPlayerProperty(0, 1, 4);
+	Delay(1);
+	LocalAmbientSound("Elev_TP", 127);
+    Delay(35);
+    Teleport_NoFog(210, 1, 210);
+    SetActorPitch(0, 0);
+    SetMusic("D_NULL");
+    Delay(35*2);
+	ChangeCamera(0, 1, 0);
+    fadeto(0, 0, 0, 0.0, 0.5);
+    SetPlayerProperty(0, 0, 4);
+	ScriptCall("DFPlayer", "SetMap", "Data Not Found");
+    Delay(35*3);
+    Polyobj_Move(78, 10, 128, 60);
+    LocalAmbientSound("Elev_03", 127);
+    ScriptCall("DFPlayer", "MusicFade", 1.0, 0.0);
+}
+
+Script 01 (void)
+{
+    Thing_Activate(100);
+    Thing_Deactivate(101);
+    Delay(35);
+    Thing_Deactivate(100);
+    Thing_Activate(101);
+    Delay(35);
+    Restart;
+}
+
+Script 02 (void)
+{
+	SetLineSpecial(10, 0, 0);
+	Light_Fade(11, 0, 128);
+	Delay(10);
+}
+
+Script 03 (void)
+{
+	LocalAmbientSound("DoorTP9", 127);
+	SetPlayerProperty(1,1,0);
+	SetActorProperty(0, APROP_Invulnerable, TRUE);
+	FadeTo(0, 0, 0, 1.0, 0.5);
+	Delay(20);
+	Teleport_NoFog(209, 1, 0);
+	Delay(15);
+	LocalAmbientSound("DoorTP14",127);
+	FadeTo(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+	SetActorProperty(0, APROP_Invulnerable, FALSE);
+}
+
+Script 04 (void)
+{
+	LocalAmbientSound("DoorTP9", 127);
+	SetPlayerProperty(1,1,0);
+	SetActorProperty(0, APROP_Invulnerable, TRUE);
+	FadeTo(0, 0, 0, 1.0, 0.5);
+	Delay(20);
+	Teleport_NoFog(15, 1, 0);
+	Delay(15);
+	LocalAmbientSound("DoorTP14",127);
+	FadeTo(0, 0, 0, 0.0, 0.5);
+	SetPlayerProperty(1,0,0);
+	SetActorProperty(0, APROP_Invulnerable, FALSE);
+}
+
+Script 10 (void) //Power-on
+{
+	Thing_Deactivate(10);
+	Thing_Deactivate(93);
+	Thing_Activate(8);
+	Thing_Activate(11);
+	Polyobj_Move(79, 10, 0, 60);
+	Delay(4);
+	Thing_Deactivate(8);
+	Delay(4);
+	AmbientSound("PowerOn1", 64);
+	Delay(4);
+	Thing_Activate(8);
+	Delay(5);
+	Thing_Activate(94);
+	Delay(5);
+	Thing_Activate(95);
+	Delay(5);
+	Thing_Activate(97);
+	Thing_Deactivate(8);
+	Delay(3);
+	Thing_Activate(8);
+	Light_ChangeToValue(210, 136);
+	Light_ChangeToValue(98, 152);
+
+	Thing_Remove(355);
+	Thing_Remove(388);
+	SetLineSpecial(42, 80, 39);
+
+	//Light up the place
+	ACS_Execute(1, 0);
+	Thing_Activate(1);
+	Thing_Deactivate(4);
+	Light_ChangeToValue(3, 152);
+
+	SetFont (const:"ACS_FONT");
+    HudMessage(s:"Backup Power online.";
+    HUDMSG_PLAIN, 1, CR_WHITE, 1.5, 0.85, 5.0);
+}
+
+Script 26 (void) //Mall TP
+{
+	SetLineSpecial(17, 80, 3);
+	LocalAmbientSound("DoorTP9", 127);
+	SetPlayerProperty(1,1,0);
+	SetActorProperty(0, APROP_Invulnerable, TRUE);
+	FadeTo(0, 0, 0, 1.0, 0.5);
+	Delay(20);
+	Teleport_NoFog(209, 1, 209);
+	Delay(15);
+	Sector_SetColor(7, 49, 69, 102, 0);
+	GiveInventory("LowZone", 1);
+	LocalAmbientSound("DoorTP14",127);
+	Thing_Activate(275);
+	SetMusic("D_NULL");
+	Thing_Activate(211);
+	ScriptCall("DFPlayer", "MusicFade", 1.0, 0.0);
+	FadeTo(0, 0, 0, 0.0, 0.5);
+	ScriptCall("Saver", "Autosave", TRUE);
+	ScriptCall("DFPlayer", "SetHUD", TRUE);
+	SetPlayerProperty(1,0,0);
+	SetActorProperty(0, APROP_Invulnerable, FALSE);
+	Thing_Remove(163);
+}
+
+Script 27 (void) //Chicken reveal
+{
+	Thing_SetConversation(345, 0);
+	SetLineSpecial(344, 0);
+	LocalAmbientSound("Funny01", 104); //217 delay before move
+	Delay(86);
+	LocalAmbientSound("Funny02", 127);
+	ACS_Execute(30, 0);
+	Delay(128);
+	Thing_Activate(219);
+	Scroll_Wall(214, 0.0, 2.0, 0, 2);
+	Scroll_Wall(216, 0.0, -2.0, 0, 2);
+	Scroll_Wall(217, 1.0, 0.0, 0, 2);
+	Scroll_Wall(218, -1.0, 0.0, 0, 2);
+	Floor_RaiseByValue(213, 3, 54);
+	Ceiling_LowerByValue(213, 3, 54);
+	Floor_LowerByValue(96, 4, 70);
+	Ceiling_RaiseByValue(96, 4, 70);
+	Delay(140);
+	Thing_Deactivate(219);
+	PlaySound(220, "GateStop", CHAN_AUTO, 1.0, FALSE, 0.5);
+	Scroll_Wall(214, 0.0, 0.0, 0, 2);
+	Scroll_Wall(216, 0.0, 0.0, 0, 2);
+	Scroll_Wall(217, 0.0, 0.0, 0, 2);
+	Scroll_Wall(218, 0.0, 0.0, 0, 2);
+	QuakeEx(0, 2, 2, 2, 17, 0, 500, "DSEMPTY");
+
+	Delay(140);
+	PlaySound(225, "Freezer1", CHAN_AUTO, 0.8, FALSE, 0.5);
+	PlaySound(219, "AirHiss", CHAN_AUTO, 0.8, FALSE, 0.5);
+	Floor_LowerByValue(221, 2, 32);
+	Ceiling_RaiseByValue(221, 2, 32);
+	Delay(4);
+	SpawnSpotFacing("Condensation", 220, 999);
+	ACS_Execute(29, 0);
+	for(int i = 0; i < 120; i++)
+	{
+		Light_ChangeToValue(224, i);
+		Delay(1);
+	}
+	SpawnSpot("EyemarkDistance", 6, 6, 0);
+}
+
+Script 28 (int choice) //Chicken Stuff
+{
+	if(choice == 0) //Player takes chicken
+	{
+
+	}
+	else //Player Eats chicken
+	{
+
+	}
+	SetLineSpecial(227, 0, 0, 0, 0, 0, 0);
+	SetLineSpecial(232, 80, 31);
+	Thing_Deactivate(6);
+	Thing_Remove(226);
+}
+
+Script 29 (void)
+{
+	Delay(80);
+	SetLineSpecial(227, 18, 226, 1);
+}
+
+Script 30 (void)
+{
+	Thing_Deactivate(229);
+	for(int i = 0; i < 120; i++)
+	{
+		Light_LowerByValue(228, 1);
+		Delay(1);
+	}
+	Delay(35);
+	Light_RaiseByValue(228, 120);
+	Delay(2);
+	Light_LowerByValue(228, 120);
+	Delay(1);
+	Light_RaiseByValue(228, 120);
+	Delay(2);
+	Light_LowerByValue(228, 120);
+	Delay(1);
+	Light_RaiseByValue(228, 120);
+	Thing_Activate(229);
+}
+
+Script 31 (void) //Fucking with the player, flicker
+{
+	ClearLineSpecial();
+	LocalAmbientSound("Buzz1", 127);
+	Thing_Deactivate(229);
+	Thing_Remove(999);
+	Light_LowerByValue(228, 120);
+	Delay(2);
+	Light_RaiseByValue(228, 120);
+	Delay(2);
+	Light_LowerByValue(228, 120);
+	Delay(1);
+	Light_RaiseByValue(228, 120);
+	Delay(2);
+	Light_LowerByValue(228, 120);
+	Delay(3);
+	Light_RaiseByValue(228, 120);
+	Delay(2);
+	Light_LowerByValue(228, 120);
+	Delay(35*2);
+	PlaySound(354, "Funny03", CHAN_AUTO, 0.7);
+	Delay(5);
+	Light_RaiseByValue(228, 120);
+	Delay(2);
+	Light_LowerByValue(228, 120);
+	Delay(1);
+	Light_RaiseByValue(228, 120);
+	Delay(2);
+	Light_LowerByValue(228, 120);
+	FadeTo(0, 0, 0, 1.0, 0.0);
+	Delay(1);
+	Light_RaiseByValue(228, 120);
+	Thing_Activate(229);
+	FadeTo(0, 0, 0, 0.0, 0.5);
+}
+
+Script 32 (int tag) //Elevator ride to Lower Levels and Mall
+{
+	SetLineSpecial(237, 0);
+	Line_SetBlocking(2, BLOCKF_CREATURES, 0);
+	Delay(35);
+	ScriptCall("DFPlayer", "MusicFade", 0.0, 70.0);
+	Polyobj_Move(78, 10, 0, 60);
+	LocalAmbientSound("Elev_02", 127);
+	Delay(80);
+	fadeto(0, 0, 0, 1.0, 0.5);
+	Delay(20);
+	//SetPlayerProperty(0, 1, 4);
+	SetLineSpecial(237, 18, 238);
+	Line_SetBlocking(2, 0, BLOCKF_CREATURES);
+	Delay(1);
+	Teleport_NewMap(6, 1, 0);
+}
+
+Script 39 (void)
+{
+    ClearLineSpecial();
+	LocalAmbientSound("PA_01", 127);
+}
+
+Script 64 (void)
+{
+	Ceiling_RaiseByValue(346, 8, 146);
+	//Thing_SetConversation(347, 0);
+	SetLineSpecial(348, 0);
+}

@@ -1,0 +1,1168 @@
+class InventoryMenu : UIGenericMenu //Please don't ever copy this hacky mess lmfao. Dict tape and strings galore
+{
+	Font fnt;
+	PlayerPawn pmo;
+	InventoryMenuHandler handler;
+	Array<CustomInventoryItem> healItems, toolItems, skillItems;
+	Array<UIButton> healBtnHolder, toolBtnHolder, skillBtnHolder, allBtnHolder;
+	Array<UIImage> healIcon, toolIcon, skillIcon;
+	
+	int fntColor, hItemX, hItemY, tItemX, tItemY, sItemX, sItemY, strCount, witCount, endCount, maxInv, EPTimer;
+	String conTitle, bindItem;
+	double flashAlpha;
+	
+	//Repair
+	UIButton rHG, rSG, rSP, rAR;
+	bool hasWpn; //Prevent vm crash and having to actually use my brain
+	
+	 //Confirmation
+    string upg_command;
+    bool confirm_wait;
+    UIButton btn_confirm, btn_cancel;
+    UIFrame confirm_box, confirm_bound;
+    UILabel confirm_msg;
+	
+	//Status
+	UIFrame UsagePrompt, ExtendedPrompt, BindingFrame, RepairPrompt;
+	UIButton epUse, epDrop, epBind;
+	UIBoxTextures epBtnTex, epBtnHover;
+	UIImage bnd1, bnd2, bnd3, bnd4;
+	UILabel itemName, itemText, itemEffect, subHead1, subHead2, subHead3, AtrText, CStateText, ObjectiveText, LocationName;
+	
+	string getKey(string keybind) 
+    {
+      Array<int> keyInts;
+      AutoMapBindings.GetAllKeysForCommand(keyInts, keybind);
+      return AutoMapBindings.NameAllKeys(keyInts, FALSE);
+    }
+
+	void DisplayStatus()
+	{
+		PlayerPawn pmo = players[consoleplayer].mo;
+		String Attribute = "";
+		String condText = "";
+		conTitle = String.Format("Consumables & Medications (%d/%d)", DFPlayer(pmo).invCur, DFPlayer(pmo).invMax);
+
+		if(DFPlayer(pmo).tox > DFPlayer(pmo).toxMax * 0.8)
+		  condText.AppendFormat("Toxin (Lethal)\n\cR-Suffer Periodic Damage\n-Impaired Movement\n-Impaired Aim\n\n");
+		else if(DFPlayer(pmo).tox >= DFPlayer(pmo).toxMax * 0.5)
+		  condText.AppendFormat("Toxin (Moderate)\n\cR-Impaired Aim\n\n");
+		
+		if(DFPlayer(pmo).rad > DFPlayer(pmo).radMax * 0.9)
+		  condText.AppendFormat("\cJRadiation (Lethal)\n\cR-Imminent Overload\n-Impaired Vision\n\n");
+		else if(DFPlayer(pmo).rad >= DFPlayer(pmo).radMax * 0.5)
+		  condText.AppendFormat("\cJRadiation (Moderate)\n\cR-Impaired Vision\n\n");
+		  
+		CStateText.setText(condText);
+
+		Attribute.AppendFormat("LEVEL %d Avatar:\n%s\n\nStrength: %d\nWits: %d\nPhysique: %d\n\n    Exaltation: %d\n    Mutation: %d\n    Psi. Attunement: %d/%d",
+		DFPlayer(pmo).level,
+		DFPlayer(pmo).title,
+		pmo.CountInv("StrToken"),
+		pmo.CountInv("WitToken"),
+		pmo.CountInv("PhyToken"),
+		pmo.CountInv("ExaltXP"),
+		pmo.CountInv("Mutation"),
+		DFPlayer(pmo).tune,
+		DFPlayer(pmo).tune_max
+		);
+		AtrText.setText(Attribute);
+
+		LocationName.setText(String.Format("Location: %s", DFPlayer(pmo).location));
+		ObjectiveText.setText(StringTable.Localize(DFPlayer(pmo).goal));
+	}
+	
+    override void Init(Menu parent)
+    {
+        Super.Init(parent);
+		pmo = players[consoleplayer].mo;
+		fnt = Font.GetFont("DF_FONT");
+		fntColor = Font.CR_White;
+		DontDim = true;
+		flashAlpha = 0.0;
+		handler = new("InventoryMenuHandler");
+        handler.menu = self;
+	
+        SetBaseResolution((720, 400));
+		SetBackgroundImage();
+		CreateMenuTabs();
+		
+		if(pmo)
+		{
+		  strCount = pmo.CountInv("StrToken");
+		  witCount = pmo.CountInv("WitToken");
+		  endCount = pmo.CountInv("PhyToken");
+		  maxInv = DFPlayer(pmo).invMax;
+		}
+		
+		allBtnHolder.Clear();
+		healItems.Clear();
+		toolItems.Clear();
+		skillItems.Clear();
+		healBtnHolder.Clear();
+		toolBtnHolder.Clear();
+		skillBtnHolder.Clear();
+		
+		for(Inventory item = DFPlayer(pmo).Inv; item != NULL; item = item.Inv)
+		{
+			if(item is "Consumable")
+			{
+				if(item.amount > 0)
+				{
+					for(int i = 0; i < item.Amount; i++)
+						healItems.Push(CustomInventoryItem(item));
+				}
+			}
+			else if(item is "Tool" || item is "KeyItem")
+			{
+				if(item.amount > 0)
+				{
+					for(int i = 0; i < item.Amount; i++)
+						ToolItems.Push(CustomInventoryItem(item));
+				}
+			}
+			else if(item is "Skill")
+			{
+				if(item.amount > 0)
+				{
+					for(int i = 0; i < item.Amount; i++)
+						skillItems.Push(CustomInventoryItem(item));
+				}
+			}
+		}
+		
+		//Draw the location header
+		let nameImg = UIImage(new("UIImage")).Create
+		(
+			(210, 32),
+			(300, 19),
+			"Graphics/Inventory Icon/Name.png",
+			UIImage.AlignType_Center
+		);
+		nameImg.Pack(mainframe);
+		
+		//Draw the location name
+		LocationName = new("UILabel").Create
+		(
+			(210, 32),
+			(300, 19),
+			text: "",
+			fnt: fnt,
+			alignment: UILabel.AlignType_Center,
+			wrap: false,
+			autoSize: false,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		LocationName.Pack(mainframe);
+		
+		//Draw the inventory name
+		itemName = new("UILabel").Create
+		(
+			(268, 64),
+			(212, 16),
+			text: "",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: false,
+			autoSize: false,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		itemName.Pack(mainframe);
+		
+		//Draw the inventory effect header
+		let itemEffectHeader = new("UILabel").Create
+		(
+			(268, 82),
+			(212, 16),
+			text: "\cDEffect:",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		itemEffectHeader.Pack(mainframe);
+		
+		//Draw the inventory effect
+		itemEffect = new("UILabel").Create
+		(
+			(268, 102),
+			(212, 120),
+			text: "",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.45,
+			textColor: fntColor
+		);
+		itemEffect.Pack(mainframe);
+		
+		//Draw the inventory Description header
+		let itemTextHeader = new("UILabel").Create
+		(
+			(268, 182),
+			(212, 16),
+			text: "Description:",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		itemTextHeader.Pack(mainframe);
+		
+		//Draw the inventory Description
+		itemText = new("UILabel").Create
+		(
+			(268, 202),
+			(212, 210),
+			text: "",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.45,
+			textColor: fntColor
+		);
+		itemText.Pack(mainframe);
+		
+		//Draw the Consumable Subheader///////////////////////////	
+		let cu = UIImage(new("UIImage")).Create((0,64), (256, 16), image: "Graphics/Inventory Icon/HeaderBar.png");
+		cu.Pack(mainframe);
+		
+		subHead1 = new("UILabel").Create
+		(
+			(4, 64),
+			(248, 16),
+			text: "",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		subHead1.Pack(mainframe);
+		
+		//Draw the item grid background
+		let hoverTexture = UIBoxTextures(new("UIBoxTextures")).createSingleTexture("Graphics/Inventory Icon/GridSelect.png", true);
+		if(healItems.Size() > 0)
+		{
+			hItemX = 0;
+			hItemY = 80;
+			
+			for(int i = 0; i < healItems.Size(); i++)
+			{
+				if(hItemX >= 256)
+				{
+					hItemX = 0;
+					hItemY += 32;
+				}
+				
+				UIImage itemIcon = UIImage(new("UIImage")).Create
+				(
+					(hItemX, hItemY),
+					(32, 32),
+					CustomInventoryItem(healItems[i]).invIcon,
+					UIImage.AlignType_Center,
+					imagescale: (0.5, 0.5)
+				);
+				itemIcon.Pack(mainframe);
+				healIcon.Push(itemIcon);
+				
+				String cmd = String.Format("%s:%s:%s:%d:%s:%s",
+				CustomInventoryItem(healItems[i]).invName,
+				CustomInventoryItem(healItems[i]).invText,
+				healItems[i].GetClassName(),
+				i,
+				CustomInventoryItem(healItems[i]).invLore,
+				"0"
+				);
+				
+				UIButton btn = UIButton(new("UIButton").Create
+				(
+					(hItemX, hItemY),
+					(32, 32),
+					cmdHandler: handler,
+					command: cmd,
+					//altcommand: "dropItem:" .. CustomInventoryItem(healItems[i]).GetClassName() .. ":" .. i .. ":" .. "1"
+					hover: hoverTexture
+				));
+				btn.Pack(mainframe);
+				healBtnHolder.Push(btn);
+				allBtnHolder.Push(btn);
+				
+				hItemX += 32;
+			}
+		}
+		
+		if(healItems.Size() <= 0)
+		{
+			hItemX = 0;
+			hItemY = 80;
+		}
+		
+		if(healItems.Size() < maxInv)
+		{
+		    for(int i = 0; i < maxInv - healItems.Size(); i++)
+		    {
+				if(hItemX >= 256)
+				{
+					hItemX = 0;
+					hItemY += 32;
+				}
+				
+				UIImage itemBG = UIImage(new("UIImage")).Create
+				(
+					(hItemX, hItemY),
+					(32, 32),
+					"Graphics/Inventory Icon/Grid.png",
+					UIImage.AlignType_Left
+				);
+				itemBG.Pack(mainframe);
+				
+				hItemX += 32;
+			}
+		}
+		
+		//Draw the Consumable Subheader///////////////////////////
+		tItemX = 0;
+	    tItemY = hitemY + 44;
+		  
+		let cm = UIImage(new("UIImage")).Create((0,tItemY), (256, 16), image: "Graphics/Inventory Icon/HeaderBar.png");
+		cm.Pack(mainframe);
+		
+		subHead2 = new("UILabel").Create
+		(
+			(4, tItemY),
+			(248, 16),
+			text: "Key Items",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		subHead2.Pack(mainframe);
+		
+		//Draw the item grid background
+		if(toolItems.Size() > 0)
+		{
+			tItemY += 16;
+			
+			for(int i = 0; i < toolItems.Size(); i++)
+			{
+				if(tItemX >= 256)
+				{
+					tItemX = 0;
+					tItemY += 32;
+				}
+				UIImage itemBG = UIImage(new("UIImage")).Create
+				(
+					(tItemX, tItemY),
+					(32, 32),
+					"Graphics/Inventory Icon/Grid.png",
+					UIImage.AlignType_Left
+				);
+				itemBG.Pack(mainframe);
+					
+				UIImage itemIcon = UIImage(new("UIImage")).Create
+				(
+					(tItemX, tItemY),
+					(32, 32),
+					CustomInventoryItem(toolItems[i]).invIcon,
+					UIImage.AlignType_Center,
+					imagescale: (0.5, 0.5)
+				);
+				itemIcon.Pack(mainframe);
+				toolIcon.Push(itemIcon);
+				
+				UIButton btn = UIButton(new("UIButton").Create
+				(
+					(tItemX, tItemY),
+					(32, 32),
+					cmdHandler: handler,
+					command: CustomInventoryItem(toolItems[i]).invName .. ":" .. CustomInventoryItem(toolItems[i]).invText .. ":" .. CustomInventoryItem(toolItems[i]).GetClassName() .. ":" .. i .. ":" .. CustomInventoryItem(toolItems[i]).invLore .. ":" .. "1",
+					hover: hoverTexture
+				));
+						
+				btn.Pack(mainframe);
+				toolBtnHolder.Push(btn);
+				allBtnHolder.Push(btn);
+				
+				tItemX += 32;
+			}
+		}
+		
+		//Draw the Skills stuff.!!!!
+		sItemX = 0;
+	    sItemY = tItemY + 44;
+		
+		let sm = UIImage(new("UIImage")).Create((0,sItemY), (256, 16), image: "Graphics/Inventory Icon/HeaderBar.png");
+		sm.Pack(mainframe);
+		
+		subHead3 = new("UILabel").Create
+		(
+			(4, sItemY),
+			(248, 16),
+			text: "Abilities",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		subHead3.Pack(mainframe);
+		
+		if(skillItems.Size() > 0)
+		{
+			sItemY += 16;
+			
+			for(int i = 0; i < skillItems.Size(); i++)
+			{
+				if(sItemX >= 256)
+				{
+					sItemX = 0;
+					sItemY += 32;
+				}
+				UIImage itemBG = UIImage(new("UIImage")).Create
+				(
+					(sItemX, sItemY),
+					(32, 32),
+					"Graphics/Inventory Icon/Grid.png",
+					UIImage.AlignType_Left
+				);
+				itemBG.Pack(mainframe);
+					
+				UIImage itemIcon = UIImage(new("UIImage")).Create
+				(
+					(sItemX, sItemY),
+					(32, 32),
+					CustomInventoryItem(skillItems[i]).invIcon,
+					UIImage.AlignType_Center,
+					imagescale: (0.5, 0.5)
+				);
+				itemIcon.Pack(mainframe);
+				skillIcon.Push(itemIcon);
+				
+				UIButton btn = UIButton(new("UIButton").Create
+				(
+					(sItemX, sItemY),
+					(32, 32),
+					cmdHandler: handler,
+					command: CustomInventoryItem(skillItems[i]).invName .. ":" .. CustomInventoryItem(skillItems[i]).invText .. ":" .. CustomInventoryItem(skillItems[i]).GetClassName() .. ":" .. i .. ":" .. CustomInventoryItem(skillItems[i]).invLore .. ":" .. "1",
+					hover: hoverTexture
+				));
+						
+				btn.Pack(mainframe);
+				skillBtnHolder.Push(btn);
+				allBtnHolder.Push(btn);
+				
+				sItemX += 32;
+			}
+		}
+		
+		//Draw the attribute header
+		let AtrTextHeader = new("UILabel").Create
+		(
+			(496, 64),
+			(105, 16),
+			text: "Attribute",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		AtrTextHeader.Pack(mainframe);
+		
+		//Draw the attribute	
+		AtrText = new("UILabel").Create
+		(
+			(496, 82), //329 y
+			(105, 145),
+			text: "",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.4,
+			textColor: fntColor
+		);
+		AtrText.Pack(mainframe);
+		
+		//Draw the current condition header
+		let CStateTextHeader = new("UILabel").Create
+		(
+			(611, 64),
+			(105, 16),
+			text: "Condition",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		CStateTextHeader.Pack(mainframe);
+		
+		//Draw the current condition
+		CStateText = new("UILabel").Create
+		(
+			(611, 82),
+			(105, 145),
+			text: "",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.4,
+			textColor: fntColor
+		);
+		CStateText.Pack(mainframe);
+		
+		//Draw the current objective header
+		let ObjHeader = new("UILabel").Create
+		(
+			(496, 229),
+			(105, 16),
+			text: "Current Objective",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.6,
+			textColor: fntColor
+		);
+		ObjHeader.Pack(mainframe);
+		
+		//Draw the current objective
+		ObjectiveText = new("UILabel").Create
+		(
+			(496, 248),
+			(220, 140),
+			text: "",
+			fnt: fnt,
+			alignment: UILabel.AlignType_TopLeft,
+			wrap: true,
+			autoSize: true,
+			textScale: 0.45,
+			textColor: fntColor
+		);
+		ObjectiveText.Pack(mainframe);
+
+	  let itUsageBtn = UIBoxTextures(new("UIBoxTextures")).createSingleTexture("Graphics/Inventory Icon/Prompt.png", false);
+	  let hvUsageBtn = UIBoxTextures(new("UIBoxTextures")).createSingleTexture("Graphics/Inventory Icon/PromptHover.png", false);
+	
+	  SetStatusIcon();
+	  
+	  UsagePrompt = UIFrame(new("UIFrame")).Create((0, 0), (388, 34));
+	  UsagePrompt.hide();
+	  UsagePrompt.pack(mainframe);
+	  
+	  String m1Tip = "\cD[Mouse1] \cJUse Item";
+	  String m2Tip = "\cD[Mouse2] \cJOptions";
+	  
+	  if(inv_clickSwap)
+	  {
+	    m1Tip = "\cD[Mouse1] \cJOptions";
+	    m2Tip = "\cD[Mouse2] \cJUse Item";
+	  }
+	  
+	  let UsagePromptBG1 = UIImage(new("UIImage")).Create((0, 0), (90, 16), image: "Graphics/Inventory Icon/Inv_Tooltip.png");
+	  UsagePromptBG1.Pack(UsagePrompt);
+	  let UsagePromptBG2 = UIImage(new("UIImage")).Create((0, 18), (90, 16), image: "Graphics/Inventory Icon/Inv_Tooltip.png");
+	  UsagePromptBG2.Pack(UsagePrompt);
+	
+	  let UsageLabel1 = UILabel(new("UILabel")).Create(
+	    (4, 0),
+	    (380, 16),
+	    text: m1Tip,
+	    fnt: fnt,
+	    alignment: UILabel.AlignType_CenterLeft,
+	    wrap: false,
+	    autoSize: false,
+	    textScale: 0.45
+	  );
+	  UsageLabel1.pack(UsagePrompt);
+	
+	  let UsageLabel2 = UILabel(new("UILabel")).Create(
+	    (4, 18),
+	    (380, 16),
+	    text: m2Tip,
+	    fnt: fnt,
+	    alignment: UILabel.AlignType_CenterLeft,
+	    wrap: false,
+	    autoSize: false,
+	    textScale: 0.45
+	  );
+	  UsageLabel2.pack(UsagePrompt);
+	  
+	  BindingFrame = UIFrame(new("UIFrame")).Create((16, 200), (240, 88));
+	  BindingFrame.hide();
+	  BindingFrame.Pack(mainframe);
+	  UIImage BindingFrameBG = UIImage(new("UIImage")).Create((0, 0), (240, 88), image: "Graphics/Inventory Icon/BindBG.png");
+	  BindingFrameBG.Pack(BindingFrame);
+	  
+	  for(int i = 0; i < 4; i++)
+	  {
+	    UIImage bndSlot = UIImage(new("UIImage")).Create(((i*48) + 32, 32), (32, 32), image: "Graphics/Inventory Icon/Grid.png");
+		bndSlot.Pack(BindingFrame);
+	  }
+
+	  bnd1 = UIImage(new("UIImage")).Create((32, 32), (32, 32), image: "", imageScale: (0.5,0.5));
+	  bnd2 = UIImage(new("UIImage")).Create((80, 32), (32, 32), image: "", imageScale: (0.5,0.5));
+	  bnd3 = UIImage(new("UIImage")).Create((128, 32), (32, 32), image: "", imageScale: (0.5,0.5));
+	  bnd4 = UIImage(new("UIImage")).Create((176, 32), (32, 32), image: "", imageScale: (0.5,0.5));
+	  bnd1.Pack(BindingFrame);
+	  bnd2.Pack(BindingFrame);
+	  bnd3.Pack(BindingFrame);
+	  bnd4.Pack(BindingFrame);
+	  
+	  for(int i = 0; i < 4; i++)
+	  {
+	    UIButton bindingBtn = UIButton(new("UIButton").Create(((i*48) + 32, 32), (32, 32), cmdHandler: handler, command: String.Format("BindTo:%d", i + 1), hover: hoverTexture));
+	    bindingBtn.Pack(BindingFrame);
+	  }
+	  
+	  let BindingLabelGFX = UIImage(new("UIImage")).Create
+	  (
+		(0, 6),
+		(240, 16),
+		"Graphics/Inventory Icon/Name.png",
+		UIImage.AlignType_Center,
+		(0.67, 0.67)
+	  );
+	  BindingLabelGFX.Pack(BindingFrame);
+		
+	  let BindingLabel = new("UILabel").Create
+	  (
+		(0, 6),
+		(240, 16),
+		text: "Assign to Quick Use",
+		fnt: fnt,
+		alignment: UILabel.AlignType_Center,
+		wrap: false,
+		autoSize: false,
+		textScale: 0.5,
+		textColor: fntColor
+	  );
+	  BindingLabel.Pack(BindingFrame);
+	
+	  ExtendedPrompt = UIFrame(new("UIFrame")).Create((0, 0), (100, 56));
+	  ExtendedPrompt.hide();
+	  ExtendedPrompt.Pack(mainframe);
+
+	  epBtnTex = UIBoxTextures(new("UIBoxTextures")).createSingleTexture("Graphics/Inventory Icon/Inv_Tooltip.png", false);
+	  epBtnHover = UIBoxTextures(new("UIBoxTextures")).createSingleTexture("Graphics/Inventory Icon/Inv_Tooltip2.png", false);
+	  
+	  epUse = UIButton(new("UIButton").Create
+	  (
+	    (16, 8),
+	    (88, 12),
+	    "Use Item",
+	    cmdHandler: handler,
+	    inactive : epBtnTex,
+	    hover: epBtnHover,
+	    click: epBtnTex,
+	    fnt: fnt,
+	    textscale: 0.5,
+	    alignment: UIButton.AlignType_Center
+	  ));				
+	  epUse.Pack(ExtendedPrompt);
+	
+	  epDrop = UIButton(new("UIButton").Create
+	  (
+	    (16, 22),
+	    (88, 12),
+	    "Drop Item",
+	    cmdHandler: handler,
+	    inactive : epBtnTex,
+	    hover: epBtnHover,
+	    click: epBtnTex,
+	    fnt: fnt,
+	    textscale: 0.5,
+	    alignment: UIButton.AlignType_Center
+	  ));				
+	  epDrop.Pack(ExtendedPrompt);
+	
+	  epBind = UIButton(new("UIButton").Create
+	  (
+	    (16, 36),
+	    (88, 12),
+	    "Keybind",
+	    cmdHandler: handler,
+	    inactive : epBtnTex,
+	    hover: epBtnHover,
+	    click: epBtnTex,
+	    fnt: fnt,
+	    textscale: 0.5,
+	    alignment: UIButton.AlignType_Center
+	  ));				
+	  epBind.Pack(ExtendedPrompt);
+	  
+	  ///////Repair Prompts
+	  RepairPrompt = UIFrame(new("UIFrame")).Create((0, 0), (108, 64));
+	 // RepairPrompt.hide();
+	  RepairPrompt.Pack(mainframe);
+	  
+	  //////Repair Buttons
+	  if(DFPlayer(pmo).wep2)
+	  {
+		  hasWpn = true;
+		  rHG = UIButton(new("UIButton").Create
+		  (
+			(16, 8), (96, 12), "", handler, "", epBtnTex, epBtnHover, epBtnTex, null, fnt, 0.45,
+			alignment: UIButton.AlignType_Right
+		  ));			
+		  rHG.Pack(RepairPrompt);
+	  }
+	  
+	  if(DFPlayer(pmo).wep3a)
+	  {
+		  hasWpn = true;
+		  rSG = UIButton(new("UIButton").Create
+		  (
+			(16, 22), (96, 12), "", handler, "", epBtnTex, epBtnHover, epBtnTex, null, fnt, 0.45,
+			alignment: UIButton.AlignType_Right
+		  ));			
+		  rSG.Pack(RepairPrompt);
+	  }
+	  
+	  if(DFPlayer(pmo).wep4a)
+	  {
+		  hasWpn = true;
+		  rSP = UIButton(new("UIButton").Create
+		  (
+			(16, 36), (96, 12), "", handler, "", epBtnTex, epBtnHover, epBtnTex, null, fnt, 0.45,
+			alignment: UIButton.AlignType_Right
+		  ));			
+		  rSP.Pack(RepairPrompt);
+	  }
+	  
+	  if(DFPlayer(pmo).wep4b)
+	  {
+		  hasWpn = true;
+		  rAR = UIButton(new("UIButton").Create
+		  (
+			(16, 50), (96, 12), "", handler, "", epBtnTex, epBtnHover, epBtnTex, null, fnt, 0.45,
+			alignment: UIButton.AlignType_Right
+		  ));			
+		  rAR.Pack(RepairPrompt);
+	  }
+	}
+	
+	ui void InteractItem(String command)
+	{		
+	  for(int j = 0; j < allBtnHolder.Size(); j++)
+	  {
+	    if(allBtnHolder[j].isHovered() && handler)
+		{
+		  if(command ~== "use")
+		    handler.buttonClickCommand(allBtnHolder[j], "UseItem:" .. allBtnHolder[j].getCommand());
+		  else if(command ~== "extra")
+		    ShowExtendedOption(allBtnHolder[j].getCommand());
+		  break;
+		}
+	  }
+	}
+	
+	void ShowExtendedOption(string cmd)
+    {
+	  if(cmd == "None")
+	    return;
+		
+	  Array<String> command;
+	  cmd.Split(command, ":");
+	  
+      menu.MenuSound("menu/clear");
+	  epUse.setCommand("UseItem:" .. cmd);
+	  epDrop.setCommand("DropItem:" .. cmd);
+	  epDrop.setHoverTexture(epBtnHover);
+	  epDrop.setAlpha(1.0);
+	  
+	  if(command[2] ~== "Stim")
+	  {
+		epDrop.setCommand("");
+		epDrop.setHoverTexture(epBtnTex);
+		epDrop.setAlpha(0.5);
+	    epBind.setCommand("");
+		epBind.setHoverTexture(epBtnTex);
+		epBind.setAlpha(0.5);
+	  }
+	  else if(command[2].Left(4) ~== "Key_")
+	  {
+		epUse.setCommand("");
+		epUse.setHoverTexture(epBtnTex);
+		epUse.setAlpha(0.5);
+		epBind.setCommand("");
+		epBind.setHoverTexture(epBtnTex);
+		epBind.setAlpha(0.5);
+		epDrop.setCommand("");
+		epDrop.setHoverTexture(epBtnTex);
+		epDrop.setAlpha(0.5);
+	  }
+	  else if(command[2].Left(5) ~== "Skill")
+	  {
+		if(command[0].Left(7) ~== "Passive")
+		{
+		  epUse.setCommand("");
+		  epUse.setHoverTexture(epBtnTex);
+		  epUse.setAlpha(0.5);
+		  epBind.setCommand("");
+		  epBind.setHoverTexture(epBtnTex);
+		  epBind.setAlpha(0.5);
+		}
+		else
+		{
+		  epBind.setCommand("BindItem");
+		  epBind.setHoverTexture(epBtnHover);
+		  epBind.setAlpha(1.0);
+		}
+		epDrop.setCommand("");
+		epDrop.setHoverTexture(epBtnTex);
+		epDrop.setAlpha(0.5);
+		bindItem = command[2];
+	  }
+	  else if(command[2].Left(6) ~== "Helper")
+	  {
+		epUse.setCommand("");
+		epUse.setHoverTexture(epBtnTex);
+		epUse.setAlpha(0.5);
+		epBind.setCommand("");
+		epBind.setHoverTexture(epBtnTex);
+		epBind.setAlpha(0.5);
+	  }
+	  else
+	  {
+	    epBind.setCommand("BindItem");
+		epBind.setHoverTexture(epBtnHover);
+		epBind.setAlpha(1.0);
+		bindItem = command[2];
+	  }
+	  UsagePrompt.hide();
+	  ExtendedPrompt.setPos(mainframe.screenToRel(getMousePos() - (22,24)));
+	  ExtendedPrompt.show();
+    }
+	
+	void ShowRepairOption(String cmd)
+	{
+	  menu.MenuSound("menu/clear");
+	  if(DFPlayer(pmo).wep2)
+	  {
+	    let inv = pmo.FindInventory("Handgun");
+		if(inv)
+		  rHG.setText(String.Format("Handgun: %d", DF_Weapon(inv).wep_cond) .. "%  ");
+		
+	    rHG.setCommand("Repair:Handgun:" .. cmd);
+	  }
+		
+	  if(DFPlayer(pmo).wep3a)
+	  {
+	    let inv = pmo.FindInventory("Trenchgun");
+		if(inv)
+		  rSG.setText(String.Format("Trenchgun: %d", DF_Weapon(inv).wep_cond) .. "%  ");
+		  
+	    rSG.setCommand("Repair:Trenchgun:" .. cmd);
+	  }
+	  
+	  if(DFPlayer(pmo).wep4a)
+	  {
+	    let inv = pmo.FindInventory("SprayCan");
+		if(inv)
+		  rSP.setText(String.Format("Spray Can: %d", DF_Weapon(inv).wep_cond) .. "%  ");
+		
+	    rSP.setCommand("Repair:Spraycan:" .. cmd);
+	  }
+	  
+	  if(DFPlayer(pmo).wep4b)
+	  {
+	    let inv = pmo.FindInventory("AR");
+		if(inv)
+		  rAR.setText(String.Format("Assault Rifle: %d", DF_Weapon(inv).wep_cond) .. "%  ");
+	    
+	    rAR.setCommand("Repair:AR:" .. cmd);
+	  }
+	  
+	  UsagePrompt.hide();
+	  RepairPrompt.setPos(mainframe.screenToRel(getMousePos() - (22,50)));
+	  RepairPrompt.show();
+	}
+	
+	void ShowBindingOption()
+	{
+	  let pmo = players[consoleplayer].mo;
+	  
+	  if(DFPlayer(pmo).quickUse1)
+	    bnd1.setImage(CustomInventoryItem(DFPlayer(pmo).quickUse1).invIcon);
+		
+	  if(DFPlayer(pmo).quickUse2)
+	    bnd2.setImage(CustomInventoryItem(DFPlayer(pmo).quickUse2).invIcon);
+		
+	  if(DFPlayer(pmo).quickUse3)
+	    bnd3.setImage(CustomInventoryItem(DFPlayer(pmo).quickUse3).invIcon);
+		
+	  if(DFPlayer(pmo).quickUse4)
+	    bnd4.setImage(CustomInventoryItem(DFPlayer(pmo).quickUse4).invIcon);
+		
+	  BindingFrame.setPos(mainframe.screenToRel(getMousePos() - (64,64)));
+	  BindingFrame.show();
+	}
+	
+	override bool OnUIEvent(UIEvent ev)
+	{
+	  if(ev.Type == UIEvent.Type_KeyDown)
+	  {
+		if(ev.KeyString ~== "	")
+		  Close();
+		else if((ev.KeyChar == 32 || ev.KeyChar == 89) && confirm_wait)
+	      handler.Confirm();
+	  }
+	  
+	  if(ev.type == UIEvent.Type_LButtonDown)
+	  {
+		if(inv_clickSwap)
+		  InteractItem("extra");
+		else
+		  InteractItem("use");
+	  }
+	  
+	  if(ev.type == UIEvent.Type_RButtonDown)
+	  {
+	    if(confirm_wait)
+	    {
+	      confirm_bound.hide();
+		  confirm_box.hide();
+		  confirm_wait = false;
+	    }
+		else
+		{
+		  if(inv_clickSwap)
+		    InteractItem("use");
+		  else
+		    InteractItem("extra");
+		}
+	  }
+	  
+	  return Super.OnUIEvent(ev);
+	}
+	
+	override bool menuEvent(int mkey, bool fromcontroller)
+    {
+      if(mkey == MKEY_Enter && confirm_wait)
+	    handler.Confirm();
+		
+      return Super.menuEvent(mkey, fromController);
+    }
+	
+	override void Ticker()
+	{
+	  DisplayStatus();
+	  
+	  if(flashAlpha > 0.0)
+	    flashAlpha -= 0.015;
+		
+	  if(subHead1)
+	    subHead1.setText(conTitle);
+		
+      if(usagePrompt)
+	  {
+	    vector2 pos = mainframe.screenToRel(getMousePos());
+		UsagePrompt.setPos(pos + (8, 8));
+	  }
+	  
+	  if(!RepairPrompt.isHidden() && !RepairPrompt.containsMouse())
+	    RepairPrompt.hide();
+	  
+	  if(!ExtendedPrompt.isHidden() && !ExtendedPrompt.containsMouse())
+	    ExtendedPrompt.hide();
+	  else if(ExtendedPrompt.isHidden())
+	  {
+	    for(int i = 0; i < allBtnHolder.Size(); i++)
+	    {
+	      if(allBtnHolder[i].isHovered())
+		  {
+		    if(allBtnHolder[i].getCommand() != "none" || allBtnHolder[i].getCommand() != "")
+		    {
+		       UsagePrompt.show();
+		       break;
+		    }
+		    else
+		    {
+		      itemName.setText("");
+		      itemEffect.setText("");
+		      itemText.setText("");
+		      UsagePrompt.hide();
+		    }
+		  }
+		  else if(i == allBtnHolder.Size() -1 && !allBtnHolder[i].isHovered())
+		  {
+		    itemName.setText("");
+		    itemEffect.setText("");
+		    itemText.setText("");
+		    UsagePrompt.hide();
+		  }
+	    }
+	  }
+	  
+	  Super.Ticker();
+	}
+	
+	override void Drawer()
+	{
+	  Screen.Dim(Color(8, 8, 8), 0.6, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+	  Super.Drawer();
+	  Screen.Dim(Color(208, 240, 255), flashAlpha, 0, 0, Screen.GetWidth(), Screen.GetHeight());
+    }
+
+  void SetBackgroundImage()
+  {
+    let inm = UIImage(new("UIImage")).Create((264, 64), (220, 16), image: "Graphics/Inventory Icon/EffectHeader.png");
+	inm.Pack(mainframe);
+	
+	let ie = UIImage(new("UIImage")).Create((264, 82), (220, 16), image: "Graphics/Inventory Icon/EffectHeader.png");
+	ie.Pack(mainframe);
+	let ieb = UIImage(new("UIImage")).Create((264, 100), (220, 80), image: "Graphics/Inventory Icon/EffectBar.png");
+	ieb.Pack(mainframe);
+	
+	let id = UIImage(new("UIImage")).Create((264, 182), (220, 16), image: "Graphics/Inventory Icon/EffectHeader.png");
+	id.Pack(mainframe);
+	let idb = UIImage(new("UIImage")).Create((264,200), (220, 192), image: "Graphics/Inventory Icon/DescriptionBar.png");
+	idb.Pack(mainframe);
+	
+	let cs = UIImage(new("UIImage")).Create((492,64), (113, 163), image: "Graphics/Inventory Icon/StatBar.png");
+	cs.Pack(mainframe);
+	
+	let as = UIImage(new("UIImage")).Create((607,64), (113, 163), image: "Graphics/Inventory Icon/StatBar.png");
+	as.Pack(mainframe);
+	
+	let at = UIImage(new("UIImage")).Create((492,229), (229, 163), image: "Graphics/Inventory Icon/Objective.png");
+	at.Pack(mainframe);
+  }
+  
+  void SetStatusIcon()
+  {	
+	let ei = UIImage(new("UIImage")).Create((496, 160), (20, 20), image: "EK_ICON", imageScale: (0.4, 0.4)); //12
+	ei.Pack(mainframe);
+	
+	let fa = UIImage(new("UIImage")).Create((496, 172), (20, 20), image: "FA_ICON", imageScale: (0.4, 0.4));
+	fa.Pack(mainframe);
+	
+	let fr = UIImage(new("UIImage")).Create((496, 184), (20, 20), image: "MN_ICON", imageScale: (0.4, 0.4));
+	fr.Pack(mainframe);
+  }
+  
+  void CreateMenuTabs()
+  {
+    UIBoxTextures inactiveTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/TabInactive.png", false);
+	UIBoxTextures hoverTexture = UIBoxTextures(new('UIBoxTextures')).createSingleTexture("Graphics/Codex/TabHover.png", false);
+	
+	UIFrame tabFrame = UIFrame(new("UIFrame")).Create((199, 0), (322, 24));
+	tabFrame.Pack(mainframe);
+	
+	UIImage tbg = UIImage(new("UIImage")).Create((0, 0), (322, 24), image: "Graphics/Codex/TabBG.png");
+	tbg.Pack(tabFrame);
+	
+	UIButton inv = UIButton(new("UIButton")).Create((0, 0), (64, 24), "Inventory", handler, "ChangeMenu:InventoryMenu",
+	inactive : null,
+	hover: hoverTexture,
+	click: null,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_Center
+	);
+	inv.pack(tabFrame);
+	
+	UIButton wep = UIButton(new("UIButton")).Create((64, 0), (64, 24), "Weapons", handler, "ChangeMenu:CodexMenu",
+	inactive : null,
+	hover: hoverTexture,
+	click: null,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_Center
+	);
+	wep.pack(tabFrame);
+	
+	UIButton bes = UIButton(new("UIButton")).Create((128, 0), (64, 24), "Bestiary", handler, "ChangeMenu:BestiaryMenu",
+	inactive : null,
+	hover: hoverTexture,
+	click: null,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_Center
+	);
+	bes.pack(tabFrame);
+	
+	UIButton note = UIButton(new("UIButton")).Create((192, 0), (64, 24), "Map", handler, "ChangeMenu:MapMenu",
+	inactive : null,
+	hover: hoverTexture,
+	click: null,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_Center
+	);
+	note.pack(tabFrame);
+	
+	UIButton help = UIButton(new("UIButton")).Create((256, 0), (64, 24), "Help", handler, "ChangeMenu:HelpMenu",
+	inactive : null,
+	hover: hoverTexture,
+	click: null,
+	fnt: fnt,
+	textscale: 0.5,
+	alignment: UIButton.AlignType_Center
+	);
+	help.pack(tabFrame);
+  }
+}
+
+class InventoryActivator : Inventory
+{
+  bool tip_prompt;
+  Default
+  {
+	+Inventory.UNDROPPABLE
+	-Inventory.INVBAR
+  }
+
+  override bool Use(bool pickup)
+  {
+	if(owner == null)
+	  return true;
+	  
+	if(tip_prompt)
+	{
+	  let ev = GenericScreenStuff(EventHandler.Find("GenericScreenStuff"));
+	  if(ev)
+	    ev.PromptTutorial("Clear");
+		
+	  tip_prompt = false;
+	}
+
+	if(owner == players[consoleplayer].mo)
+	{
+	  DFPlayer(owner).goal_alert = false;
+	  A_StartSound("menu/clear", CHAN_AUTO, CHANF_UI, attenuation: 0.0);
+	  Menu.SetMenu("InventoryMenu");
+	}
+
+	return false;
+  }
+  
+  States
+  {
+	Spawn:
+	  TNT1 A -1;
+	  Stop;
+	Use:
+	  TNT1 A 0;
+	  Fail;
+  }
+}

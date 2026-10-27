@@ -1,0 +1,162 @@
+namespace = "GZDoom";
+
+Conversation
+{
+    ID = 1;
+    page // Page 1
+    {
+		Name = "$Terminal";
+        Dialog = "$Terminal_08a_1";
+		Voice = "Term_01";
+		GoodBye = "$Leave";
+	}
+}
+
+Conversation
+{
+    ID = 2;
+    page // Page 1
+    {
+		Name = "$M2_Elevator";
+        Dialog = "$M2_Elevator01";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$EastWing_Elevator_1a";
+			NextPage = 2;
+			CloseDialog = TRUE;
+			Special = 80;
+			Arg0 = 22;
+		}
+	}
+	page // Page 2
+    {
+		Name = "$M2_Elevator";
+        Dialog = "$M2_Elevator01";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$EastWing_Elevator_1a";
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 3;
+    page // Page 1
+    {
+		Name = "NOWHERE";
+        Dialog = "$Alien_01";
+		Choice
+		{
+			text = "$Alien_01a";
+			NextPage = 2;
+		}
+	}
+	page // Page 2
+    {
+		Name = "NOWHERE";
+        Dialog = "$Alien_02";
+		Choice
+		{
+			text = "$Alien_02a";
+			CloseDialog = TRUE;
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 21;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 4;
+    page // Page 1
+    {
+		Name = "$EastWing_Door";
+        Dialog = "$EastWing_Door01";
+		Voice = "Locked02";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$EastWing_Door01a";
+			NextPage = 2;
+			Special = 80;
+			Arg0 = 7;
+			CloseDialog = TRUE;
+		}
+	}
+	page // Page 2
+    {
+		Name = "$EastWing_Door";
+        Dialog = "$EastWing_Door02";
+		Choice
+		{
+			text = "$EastWing_Door02a";
+			NextPage = 2;
+			Special = 80;
+			Arg0 = 7;
+			CloseDialog = TRUE;
+		}
+		Choice
+		{
+			text = "$Leave";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 10;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 5;
+    page // Page 1
+    {
+		Name = "$Spiral";
+        Dialog = "$Sprial_1";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Spiral_1a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 18;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 6;
+    page // Page 1
+    {
+		Name = "$Spiral";
+        Dialog = "$Spiral_2";
+		GoodBye = "$Leave";
+		Choice
+		{
+			text = "$Spiral_1a";
+			NextPage = 1;
+			Special = 80;
+			Arg0 = 18;
+			CloseDialog = TRUE;
+		}
+	}
+}
+
+Conversation
+{
+    ID = 7;
+    page // Page 1
+    {
+		Name = "$Terminal";
+        Dialog = "$Terminal_15";
+		Voice = "Term_01";
+		GoodBye = "$Leave";
+	}
+}

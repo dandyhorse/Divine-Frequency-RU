@@ -1,0 +1,131 @@
+#d97
+#F974
+#d97
+#F974!
+.NN@
+#74-
+SPTR 
+SNAML
+Init
+Cutscene_Skip
+Lego
+Bird_Light_Fade
+Radiation
+STRL(
+BrainBounce
+dev_debug
+DFPlayer
+SetHUD
+GenericScreenStuff
+Clean
+D_NULL
+BRIGHT
+SHOOTABLE
+MusicFade
+SprayCan
+Cutscene_Skip
+SkipCutscene
+The_Six1
+The_Six2
+LowZone
+M2_Door2
+BigGate1
+Active
+BigMove5
+dsempty
+HyDoor
+BigMove1
+HyDoor2
+Spawn
+HyDoor3
+TurAct1
+ACS_FONT
+Anom_04
+SetLocation
+Middle Spiral
+Null0d La5ds6ape: 3D.^
+!'0''N 3E.S
+0'14''E\nA7om0l1us 0ct2vity: \cGH1z6rd7us
+Nu1led 3and7ca0e: 97.x
+0'@''N 39.1
+!'0''W\nAn-1alo3s A*t14v0ty: \cG-az4rd0us
+N10led La9ds0a1e: ::.5
+0'*''S 66.6
+0'0''E\nAn3m8l-us -c6iv2ty: \cG01za10dou8
+Nulled Landscape: 37.5
+0'0''N 36.5
+0'0''W\nResonance Proximity: \cGCritical
+DoorTP5
+DoorTP12
+Follow
+MidZone
+MP2_D5a
+Locked02
+Something is blocking the door from the other side...
+Six_GermWave
+Activate
+GKCell
+HighZone
+Cage02
+Bram
+You feel a colossal presence trying to breach your mind.
+Shaman_SigilFire
+RitualGiant
+Bird_Light_Fade
+BirdWorship
+Autosave
+DoorTP13
+DoorTP14
+BigDoor1
+Clock
+Clock2
+Spectate
+DoorTP11
+DoorTP7
+DoorTP8
+SetRadiation
+Radiation
+Power Threshold: 
+Gi_Die3
+ShaderHandler
+SetInvert
+SetImageGlitcher
+Alarm_04
+Spiral06
+Death
+Giant_Ghost
+Sx_End0
+Begin
+GaryEnergyBurst
+Sx_Bat4
+Shm_Act
+PulseShaderHit
+BlastOffToken
+Attempting Consciousness Merging.  
+Attempting Consciousness Merging.. 
+Attempting Consciousness Merging...
+Error. Mind unidentifiable. Initiate emergency purging protocol.
+DS_Warn
+RadiationToken
+RadBlur
+MP2_D5b
+Poison1
+Trip01
+TrippyColor1
+TrippyColor2
+Fire3
+BuildRadiation
+LiftGate
+LiftMov2
+Trip02
+TrippyColor3
+MSP_02
+BerzerkGlitch
+MSP_01
+You feel a pressure against your skull. Something is trying to reach you.
+WitToken
+DetectAmbush
+Mirror
+SetZone
+MP_ROOM2
+ACSe>
