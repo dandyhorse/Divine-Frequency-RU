@@ -16,7 +16,8 @@
     "build:legacy": "node src/tools/node/cli.mjs build --without-acs --without-maps",
     "package": "node src/tools/node/cli.mjs package",
     "all": "node src/tools/node/cli.mjs all",
-    "report": "node src/tools/node/report.mjs"
+    "report": "node src/tools/node/report.mjs",
+    "installer": "node src/installer/build.mjs"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.0.13"
