@@ -38,7 +38,7 @@
 ## Установка
 
 1. Скачайте и распакуйте [DF_RU_Portable.zip](https://github.com/dandyhorse/Divine-Frequency-RU/releases/latest/download/DF_RU_Portable.zip) в любую папку.
-2. Запустите `install.cmd`.
+2. Запустите `install.cmd`. Установщик ищет игру в стандартных папках Steam и во всех библиотеках из `libraryfolders.vdf`.
 3. Если игра не найдена автоматически, укажите папку, где лежат `DivineFrequency.exe` и `DFSDSA.ipk3`.
 4. Запускайте игру обычным ярлыком или через Steam. Новый ярлык не нужен.
 
