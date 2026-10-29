@@ -25591,7 +25591,7 @@ Spray Can now embedded with Pyromancy\n\c[Gold]Codex Updated (Misc)
 - **RU:**
 
 ```text
-\c[Cyan]--Эликсир жизненной силы--\c[-]\nЗапас тоника пополнен
+\c[Cyan]--Инъектор Психуса--\c[-]\nЗапас тоника пополнен
 ```
 
 - **EN:**
