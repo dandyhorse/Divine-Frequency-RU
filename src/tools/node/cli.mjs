@@ -110,7 +110,7 @@ try {
       packagePortable({
         pk3: resolve(value("--pk3", DEFAULT_PK3)),
         out: resolve(value("--out", DEFAULT_PORTABLE)),
-        version: value("--version", "1.0.9"),
+        version: value("--version", "1.0.10"),
       });
       break;
     case "extract":
@@ -135,7 +135,7 @@ try {
       packagePortable({
         pk3: resolve(value("--out", DEFAULT_PK3)),
         out: resolve(value("--portable", DEFAULT_PORTABLE)),
-        version: value("--version", "1.0.9"),
+        version: value("--version", "1.0.10"),
       });
       break;
     case "doctor":

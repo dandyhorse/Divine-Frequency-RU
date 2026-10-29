@@ -369,7 +369,7 @@ namespace DfRuPatcher
             titleGrid.Children.Add(viewbox);
             var subtitle = new TextBlock
             {
-                Text = "RUSSIAN PATCH  //  1.0.9",
+                Text = "RUSSIAN PATCH  //  1.0.10",
                 FontFamily = new FontFamily("Consolas"),
                 FontSize = 10,
                 Foreground = ColorBrush("#D0D0D0"),

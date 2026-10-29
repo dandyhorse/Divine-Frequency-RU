@@ -1,6 +1,6 @@
 {
   "name": "divine-frequency-ru",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "private": true,
   "description": "Russian translation patch and build tooling for Divine Frequency",
   "type": "module",
